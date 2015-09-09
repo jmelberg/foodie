@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <!--Import materialize.css-->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.0/css/materialize.min.css">
+  <!--Import jQuery before materialize.js-->
+  <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.0/js/materialize.min.js"></script>
+
+  <script>
+  $(document).ready(function(){
+    $('#register_tab').click(function() {
+      window.location.href = '/register';
+    });
+    $('#login_tab').click(function() {
+      window.location.href = '/';
+    });
+    $('#settings_tab').click(function() {
+      window.location.href = '#';
+    });
+  });
+  </script>
+
+  <!--Let browser know website is optimized for mobile-->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+</head>
+<body>
+  <div class="row">
+    <div class="col s12" style="margin-bottom: 32px;">
+      <ul class="tabs">
+        <li class="tab col s3"><a class="active" href="/register.html" id="register_tab">Register</a></li>
+        <li class="tab col s3"><a href="/" id="login_tab">Sign in</a></li>
+        <li class="tab col s3"><a href="#settings" id="settings_tab">Settings</a></li>
+      </ul>
+    </div>
+<div id="signup" class="col s12">
+  <div class="row">
+    <div class="col s12 m4 offset-m4">
+      <div class="card blue-grey darken-1">
+        <div class="card-content white-text" style="text-align:center;">
+          <span class="card-title">Sign up</span>
+          <br>
+          <a class="btn-floating btn-large waves-effect waves-light blue"><i class="material-icons">F</i></a>
+          <a class="btn-floating btn-large waves-effect waves-light red"><i class="material-icons">G</i></a>
+          <a class="btn-floating btn-large waves-effect waves-light blue"><i class="material-icons">T</i></a>
+
+          <form style="margin-bottom:-8px;" action="/register" method="POST">
+            <div class="input-field col s12">
+              <input id="username" name="username" type="text" class="validate">
+              <label for="username">Enter Username</label>
+            </div>
+            <div class="input-field col s12">
+              <input id="email" name="email" type="text" class="validate">
+              <label for="email">Enter Email</label>
+            </div>
+            <div class="input-field col s12">
+              <input id="password" name="password" type="password" class="validate">
+              <label for="password">Enter Password</label>
+            </div>
+            <div class="input-field col s12">
+              <input id="confirm_password" type="password" class="validate">
+              <label for="confirm_password">Confirm Password</label>
+            </div>
+            <div class="card-action" style="text-align:right;">
+              <a href="/">Cancel</a>
+              <button type="submit" style="background:none; border:none; text-transform:uppercase;">Log In</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>
