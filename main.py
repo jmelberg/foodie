@@ -7,7 +7,7 @@ from google.appengine.api import users
 from google.appengine.api import images
 from webapp2_extras import sessions, auth, json
 from BaseHandler import SessionHandler, login_required
-from models import User
+from models import User, Profile, Notification
 
 class RegisterHandler(SessionHandler):
   def get(self):
@@ -19,7 +19,7 @@ class RegisterHandler(SessionHandler):
     password = cgi.escape(self.request.get('password'))
     unique_properties = ['email_address']
 
-    # Creation of User 
+    # Creation of User
     user_data = User.create_user(username, unique_properties, username=username,
                                 email_address=email, password_raw=password, verified=False)
     time.sleep(1)
@@ -57,10 +57,59 @@ class ProfileHandler(SessionHandler):
   @login_required
   def get(self, profile_id):
     user = self.user_model
+    profile_owner = User.query(User.username == profile_id).get()
+    profile = Profile.query(Profile.owner == profile_owner.key).get()
+    # If profile isn't created, instantiate
+    if not profile:
+      new_profile = Profile()
+      new_profile.owner = profile_owner.key
+      new_profile.about_me = "I love to eat food"
+      new_profile.put()
     if user:
-      self.response.out.write(template.render('views/profile.html', {'user':user}))
+      self.response.out.write(template.render('views/profile.html', {'user':user, 'profile':profile}))
     else:
       self.redirect('/')
+
+class NotificationHandler(SessionHandler):
+  ''' Sends request or views current requests from other users '''
+  @login_required
+  def get(self):
+    user = self.user_model
+    requests = Notification.query(Notification.receipient == user.key)
+                                 .order(-Notification.time)
+    self.response.out.write(template.render('#notification view here',
+                            {'user': user, 'requests': requests}))
+
+  def post(self):
+    sender = self.user_model
+    receiver = User.query(User.username == self.request.get('# notification receiver')).get()
+    desc = cgi.escape(self.request.get('#notification description'))
+    # Check for standing request
+    incoming = Notification.query(Notification.sender == receiver.key,
+                                  Notification.recipient == sender.key).get()
+    outgoing = Notification.query(Notification.recipient == sender.key,
+                                  Notification.sender == receiver.key).get()
+    # No current request made
+    if incoming is None && outgoing is None:
+      request = Notification()
+      request.sender = sender.key
+      request.recipient = receiver.key
+      request.description = desc
+      request.time = datetime.datetime.now() - datetime.timedelta(hours=7) #PST
+      request.put()
+    self.redirect('/')
+
+class ApproveRequestHandler(SessionHandler):
+  ''' Processes current requests and removes from database '''
+  def post(self):
+    sender = User.query(User.KeyProperty == cgi.escape(self.request.get('sender'))).get()
+    receiver = User.query(User.KeyProperty == cgi.escape(self.request.get('receiver'))).get()
+    # Get notification request
+    request = Notification.query(Notification.sender == sender.key).get()
+    if request != None:
+        # Remove notification
+        request.key.delete()
+    self.redirect('# List of current notifications')
 
 class LogoutHandler(SessionHandler):
   """ Terminate current session """
@@ -83,5 +132,7 @@ app = webapp2.WSGIApplication([
                              ('/', LoginHandler),
                              ('/register', RegisterHandler),
                              ('/(\w+)', ProfileHandler),
+                             ('/notifications', NotificationHandler),
+                             ('/confirm', ApproveRequestHandler),
                              ('/logout', LogoutHandler),
                               ], debug=False, config=config)
