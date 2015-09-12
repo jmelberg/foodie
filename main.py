@@ -26,20 +26,33 @@ class RegisterHandler(SessionHandler):
     try:
       u = self.auth.get_user_by_password(username, password, remember=True,
       save_session=True)
-      self.redirect('/{}'.format(self.user_model.username))
+      self.redirect('/foodie/{}'.format(self.user_model.username))
     except( auth.InvalidAuthIdError, auth.InvalidPasswordError):
       error = "Invalid Email/Password"
       self.response.out.write(template.render('views/login.html', {'error':error}))
 
+class UsernameHandler(SessionHandler):
+  ''' Used to ensure no two users can have the same username '''
+  def get(self):
+    username = cgi.escape(self.request.get('username'))
+    user_query = User.query(User.username == username)
+    taken = user_query.get()
+    if taken == None:
+      self.response.out.write('Username is available')
+    else:
+      self.response.out.write('Username is taken')
+
 class LoginHandler(SessionHandler):
   def get(self):
     if self.user_model != None:
-      self.redirect('/{}'.format(self.user_model.username))
+      self.redirect('/foodie/{}'.format(self.user_model.username))
     else:
       self.response.out.write(template.render('views/login.html', {}))
   def post(self):
     username = cgi.escape(self.request.get('email')).strip().lower()
     password = cgi.escape(self.request.get('password'))
+    print username
+    print password
     try:
       if '@' in username:
         user_login = User.query(User.email_address == username).get()
@@ -47,9 +60,10 @@ class LoginHandler(SessionHandler):
           username = user_login.username
       u = self.auth.get_user_by_password(username, password, remember=True,
       save_session=True)
-      self.redirect('/{}'.format(self.user_model.username))
+      self.redirect('/foodie/{}'.format(self.user_model.username))
     except( auth.InvalidAuthIdError, auth.InvalidPasswordError):
       error = "Invalid Email/Password"
+      print error
       self.response.out.write(template.render('views/login.html', {'error':error}))
 
 class ProfileHandler(SessionHandler):
@@ -57,15 +71,15 @@ class ProfileHandler(SessionHandler):
   @login_required
   def get(self, profile_id):
     user = self.user_model
-    profile_owner = User.query(User.username == profile_id).get()
-    profile = Profile.query(Profile.owner == profile_owner.key).get()
-    # If profile isn't created, instantiate
-    if not profile:
-      new_profile = Profile()
-      new_profile.owner = profile_owner.key
-      new_profile.about_me = "I love to eat food"
-      new_profile.put()
     if user:
+      profile_owner = User.query(User.username == profile_id).get()
+      profile = Profile.query(Profile.owner == profile_owner.key).get()
+      # If profile isn't created, instantiate
+      if not profile:
+        new_profile = Profile()
+        new_profile.owner = profile_owner.key
+        new_profile.about_me = "I love to eat food"
+        new_profile.put()
       self.response.out.write(template.render('views/profile.html', {'user':user, 'profile':profile}))
     else:
       self.redirect('/')
@@ -75,8 +89,7 @@ class NotificationHandler(SessionHandler):
   @login_required
   def get(self):
     user = self.user_model
-    requests = Notification.query(Notification.receipient == user.key)
-                                 .order(-Notification.time)
+    requests = Notification.query(Notification.receipient == user.key).order(-Notification.time)
     self.response.out.write(template.render('#notification view here',
                             {'user': user, 'requests': requests}))
 
@@ -90,7 +103,7 @@ class NotificationHandler(SessionHandler):
     outgoing = Notification.query(Notification.recipient == sender.key,
                                   Notification.sender == receiver.key).get()
     # No current request made
-    if incoming is None && outgoing is None:
+    if incoming is None and outgoing is None:
       request = Notification()
       request.sender = sender.key
       request.recipient = receiver.key
@@ -119,7 +132,6 @@ class LogoutHandler(SessionHandler):
     self.auth.unset_session()
     self.redirect('/')
 
-
 config = {}
 config['webapp2_extras.sessions'] = {
     'secret_key': 'zomg-this-key-is-so-secret',
@@ -131,7 +143,8 @@ config['webapp2_extras.auth'] = {
 app = webapp2.WSGIApplication([
                              ('/', LoginHandler),
                              ('/register', RegisterHandler),
-                             ('/(\w+)', ProfileHandler),
+                             ('/checkusername', UsernameHandler),
+                             ('/foodie/(\w+)', ProfileHandler),
                              ('/notifications', NotificationHandler),
                              ('/confirm', ApproveRequestHandler),
                              ('/logout', LogoutHandler),
