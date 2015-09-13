@@ -7,7 +7,7 @@ from google.appengine.api import users
 from google.appengine.api import images
 from webapp2_extras import sessions, auth, json
 from BaseHandler import SessionHandler, login_required
-from models import User, Profile, Notification
+from models import User, Profile, Notification, Endorsement
 
 class RegisterHandler(SessionHandler):
   def get(self):
@@ -51,8 +51,6 @@ class LoginHandler(SessionHandler):
   def post(self):
     username = cgi.escape(self.request.get('email')).strip().lower()
     password = cgi.escape(self.request.get('password'))
-    print username
-    print password
     try:
       if '@' in username:
         user_login = User.query(User.email_address == username).get()
@@ -80,7 +78,9 @@ class ProfileHandler(SessionHandler):
         new_profile.owner = profile_owner.key
         new_profile.about_me = "I love to eat food"
         new_profile.put()
-      self.response.out.write(template.render('views/profile.html', {'user':user, 'profile':profile}))
+      endorsements = Endorsement.query(Endorsement.recipient == user.key).fetch()
+      self.response.out.write(template.render('views/profile-foodie.html',
+                             {'user':user, 'profile':profile, 'endorsements':endorsements}))
     else:
       self.redirect('/')
 
@@ -89,8 +89,8 @@ class NotificationHandler(SessionHandler):
   @login_required
   def get(self):
     user = self.user_model
-    requests = Notification.query(Notification.receipient == user.key).order(-Notification.time)
-    self.response.out.write(template.render('#notification view here',
+    requests = Notification.query(Notification.recipient == user.key).order(-Notification.time)
+    self.response.out.write(template.render('views/notifications.html',
                             {'user': user, 'requests': requests}))
 
   def post(self):
