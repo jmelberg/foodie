@@ -5,6 +5,12 @@ import webapp2_extras.appengine.auth.models as auth_models
 class User(auth_models.User):
   username = ndb.StringProperty()
   email_address = ndb.StringProperty()
+  first_name = ndb.StringProperty()
+  last_name = ndb.StringProperty()
+  zip_code = ndb.IntegerProperty(default = 0)
+  credit_card = ndb.IntegerProperty(default = 0)
+  security_code = ndb.IntegerProperty(default = 0)
+  expiration_date = ndb.DateTimeProperty()
   # Foodie/Expert
   account_type = ndb.StringProperty()
 
@@ -25,4 +31,10 @@ class Endorsement(ndb.Model):
   recipient = ndb.KeyProperty(kind="User")
   sender = ndb.KeyProperty(kind="User")
   text = ndb.StringProperty()
-  
+
+''' Handles transations between users '''
+class Transaction(ndb.Model):
+  sender = ndb.KeyProperty(kind = "User")
+  receiver = ndb.KeyProperty(kind = "User")
+  amount = ndb.FloatProperty(default = 0)
+  description = ndb.StringProperty()
