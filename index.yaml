@@ -15,3 +15,15 @@ indexes:
   - name: recipient
   - name: time
     direction: desc
+
+- kind: Notification
+  properties:
+  - name: sender
+  - name: creation_time
+    direction: desc
+
+- kind: Request
+  properties:
+  - name: sender
+  - name: creation_time
+    direction: desc

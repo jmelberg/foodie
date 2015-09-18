@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+
+{% block content %}
+<!-- Get all requests -->
+<div class="row">
+  <ul class="collection with-header col s12 m6 offset-m3">
+    <li class="collection-header"> <h5>All Requests</h5></li>
+  {% for request in all_requests %}
+  {% if request.sender != user.key %}
+    <li class="collection-item avatar">
+      <img src ="http://cdn.wegotthiscovered.com/wp-content/uploads/hardwell-united-we-are-album-cover.jpg" class="circle">
+      <span class="title"><b>Requestor:</b><a href="/foodie/{{request.sender_name}}"> {{request.sender_name}}</a></span>
+      <p><b>Location:</b> {{request.location}} <br />
+        <b>For:</b> {{request.date}} <br />
+        <b> @ </b> {{request.start_time}}</p>
+
+      <div class="secondary-content">
+        <form role="form" action="/requests" method="post">
+          <input type="hidden" name="request" value={{request.key}}>
+          <a><i class="material-icons" >clear</i></a>
+          <button type="submit" style="background:none; border:none;"><i class="material-icons">done</i></button>
+        </form>
+      </div>
+    </li>
+  {% endif %}
+
+  {% endfor %}
+
+  </ul>
+</div>
+
+<div class="row">
+<ul class="collection with-header col s12 m6 offset-m3">
+  <li class="collection-header"> <h5>My Requests</h5></li>
+{% for request in my_requests %}
+  <li class="collection-item avatar">
+    <img src ="http://cdn.wegotthiscovered.com/wp-content/uploads/hardwell-united-we-are-album-cover.jpg" class="circle">
+    <span class="title"><b>Requestor:</b><a href="/foodie/{{request.sender_name}}"> {{request.sender_name}}</a></span>
+    <p><b>Location:</b> {{request.location}} <br />
+      <b>For:</b> {{request.date}} <br />
+      <b> @ </b> {{request.start_time}}</p>
+
+    <div class="secondary-content">
+      <a><i class="material-icons">clear</i></a>
+    <a><i class="material-icons">done</i></a>
+  </div>
+  </li>
+{% empty %}
+<li class="collection-header">
+ <center>
+  <h5>No Requests</h5>
+  <p>Find someone now!</p>
+ </center>
+</li>
+{% endfor %}
+
+</ul>
+</div>
+
+<!-- Get all dead requests -->
+<div class="row">
+  <ul class="collection with-header col s12 m6 offset-m3">
+    <li class="collection-header"> <h5>Dead Requests</h5></li>
+  {% for request in dead_requests %}
+    <li class="collection-item avatar">
+      <img src ="http://cdn.wegotthiscovered.com/wp-content/uploads/hardwell-united-we-are-album-cover.jpg" class="circle">
+      <span class="title"><b>Requestor:</b><a href="/foodie/{{request.sender_name}}"> {{request.sender_name}}</a></span>
+      <p><b>Location:</b> {{request.location}} <br />
+        <b>For:</b> {{request.date}} <br />
+        <b> @ </b> {{request.start_time}}</p>
+
+      <div class="secondary-content">
+        <a><i class="material-icons">clear</i></a>
+      <a><i class="material-icons">done</i></a>
+    </div>
+    </li>
+  {% endfor %}
+
+  </ul>
+</div>
+
+{% endblock %}

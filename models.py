@@ -14,11 +14,15 @@ class Profile(ndb.Model):
   about_me = ndb.StringProperty()
 
 ''' Handles the basic connection between foodie and expert'''
-class Notification(ndb.Model):
+class Request(ndb.Model):
   recipient = ndb.KeyProperty(kind="User")
   sender = ndb.KeyProperty(kind="User")
+  sender_name = ndb.StringProperty()
+  location = ndb.StringProperty()
   description = ndb.StringProperty()
-  time = ndb.DateTimeProperty(auto_now_add=True)
+  creation_time = ndb.DateTimeProperty(auto_now_add=True)
+  date = ndb.StringProperty()
+  start_time = ndb.StringProperty()
   priority = ndb.IntegerProperty(default = 0)
 
 class Endorsement(ndb.Model):

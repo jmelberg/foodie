@@ -1,37 +1,16 @@
-<!DOCTYPE html>
-<html>
-<head>
- <!--Import materialize.css-->
- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.0/css/materialize.min.css">
- <!--Import jQuery before materialize.js-->
- <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
- <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.0/js/materialize.min.js"></script>
- <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
- <script>
- $( document ).ready(function(){
-  $(".button-collapse").sideNav();
- });
- </script>
+{% extends "base.html" %}
 
- <!--Let browser know website is optimized for mobile-->
- <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-</head>
-<body>
-
-
- <!-- Navbar goes here! -->
- <div class="row">
-  <center><a href="/logout">Log me out</a></center>
- </div>
+{% block content %}
 
  <!-- Foodie View -->
  <div class="row">
-  <div class="col s12 m10 offset-m1">
+  <br/>
+  <div class="col s12 m6 offset-m3">
    <div class="card hoverable">
     <div class="card-image">
      <img src="http://images.football.co.uk/630x472/7ab9cb3e783de00df91b0a1ee51e563a.jpg">
      <span class="card-title">
-      <div style="background-color:#000000; opacity: 0.7">{{user.username}}</div>
+      <div style="background-color:#000000; opacity: 0.7">{{owner.username}}</div>
      </span>
     </div>
     <div class="card-content">
@@ -42,15 +21,17 @@
        <li class="tab col s3"><a href="#history">History</a></li>
       </ul>
      </div>
-
+    
      <div id="about" class="col s12">
       <div class="row">
        <h5>About Me</h5>
        <p>{{profile.about_me}}</p>
-       <a href="/notifications">Requests</a>
+       {% if viewer.key != profile.owner %}
+       <a>Follow</a>
+       {% endif %}
+
       </div>
      </div>
-
      <div id="comments" class="col s12">
       <div class="row">
         <h5>Comments!</h5>
@@ -104,6 +85,4 @@
 
   </div>
 
-
- </body>
- </html>
+{% endblock %}

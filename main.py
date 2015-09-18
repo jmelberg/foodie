@@ -1,13 +1,13 @@
 import cgi
 import webapp2
-import time
+import time, datetime
 from google.appengine.ext import ndb
 from google.appengine.ext.webapp import template
 from google.appengine.api import users
 from google.appengine.api import images
 from webapp2_extras import sessions, auth, json
 from BaseHandler import SessionHandler, login_required
-from models import User, Profile, Notification, Endorsement
+from models import User, Profile, Request, Endorsement
 
 class RegisterHandler(SessionHandler):
   def get(self):
@@ -68,48 +68,67 @@ class ProfileHandler(SessionHandler):
   """handler to display a profile page"""
   @login_required
   def get(self, profile_id):
-    user = self.user_model
-    if user:
-      profile_owner = User.query(User.username == profile_id).get()
-      profile = Profile.query(Profile.owner == profile_owner.key).get()
+    viewer = self.user_model
+    # Get profile info
+    profile_owner = User.query(User.username == profile_id).get()
+    profile = Profile.query(Profile.owner == profile_owner.key).get()
+    if not profile:
       # If profile isn't created, instantiate
-      if not profile:
-        new_profile = Profile()
-        new_profile.owner = profile_owner.key
-        new_profile.about_me = "I love to eat food"
-        new_profile.put()
-      endorsements = Endorsement.query(Endorsement.recipient == user.key).fetch()
-      self.response.out.write(template.render('views/profile-foodie.html',
-                             {'user':user, 'profile':profile, 'endorsements':endorsements}))
-    else:
-      self.redirect('/')
+      new_profile = Profile()
+      new_profile.owner = profile_owner.key
+      new_profile.about_me = "I love to eat food"
+      new_profile.put()
+    endorsements = Endorsement.query(Endorsement.recipient == profile_owner.key).fetch()
+    self.response.out.write(template.render('views/profile-foodie.html',
+                             {'owner':profile_owner, 'profile':profile, 'endorsements':endorsements, 'viewer': viewer}))
 
-class NotificationHandler(SessionHandler):
+class RequestsHandler(SessionHandler):
   ''' Sends request or views current requests from other users '''
   @login_required
   def get(self):
     user = self.user_model
-    requests = Notification.query(Notification.recipient == user.key).order(-Notification.time)
-    self.response.out.write(template.render('views/notifications.html',
-                            {'user': user, 'requests': requests}))
+    my_requests = Request.query(Request.sender == user.key).order(-Request.creation_time)
+    all_requests = Request.query().order(-Request.creation_time)
+    date = datetime.datetime.now() - datetime.timedelta(hours=7)
+    hours = str(date.hour)
+    if date.minute < 10:
+      minutes = "0"+str(date.minute)
+    else:
+      minutes = str(date.minute)
+    current_time = hours+":"+minutes
+    available_requests = []
+    dead_requests = []
+    for request in all_requests:
+      print "Request time: ", request.start_time, "Current Time: ", current_time
+      if request.start_time >= current_time:
+        available_requests.append(request)
+      else:
+        dead_requests.append(request)
+    self.response.out.write(template.render('views/requests.html',
+                            {'user': user, 'my_requests': my_requests, "all_requests": available_requests, "dead_requests": dead_requests}))
+    
 
+
+
+
+
+class CreateRequestHandler(SessionHandler):
+  @login_required
   def post(self):
-    sender = self.user_model
-    receiver = User.query(User.username == self.request.get('# notification receiver')).get()
-    desc = cgi.escape(self.request.get('#notification description'))
-    # Check for standing request
-    incoming = Notification.query(Notification.sender == receiver.key,
-                                  Notification.recipient == sender.key).get()
-    outgoing = Notification.query(Notification.recipient == sender.key,
-                                  Notification.sender == receiver.key).get()
-    # No current request made
-    if incoming is None and outgoing is None:
-      request = Notification()
-      request.sender = sender.key
-      request.recipient = receiver.key
-      request.description = desc
-      request.time = datetime.datetime.now() - datetime.timedelta(hours=7) #PST
-      request.put()
+    user = self.user_model
+    location = cgi.escape(self.request.get("location"))
+    date = cgi.escape(self.request.get("date"))
+    time = cgi.escape(self.request.get("time"))
+
+    # Create request
+    request = Request()
+    request.sender = user.key
+    request.sender_name = user.username
+    request.location = location
+    request.date = date
+    request.start_time = time
+    request.creation_time = datetime.datetime.now() - datetime.timedelta(hours=7) #PST
+    request.put()
     self.redirect('/')
 
 class ApproveRequestHandler(SessionHandler):
@@ -117,12 +136,12 @@ class ApproveRequestHandler(SessionHandler):
   def post(self):
     sender = User.query(User.KeyProperty == cgi.escape(self.request.get('sender'))).get()
     receiver = User.query(User.KeyProperty == cgi.escape(self.request.get('receiver'))).get()
-    # Get notification request
-    request = Notification.query(Notification.sender == sender.key).get()
+    # Get request
+    request = Request.query(Request.sender == sender.key, Request.receiver == receiver.key).get()
     if request != None:
         # Remove notification
         request.key.delete()
-    self.redirect('# List of current notifications')
+    self.redirect('/requests')
 
 class LogoutHandler(SessionHandler):
   """ Terminate current session """
@@ -145,7 +164,8 @@ app = webapp2.WSGIApplication([
                              ('/register', RegisterHandler),
                              ('/checkusername', UsernameHandler),
                              ('/foodie/(\w+)', ProfileHandler),
-                             ('/notifications', NotificationHandler),
+                             ('/requests', RequestsHandler),
                              ('/confirm', ApproveRequestHandler),
+                             ('/request', CreateRequestHandler),
                              ('/logout', LogoutHandler),
                               ], debug=False, config=config)
