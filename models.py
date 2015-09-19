@@ -18,11 +18,11 @@ class Request(ndb.Model):
   recipient = ndb.KeyProperty(kind="User")
   sender = ndb.KeyProperty(kind="User")
   sender_name = ndb.StringProperty()
+  recipient_name = ndb.StringProperty(repeated=True)
   location = ndb.StringProperty()
   description = ndb.StringProperty()
   creation_time = ndb.DateTimeProperty(auto_now_add=True)
-  date = ndb.StringProperty()
-  start_time = ndb.StringProperty()
+  start_time = ndb.DateTimeProperty()
   priority = ndb.IntegerProperty(default = 0)
 
 class Endorsement(ndb.Model):

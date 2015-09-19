@@ -27,3 +27,14 @@ indexes:
   - name: sender
   - name: creation_time
     direction: desc
+
+- kind: Request
+  properties:
+  - name: sender
+  - name: start_time
+
+- kind: Request
+  properties:
+  - name: sender
+  - name: start_time
+    direction: desc

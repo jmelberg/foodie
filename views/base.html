@@ -14,7 +14,8 @@
 
   $('.datepicker').pickadate({
     selectMonths: true, // Creates a dropdown to control month
-    selectYears: 15 // Creates a dropdown of 15 years to control year
+    selectYears: 15, // Creates a dropdown of 15 years to control year
+    format: 'yyyy-mm-dd', // Format into datetime
   });
  });
  </script>
@@ -43,7 +44,7 @@
 <!-- Modal Trigger -->
     <!-- Modal Structure -->
     <div id="requests" class="modal modal-fixed-footer">
-      <div class="modal-content">
+      <div class="modal-content col s6">
         <h4>Request a Service</h4>
           <form class="col s12" action='/request' method='POST'>
             <div class="row">
