@@ -21,6 +21,7 @@ class RequestsHandler(SessionHandler):
     my_requests = []
     empty_requests = []
     filled_requests = []
+
     # Append to master list or personal list
     for request in available_requests:
       if request.sender != user.key:
@@ -53,8 +54,11 @@ class CreateRequestHandler(SessionHandler):
     ongoing_request = Request.query(Request.sender == user.key).fetch()
     alloted_date = start_time + datetime.timedelta(hours=2) #Max limit
     create = False
+    print "Requested: ", start_time
+    print "MAX: ", alloted_date
     for request in ongoing_request:
-      if request.start_time > alloted_date and request.start_time < start_time:
+      print "Reserved: " , request.start_time
+      if request.start_time >= alloted_date or request.start_time <= start_time:
         create = True
       
     if create is True or not ongoing_request: # Create request
