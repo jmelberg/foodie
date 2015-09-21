@@ -17,8 +17,9 @@
         <b>For:</b> {{request.start_time.date}} <br />
         <b> @ </b> {{request.start_time.time}}</p>
       <div class="secondary-content">
-          <button id="delete{{forloop.counter}}" style="border:none; background:none;" value={{request.key.urlsafe}}><i class="material-icons">clear</i></button>
-          <button id="select{{forloop.counter}}" style="background:none; border:none;" value={{request.key.urlsafe}}><i class="material-icons">done</i></button>
+        <!-- Uncomment and use JS to hide -->
+        <!-- <button id="delete{{forloop.counter}}" style="border:none; background:none;" value={{request.key.urlsafe}}><i class="material-icons">clear</i></button> -->
+        <button id="select{{forloop.counter}}" style="background:none; border:none;" value={{request.key.urlsafe}}><i class="material-icons">done</i></button>
       </div>
     </li>
   {% endif %}
@@ -44,8 +45,9 @@
         <a href="/foodie/{{person}}">{{person}}</a>  
         {% endfor %}</p>
       <div class="secondary-content">
-          <button id="delete{{forloop.counter}}" style="border:none; background:none;" value={{request.key.urlsafe}}><i class="material-icons">clear</i></button>
-          <button id="select{{forloop.counter}}" style="background:none; border:none;" value={{request.key.urlsafe}}><i class="material-icons">done</i></button>
+        <!-- Uncomment and use JS to hide -->
+        <!-- <button id="delete{{forloop.counter}}" style="border:none; background:none;" value={{request.key.urlsafe}}><i class="material-icons">clear</i></button> -->
+        <button id="select{{forloop.counter}}" style="background:none; border:none;" value={{request.key.urlsafe}}><i class="material-icons">done</i></button>
       </div>
     </li>
   {% endif %}

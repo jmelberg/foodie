@@ -67,10 +67,14 @@ class ApproveRequestHandler(SessionHandler):
     # Get request
     request = ndb.Key(urlsafe=request_key).get()
     if request != None:
-        # Remove request
-        request.recipient = self.user_model.key
-        request.recipient_name.append(self.user_model.username)
-        request.put()
+        # TODO Remove request
+        # Check if already appended
+        if self.user_model.username not in request.recipient_name:
+          request.recipient = self.user_model.key
+          request.recipient_name.append(self.user_model.username)
+          request.put()
+        else:
+          print "Already connected"
     self.redirect('/requests')
 
 class DeleteRequestHandler(SessionHandler):
@@ -79,8 +83,8 @@ class DeleteRequestHandler(SessionHandler):
     request_key = self.request.get('request')
     # Get request
     request = ndb.Key(urlsafe=request_key).get()
-    if request:
+    if request.sender == self.user_model.key:
       request.key.delete()
     else:
-      print "Not in datastore"
+      print "Not permitted to delete"
 
