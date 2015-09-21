@@ -10,18 +10,6 @@ indexes:
 # automatically uploaded to the admin console when you next deploy
 # your application using appcfg.py.
 
-- kind: Notification
-  properties:
-  - name: recipient
-  - name: time
-    direction: desc
-
-- kind: Notification
-  properties:
-  - name: sender
-  - name: creation_time
-    direction: desc
-
 - kind: Request
   properties:
   - name: sender
