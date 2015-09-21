@@ -49,14 +49,25 @@ class CreateRequestHandler(SessionHandler):
     format_date = str(date+ " " +time+":00.0")
     start_time = datetime.datetime.strptime(format_date, "%Y-%m-%d %H:%M:%S.%f")
 
-    # Create request
-    request = Request()
-    request.sender = user.key
-    request.sender_name = user.username
-    request.location = location
-    request.start_time = start_time
-    request.creation_time = datetime.datetime.now() - datetime.timedelta(hours=7) #PST
-    request.put()
+    # Check for current request within time limit
+    ongoing_request = Request.query(Request.sender == user.key).fetch()
+    alloted_date = start_time + datetime.timedelta(hours=2) #Max limit
+    create = False
+    for request in ongoing_request:
+      if request.start_time > alloted_date and request.start_time < start_time:
+        create = True
+      
+    if create is True or not ongoing_request: # Create request
+      request = Request()
+      request.sender = user.key
+      request.sender_name = user.username
+      request.location = location
+      request.start_time = start_time
+      request.creation_time = datetime.datetime.now() - datetime.timedelta(hours=7) #PST
+      request.put()
+    else:
+      print "Requst time conflict"
+
     self.redirect('/')
 
 class ApproveRequestHandler(SessionHandler):

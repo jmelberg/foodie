@@ -42,7 +42,7 @@ class SessionHandler(webapp2.RequestHandler):
     return self.auth.get_user_by_session()
 
 def login_required(handler):
-  "Requires that a user be logged in to access the resource"
+  "Requires that a user be logged in to access the given resource"
   def check_login(self, *args, **kwargs):     
     if not self.user:
       return self.redirect('/')
