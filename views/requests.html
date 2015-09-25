@@ -5,102 +5,197 @@
 <script type="text/javascript" src="../js/request_actions.js"></script>
 
 <div id="user" name="user" value={{user.username}}></div>
-<div class="row">
-  <ul class="collection with-header col s12 m6 offset-m3">
-    <li class="collection-header"> <h5>All Requests</h5></li>
-  {% for request in all_requests %}
-  {% if request.sender != user.key %}
-    <li class="collection-item avatar">
-      <img src ="http://cdn.wegotthiscovered.com/wp-content/uploads/hardwell-united-we-are-album-cover.jpg" class="circle">
-      <span class="title"><b>Requestor:</b><a href="/foodie/{{request.sender_name}}"> {{request.sender_name}}</a></span>
-      <p><b>Location:</b> {{request.location}} <br />
-        <b>For:</b> {{request.start_time.date}} <br />
-        <b> @ </b> {{request.start_time.time}}</p>
-      <div class="secondary-content">
-        <!-- Uncomment and use JS to hide -->
-        <!-- <button id="delete{{forloop.counter}}" style="border:none; background:none;" value={{request.key.urlsafe}}><i class="material-icons">clear</i></button> -->
-        <button id="select{{forloop.counter}}" style="background:none; border:none;" value={{request.key.urlsafe}}><i class="material-icons">done</i></button>
-      </div>
-    </li>
-  {% endif %}
-
-  {% endfor %}
-
-  </ul>
-</div>
-<!-- Requests that have at least one attending -->
- <div class="row">
-  <ul class="collection with-header col s12 m6 offset-m3">
-    <li class="collection-header"> <h5>Filled Requests</h5></li>
-  {% for request in filled_requests %}
-  {% if request.sender != user.key %}
-    <li class="collection-item avatar">
-      <img src ="http://cdn.wegotthiscovered.com/wp-content/uploads/hardwell-united-we-are-album-cover.jpg" class="circle">
-      <span class="title"><b>Requestor:</b><a href="/foodie/{{request.sender_name}}"> {{request.sender_name}}</a></span>
-      <p><b>Location:</b> {{request.location}} <br />
-        <b>For:</b> {{request.start_time.date}} <br />
-        <b> @ </b> {{request.start_time.time}}</p>
-        <p> <b>Attendees:</b> 
-        {% for person in request.recipient_name %}
-        <a href="/foodie/{{person}}">{{person}}</a>  
-        {% endfor %}</p>
-      <div class="secondary-content">
-        <!-- Uncomment and use JS to hide -->
-        <!-- <button id="delete{{forloop.counter}}" style="border:none; background:none;" value={{request.key.urlsafe}}><i class="material-icons">clear</i></button> -->
-        <button id="select{{forloop.counter}}" style="background:none; border:none;" value={{request.key.urlsafe}}><i class="material-icons">done</i></button>
-      </div>
-    </li>
-  {% endif %}
-
-  {% endfor %}
-
-  </ul>
-</div>
 
 <div class="row">
-<ul class="collection with-header col s12 m6 offset-m3">
-  <li class="collection-header"> <h5>My Requests</h5></li>
-{% for request in my_requests %}
-  <li class="collection-item avatar">
-    <img src ="http://cdn.wegotthiscovered.com/wp-content/uploads/hardwell-united-we-are-album-cover.jpg" class="circle">
-    <span class="title"><b>Requestor:</b><a href="/foodie/{{request.sender_name}}"> {{request.sender_name}}</a></span>
-    <p><b>Location:</b> {{request.location}} <br />
-      <b>For:</b> {{request.start_time.date}} <br />
-      <b> @ </b> {{request.start_time.time}}</p>
-    <div class="secondary-content">
-      <button id="delete{{forloop.counter}}" style="border:none; background:none;" value={{request.key.urlsafe}}><i class="material-icons">clear</i></button>
+  <div class="col s12">
+    <ul class="tabs">
+      <li class="tab col s3" id="all_nav"><a class="active" href="#all">All</a></li>
+      <li class="tab col s3"><a href="#accepted">Accepted</a></li>
+      <li class="tab col s3" id="mine_nav"><a href="#mine">My Requests</a></li>
+      <li class="tab col s3"><a href="#dead">Dead Requests</a></li>
+    </ul>
   </div>
-  </li>
-{% empty %}
-<li class="collection-header">
- <center>
-  <h5>No Requests</h5>
-  <p>Find someone now!</p>
- </center>
-</li>
-{% endfor %}
 
-</ul>
-</div>
+    <!-- All Requests -->
+    <div id="all" class="col s12">
+      <div class="row">
+        <ul class="collection with-header col s12 m12">
+          <br />
+          {% for request in empty_requests %}
+          {% if request.sender != user.key %}
+          <li class="collection-item avatar">
+            <img src ="http://cdn.wegotthiscovered.com/wp-content/uploads/hardwell-united-we-are-album-cover.jpg" class="circle">
+            <span class="title"><b>Requestor:</b><a href="/foodie/{{request.sender_name}}"> {{request.sender_name}}</a></span>
+            <p><b>Location:</b> {{request.location}} <br />
+              <b>For:</b> {{request.start_time.date}} <br />
+              <b> @ </b> {{request.start_time.time}}</p>
+            <div class="secondary-content">
+              <!-- Uncomment and use JS to hide -->
+              <button id="hide{{forloop.counter}}" style="border:none; background:none;" value={{request.key.urlsafe}}><i class="material-icons">thumb_down</i></button>
+              <button id="confirm_modal{{forloop.counter}}" value={{request.key.urlsafe}} style="background:none; border:none;"><i class="material-icons">thumb_up</i></button>
+            </div>
+          </li>
 
-<!-- Get all dead requests -->
-<div class="row">
-  <ul class="collection with-header col s12 m6 offset-m3">
-    <li class="collection-header"> <h5>Dead Requests</h5></li>
-  {% for request in dead_requests %}
-    <li class="collection-item avatar">
-      <img src ="http://cdn.wegotthiscovered.com/wp-content/uploads/hardwell-united-we-are-album-cover.jpg" class="circle">
-      <span class="title"><b>Requestor:</b><a href="/foodie/{{request.sender_name}}"> {{request.sender_name}}</a></span>
-      <p><b>Location:</b> {{request.location}} <br />
-        <b>For:</b> {{request.start_time.date}} <br />
-        <b> @ </b> {{request.start_time.time}}</p>
-      <div class="secondary-content">
-        <button id="delete{{forloop.counter}}" style="border:none; background:none;" value={{request.key.urlsafe}}><i class="material-icons">clear</i></button>
+          {% endif %}
+          {% empty %}
+          <li class="collection-header">
+           <center>
+            <h5>No Requests Yet</h5>
+           </center>
+          </li>
+          {% endfor %}
+        </ul>
+      </div>
     </div>
-    </li>
-  {% endfor %}
 
-  </ul>
+    <!-- Requests that have at least one attending -->
+    <div id="accepted" class="col s12">
+     <div class="row">
+        <ul class="collection with-header col s12 m12">
+          <br />
+          {% for request in accepted_requests %}
+          {% if request.sender != user.key %}
+          <li class="collection-item avatar">
+            <img src ="http://cdn.wegotthiscovered.com/wp-content/uploads/hardwell-united-we-are-album-cover.jpg" class="circle">
+            <span class="title"><b>Requestor:</b><a href="/foodie/{{request.sender_name}}"> {{request.sender_name}}</a></span>
+            <p><b>Location:</b> {{request.location}} <br />
+              <b>For:</b> {{request.start_time.date}} <br />
+              <b> @ </b> {{request.start_time.time}}</p>
+              <p> <b>Attendees:</b> 
+              {% for person in request.recipient_name %}
+              <a href="/foodie/{{person}}">{{person}}</a>  
+              {% endfor %}</p>
+            <div class="secondary-content">
+              <button id="cancel_request{{forloop.counter}}" style="border:none; background:none;" value={{request.key.urlsafe}}><i class="material-icons">cancel</i></button>
+            </div>
+          </li>
+          {% endif %}
+          {% empty %}
+          <li class="collection-header">
+           <center>
+            <h5>No Accepted Requests</h5>
+           </center>
+          </li>
+          {% endfor %}
+        </ul>
+      </div>
+    </div>
+
+    <!-- My Requests -->
+    <div id="mine" class="col s12"> 
+      <div class="row">
+        <ul class="collection with-header col s12 m12">
+        <br />
+        {% for request in my_requests %}
+          <li class="collection-item avatar">
+            <img src ="http://cdn.wegotthiscovered.com/wp-content/uploads/hardwell-united-we-are-album-cover.jpg" class="circle">
+            <span class="title"><b>Requestor:</b><a href="/foodie/{{request.sender_name}}"> {{request.sender_name}}</a></span>
+            <p><b>Location:</b> {{request.location}} <br />
+              <b>For:</b> {{request.start_time.date}} <br />
+              <b> @ </b> {{request.start_time.time}}</p>
+              {% if request.recipient_name|length > 0 %}
+                <p> <b>Attendees:</b> 
+                {% for person in request.recipient_name %}
+                <a href="/foodie/{{person}}">{{person}}</a>  
+                {% endfor %}</p>
+              {% endif %}
+            <div class="secondary-content">
+              <button id="delete{{forloop.counter}}" style="border:none; background:none;" value={{request.key.urlsafe}}><i class="material-icons">clear</i></button>
+              <button id="edit_request{{forloop.count}}" style="border:none; background:none;" value={{request.key.urlsafe}}><i class="material-icons">mode_edit</i></button>
+          </div>
+          </li>
+        {% empty %}
+        <li class="collection-header">
+         <center>
+          <h5>No Requests</h5>
+          <p>Find someone now!</p>
+         </center>
+        </li>
+        {% endfor %}
+        </ul>
+      </div>
+    </div>
+
+    <!-- Dead Requests -->
+    <div id="dead" class="col s12">
+      <div class="row">
+        <ul class="collection with-header col s12 m12">
+          <br />
+          {% for request in dead_requests %}
+          <li class="collection-item avatar">
+            <img src ="http://cdn.wegotthiscovered.com/wp-content/uploads/hardwell-united-we-are-album-cover.jpg" class="circle">
+            <span class="title"><b>Requestor:</b><a href="/foodie/{{request.sender_name}}"> {{request.sender_name}}</a></span>
+            <p><b>Location:</b> {{request.location}} <br />
+              <b>For:</b> {{request.start_time.date}} <br />
+              <b> @ </b> {{request.start_time.time}}</p>
+              {% if request.recipient_name|length > 0 %}
+                <p> <b>Attendees:</b> 
+                {% for person in request.recipient_name %}
+                <a href="/foodie/{{person}}">{{person}}</a>  
+                {% endfor %}</p>
+              {% endif %}
+            <div class="secondary-content">
+              <button id="delete{{forloop.counter}}" style="border:none; background:none;" value={{request.key.urlsafe}}><i class="material-icons">clear</i></button>
+          </div>
+          </li>
+          {% empty %}
+          <li class="collection-header">
+           <center>
+            <h5>No Dead Requests</h5>
+           </center>
+          </li>
+          {% endfor %}
+        </ul>
+      </div>
+    </div>
+  </div>
 </div>
 
+<!-- Respond Modal -->
+<div id="respond" class="modal modal-fixed-footer">
+    <div class="modal-content">
+      <h4>Confirm Request</h4>
+      <p> I agree to meet this person blah blah blah</p>
+      <p> If I fail to appear, I accept the penalty of 50% of the agreed upon price. </p>
+      <p> blah blah blah </b>
+        
+      <br />
+    </div>
+    <div class="modal-footer">
+      <button id="accept_button" class="modal-action modal-close btn-flat" value={{request.key.urlsafe}} >Accept</button>
+      <button type="cancel" id="close_modal" class="modal-action modal-close btn-flat">Cancel</button>
+    </div>
+</div>
+
+<!-- Edit Modal -->
+<script type="text/javascript" src= "../js/create_request.js"></script> 
+
+<div id="edit_modal" class="modal modal-fixed-footer">
+  <div class="modal-content col s6">
+    <h4>Edit Request</h4>
+        <div class="row">
+          <div class="input-field col s6">
+            <input id="edit_location" name="edit_location" type="text" class="validate">
+            <label for="location">Location</label>
+          </div>
+        </div>
+        <div class="row">
+          <div class="input-field col s6">
+            <input type="date" class="datepicker" id="edit_date" name="edit_date">
+            <label for "date">Date</label>
+          </div>
+        </div>
+        <div class="row">
+          <div class="input-field col s6">
+            <label>Time</label><br />
+            <input type="time" class="timepicker" id="edit_time" name="edit_time">
+            <small id="available" style="display:none;"></small>
+          </div>
+        </div>
+  </div>
+  <div class="modal-footer">
+    <button id="submit_edit"class="modal-action modal-close btn-flat">Edit</button>
+    <button id="close_edit" type="cancel" class="modal-action modal-close btn-flat">Cancel</button>
+  </div>
+</div>
 {% endblock %}
