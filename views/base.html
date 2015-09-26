@@ -2,11 +2,15 @@
 <html>
 <head>
  <!--Import materialize.css-->
- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.0/css/materialize.min.css">z
+ <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.0/css/materialize.min.css">
  <!--Import jQuery before materialize.js-->
  <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
  <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.0/js/materialize.min.js"></script>
  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+ <script src="https://refreshless.com/nouislider/documentation/assets/wNumb.js"></script>
+ <link href="http://materializecss.com/extras/noUiSlider/nouislider.css" rel="stylesheet">
+ <!-- Slider JS -->
+<script src="http://materializecss.com/extras/noUiSlider/nouislider.js"></script>
  <script>
  $( document ).ready(function(){
   $(".button-collapse").sideNav();
@@ -18,105 +22,82 @@
     format: 'yyyy-mm-dd', // Format into datetime
   });
  });
-
  </script>
 
  <!--Let browser know website is optimized for mobile-->
  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
- <script src="https://refreshless.com/nouislider/documentation/assets/wNumb.js"></script>
-
-<link href="http://materializecss.com/extras/noUiSlider/nouislider.css" rel="stylesheet">
 </head>
 
 <body>
+<div class="row">
+  <ul class="side-nav col s2 fixed">
+    <li class="logo center">
+    <img class="responsive-img" src="https://m2.behance.net/rendition/pm/1406493/disp/f8264724f7d768741b8e5cccc9679b12.png" />
+    <span style="position: absolute; margin-top: -20%;">Foodie</span>
+    </li>
 
-<ul class="side-nav col s2 fixed">
-  <li class="logo center">
-  <img class="responsive-img" src="https://m2.behance.net/rendition/pm/1406493/disp/f8264724f7d768741b8e5cccc9679b12.png" />
-  <span style="position: absolute; margin-top: -20%;">Foodie</span>
-  </li>
-
-  <li class="no-padding"><hr style="padding:0; margin:0;"></li>
-  <li><a href="/">Home</a></li>
-  <li><a href="/requests">All Requests</a></li>
-  <li><a>Provide a Service</a></li>
-  <li><a data-target="requests" class="a modal-trigger">Request a Service</a></li>
-  <li><a>Settings</a></li>
-  <li><a href="/logout">Log Out</a></li>
-</ul>
+    <li class="no-padding"><hr style="padding:0; margin:0;"></li>
+    <li><a href="/">Home</a></li>
+    <li><a href="/requests?q=all">Provide a Service</a></li>
+    <li><a data-target="requests" class="a modal-trigger">Request a Service</a></li>
+    <li><a href="/requests?q=mine">My Requests
+      {% if user.open_requests > 0 %} 
+      <span class="new badge" >
+      {{user.open_requests}}
+      </span>
+      {% else %}
+      {% endif %}
+    </a></li>
+    <li><a>Settings</a></li>
+    <li><a href="/logout">Log Out</a></li>
+  </ul>
+  <div class="col s6 s8 offset-m2">
+    {% block content %} {% endblock %}
+  </div>
+</div>
 
 <!-- Modal Trigger -->
-    <!-- Modal Structure -->
-    <div id="requests" class="modal modal-fixed-footer">
-      <div class="modal-content col s6">
-        <h4>Request a Service</h4>
-          <form class="col s12" action='/request' method='POST'>
-            <div class="row">
-              <div class="input-field col s6">
-                <input placeholder="Philz" id="location" name="location" type="text" class="validate">
-                <label for="location">Location</label>
-              </div>
-            </div>
-            <div class="row">
-              <div class="input-field col s6">
-                <input type="date" class="datepicker" id="date" name="date">
-                <label for "date">Date</label>
-              </div>
-            </div>
-            <div class="row">
-              <div class="input-field col s6">
-                <label>Time</label> <br />
-                <input type="time" class="timepicker" id="time" name="time">
-              </div>
-            </div>
-            <div class="row">
-              <div class="input-field col s6">
-                <label>Price Range</label> <br /><br />
-                <div id="range-input">
-                  <input type="number" id="min_price" name="min_price" hidden>
-                  <input type="number" id="max_price" name="max_price" hidden>
-                </div>
-              </div>
-            </div>     
-      </div>
-      <div class="modal-footer">
-            <!-- <button id="cancel-request" type="cancel" class="modal-action modal-close btn-flat">Cancel</button> -->
-            <button id="send-request" type="submit" class="modal-action modal-close btn-flat">Send</button>
-          </form>
+<!-- Modal Structure -->
+<script type="text/javascript" src= "../js/create_request.js"></script> 
+
+<div id="requests" class="modal modal-fixed-footer">
+  <div class="modal-content col s6">
+    <h4>Request a Service</h4>
+    <div class="row">
+      <div class="input-field col s6">
+        <input placeholder="Philz" id="location" name="location" type="text" class="validate">
+        <label for="location">Location</label>
       </div>
     </div>
-{% block content %}{% endblock %}
+    <div class="row">
+      <div class="input-field col s6">
+        <input type="date" class="datepicker" id="date" name="date">
+        <label for "date">Date</label>
+      </div>
+    </div>
+    <div class="row">
+      <div class="input-field col s6">
+        <label>Time</label><br />
+        <input type="time" class="timepicker" id="time" name="time">
+        <small id="slot_available" style="display:none;"></small>
+      </div>
+    </div>
+    <div class="row">
+      <div class="input-field col s6">
+        <label>Price Range</label> <br /><br />
+        <div id="range-input">
+          <input type="number" id="min_price" name="min_price" hidden>
+          <input type="number" id="max_price" name="max_price" hidden>
+        </div>
+      </div>
+    </div>    
+  </div>
+  <div class="modal-footer">
+    <button id="send_request" type="submit" class="modal-action modal-close btn-flat">Send</button>
+    <button id="cancel_request" type="cancel" class="modal-action modal-close btn-flat">Cancel</button>
+  </div>
+</div>
 
-  <script src="http://materializecss.com/extras/noUiSlider/nouislider.js"></script>
-  <script type="text/javascript">
-      var slider = document.getElementById('range-input');
-      noUiSlider.create(slider, {
-       start: [20, 80],
-       connect: true,
-       step: 1,
-       range: {
-         'min': 0,
-         'max': 100
-       },
-       format: wNumb({
-         decimals: 0
-       })
-      });
-
-
-        var min_price = document.getElementById('min_price');
-        var max_price = document.getElementById('max_price');
-
-        slider.noUiSlider.on('update', function( values, handle ) {
-          var value = values[handle];
-          if ( handle ) {
-            max_price.value = value;
-          } else {
-            min_price.value = value;
-          }
-        });
-     
-  </script>
 </body>
 </html>
 
