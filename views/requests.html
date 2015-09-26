@@ -3,7 +3,7 @@
 {% block content %}
 <!-- Get all requests -->
 <script type="text/javascript" src="../js/request_actions.js"></script>
-
+<script type="text/javascript" src="../js/create_request.js"></script>
 <div id="user" name="user" value={{user.username}}></div>
 
 <div class="row">
@@ -29,6 +29,7 @@
             <p><b>Location:</b> {{request.location}} <br />
               <b>For:</b> {{request.start_time.date}} <br />
               <b> @ </b> {{request.start_time.time}}</p>
+              <b>Price Range:</b> ${{request.min_price}} to ${{request.max_price}}</p>
             <div class="secondary-content">
               <!-- Uncomment and use JS to hide -->
               <button id="hide{{forloop.counter}}" style="border:none; background:none;" value={{request.key.urlsafe}}><i class="material-icons">thumb_down</i></button>
@@ -99,6 +100,7 @@
                 <a href="/foodie/{{person}}">{{person}}</a>  
                 {% endfor %}</p>
               {% endif %}
+              <b>Price Range:</b> ${{request.min_price}} to ${{request.max_price}}</p>
             <div class="secondary-content">
               <button id="delete{{forloop.counter}}" style="border:none; background:none;" value={{request.key.urlsafe}}><i class="material-icons">clear</i></button>
               <button id="edit_request{{forloop.count}}" style="border:none; background:none;" value={{request.key.urlsafe}}><i class="material-icons">mode_edit</i></button>
@@ -134,6 +136,7 @@
                 <a href="/foodie/{{person}}">{{person}}</a>  
                 {% endfor %}</p>
               {% endif %}
+              <b>Price Range:</b> ${{request.min_price}} to ${{request.max_price}}</p>
             <div class="secondary-content">
               <button id="delete{{forloop.counter}}" style="border:none; background:none;" value={{request.key.urlsafe}}><i class="material-icons">clear</i></button>
           </div>
@@ -168,30 +171,43 @@
 </div>
 
 <!-- Edit Modal -->
-<script type="text/javascript" src= "../js/create_request.js"></script> 
-
 <div id="edit_modal" class="modal modal-fixed-footer">
   <div class="modal-content col s6">
     <h4>Edit Request</h4>
         <div class="row">
           <div class="input-field col s6">
+            <label>Location</label><br/>
             <input id="edit_location" name="edit_location" type="text" class="validate">
-            <label for="location">Location</label>
           </div>
         </div>
         <div class="row">
           <div class="input-field col s6">
+            <label>Date</label><br/>
             <input type="date" class="datepicker" id="edit_date" name="edit_date">
-            <label for "date">Date</label>
           </div>
         </div>
         <div class="row">
           <div class="input-field col s6">
-            <label>Time</label><br />
-            <input type="time" class="timepicker" id="edit_time" name="edit_time">
-            <small id="available" style="display:none;"></small>
+            <label>Previous Time</label><br />
+            <input type="text" name="prev_time" id="prev_time" disabled>
           </div>
         </div>
+        <div class="row">
+          <div class="input-field col s6">
+            <label>New Time</label><br />
+            <input type="time" class="timepicker" id="edit_time" name="edit_time">
+            <!--<small id="slot_available" style="display:none;"></small> -->
+          </div>
+        </div>
+        <div class="row">
+        <div class="input-field col s6">
+          <label>Price Range</label> <br /><br />
+          <div id="edit_slider">
+            <input type="number" id="edit_min_price" name="edit_min_price" hidden>
+            <input type="number" id="edit_max_price" name="edit_max_price" hidden>
+          </div>
+        </div>
+    </div>  
   </div>
   <div class="modal-footer">
     <button id="submit_edit"class="modal-action modal-close btn-flat">Edit</button>

@@ -24,7 +24,7 @@ class RequestsHandler(SessionHandler):
     accepted_requests = []
     for request in available_requests:
       if request.sender == user.key:
-        # User generated reqeusts
+        # User generated requests
         my_requests.append(request)
       else:
         # Accepted requests
@@ -49,8 +49,9 @@ class CreateRequestHandler(SessionHandler):
     location = cgi.escape(self.request.get("location"))
     date = cgi.escape(self.request.get("date"))
     time = cgi.escape(self.request.get("time"))
-  
-    
+    min_price = int(cgi.escape(self.request.get("min_price")))
+    max_price = int(cgi.escape(self.request.get("max_price")))
+
     # Convert date and time to datetime
     format_date = str(date+ " " +time+":00.0")
     start_time = datetime.datetime.strptime(format_date, "%Y-%m-%d %H:%M:%S.%f")
@@ -62,6 +63,8 @@ class CreateRequestHandler(SessionHandler):
     request.location = location
     request.start_time = start_time
     request.creation_time = datetime.datetime.now() - datetime.timedelta(hours=7) #PST
+    request.min_price = min_price
+    request.max_price = max_price
     request.put()
     print "Added request to queue"
     #Increment open requests
@@ -74,9 +77,11 @@ class EditRequestHandler(SessionHandler):
   ''' Edit current request '''
   def post(self):
     user = self.user_model
-    location = cgi.escape(self.request.get("location"))
-    date = cgi.escape(self.request.get("date"))
-    time = cgi.escape(self.request.get("time"))
+    location = cgi.escape(self.request.get("edit_location"))
+    date = cgi.escape(self.request.get("edit_date"))
+    time = cgi.escape(self.request.get("edit_time"))
+    min_price = int(cgi.escape(self.request.get("edit_min_price")))
+    max_price = int(cgi.escape(self.request.get("edit_max_price")))
 
     previous_request_key = cgi.escape(self.request.get("request"))
     previous_request = ndb.Key(urlsafe=previous_request_key).get()
@@ -143,7 +148,9 @@ class CheckTimeConflict(SessionHandler):
     user = self.user_model
     date = cgi.escape(self.request.get("date"))
     time = cgi.escape(self.request.get("time"))
-    
+    active_request = cgi.escape(self.request.get("active_request"))
+    print "======="
+    print active_request
     # Convert date and time to datetime
     format_date = str(date+ " " +time+":00.0")
     start_time = datetime.datetime.strptime(format_date, "%Y-%m-%d %H:%M:%S.%f")
@@ -152,10 +159,8 @@ class CheckTimeConflict(SessionHandler):
     ongoing_request = Request.query(Request.sender == user.key).fetch()
     alloted_date = start_time + datetime.timedelta(hours=2) #Max limit
 
-    if len(ongoing_request) > 0:
-      create = timeCheck(ongoing_request, alloted_date, start_time)
-    else:
-      create = True
+    create = timeCheck(ongoing_request, alloted_date, start_time)
+    print create
     if create is True:
       self.response.out.write('Available')
     else:
@@ -169,17 +174,20 @@ def timeCheck(ongoing_request, alloted_date, start_time):
   print "Requested: ", start_time
   print "MAX: ", alloted_date
   current_time = datetime.datetime.now() - datetime.timedelta(hours=7)
-  for request in ongoing_request:
-    print "Reserved: " , request.start_time
-    if request.start_time > alloted_date or request.start_time < start_time:
-      if start_time > current_time:
-        create = True
+  if len(ongoing_request) > 0:
+    for request in ongoing_request:
+      print "Reserved: " , request.start_time
+      if request.start_time > alloted_date or request.start_time < start_time:
+        if start_time > current_time:
+          create = True
+        else:
+          print "Request time already passed"
+          break
       else:
-        print "Request time already passed"
+        create = False
         break
-    else:
-      create = False
-      break
+  else:
+    create = True
   return create
 
 class ReturnRequestHandler(SessionHandler):
@@ -189,10 +197,13 @@ class ReturnRequestHandler(SessionHandler):
     print "In Return"
     key = cgi.escape(self.request.get("key"))
     request = ndb.Key(urlsafe=key).get()
-    
-    print date, time
+    date = request.start_time.strftime("%B %d, %Y")
+    time = request.start_time.strftime("%H:%M:%S")
+    min_price = request.min_price
+    max_price = request.max_price
     if request:
-      results = {"location": request.location, "date": str(request.start_time.date), "time": str(request.start_time.time)}
-      self.response.out.write(json.dumps(results))
+      results = {"location": request.location, "date": date, "time_slot": time,
+      'min_price':min_price, 'max_price':max_price,}
+      self.response.out.write(json.dumps(results), )
     else:
       self.response.out.write("None")

@@ -73,6 +73,7 @@ app = webapp2.WSGIApplication([
                              ('/checkusername', UsernameHandler),
                              ('/foodie/(\w+)', ProfileHandler),
                              ('/requests', RequestsHandler),
+                             ('/editrequest', EditRequestHandler),
                              ('/checktime', CheckTimeConflict),
                              ('/confirm', ApproveRequestHandler),
                              ('/delete', DeleteRequestHandler),
