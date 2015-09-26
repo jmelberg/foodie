@@ -31,7 +31,7 @@ class LoginHandler(SessionHandler):
     except( auth.InvalidAuthIdError, auth.InvalidPasswordError):
       error = "Invalid Email/Password"
       print error
-      self.response.out.write(template.render('views/login.html', {'error':error}))
+      self.response.out.write(template.render('views/login.html', {'error': error}))
 
 class ProfileHandler(SessionHandler):
   """handler to display a profile page"""
