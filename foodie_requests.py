@@ -152,8 +152,10 @@ class CheckTimeConflict(SessionHandler):
     ongoing_request = Request.query(Request.sender == user.key).fetch()
     alloted_date = start_time + datetime.timedelta(hours=2) #Max limit
 
-    create = timeCheck(ongoing_request, alloted_date, start_time)
-    
+    if len(ongoing_request) > 0:
+      create = timeCheck(ongoing_request, alloted_date, start_time)
+    else:
+      create = True
     if create is True:
       self.response.out.write('Available')
     else:
