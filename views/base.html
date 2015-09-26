@@ -2,7 +2,7 @@
 <html>
 <head>
  <!--Import materialize.css-->
- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.0/css/materialize.min.css">
+ <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.0/css/materialize.min.css">z
  <!--Import jQuery before materialize.js-->
  <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
  <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.0/js/materialize.min.js"></script>
@@ -18,10 +18,14 @@
     format: 'yyyy-mm-dd', // Format into datetime
   });
  });
+
  </script>
 
  <!--Let browser know website is optimized for mobile-->
  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+ <script src="https://refreshless.com/nouislider/documentation/assets/wNumb.js"></script>
+
+<link href="http://materializecss.com/extras/noUiSlider/nouislider.css" rel="stylesheet">
 </head>
 
 <body>
@@ -65,16 +69,54 @@
                 <input type="time" class="timepicker" id="time" name="time">
               </div>
             </div>
-          <div class="modal-footer">
+            <div class="row">
+              <div class="input-field col s6">
+                <label>Price Range</label> <br /><br />
+                <div id="range-input">
+                  <input type="number" id="min_price" name="min_price" hidden>
+                  <input type="number" id="max_price" name="max_price" hidden>
+                </div>
+              </div>
+            </div>     
+      </div>
+      <div class="modal-footer">
             <!-- <button id="cancel-request" type="cancel" class="modal-action modal-close btn-flat">Cancel</button> -->
             <button id="send-request" type="submit" class="modal-action modal-close btn-flat">Send</button>
-          </div>
-        </form>
+          </form>
       </div>
-      
     </div>
 {% block content %}{% endblock %}
 
+  <script src="http://materializecss.com/extras/noUiSlider/nouislider.js"></script>
+  <script type="text/javascript">
+      var slider = document.getElementById('range-input');
+      noUiSlider.create(slider, {
+       start: [20, 80],
+       connect: true,
+       step: 1,
+       range: {
+         'min': 0,
+         'max': 100
+       },
+       format: wNumb({
+         decimals: 0
+       })
+      });
+
+
+        var min_price = document.getElementById('min_price');
+        var max_price = document.getElementById('max_price');
+
+        slider.noUiSlider.on('update', function( values, handle ) {
+          var value = values[handle];
+          if ( handle ) {
+            max_price.value = value;
+          } else {
+            min_price.value = value;
+          }
+        });
+     
+  </script>
 </body>
 </html>
 

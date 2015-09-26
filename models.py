@@ -30,6 +30,8 @@ class Request(ndb.Model):
   creation_time = ndb.DateTimeProperty(auto_now_add=True)
   start_time = ndb.DateTimeProperty()
   priority = ndb.IntegerProperty(default = 0)
+  min_price = ndb.IntegerProperty(default = 0)
+  max_price = ndb.IntegerProperty(default = 0)
 
 class Endorsement(ndb.Model):
   recipient = ndb.KeyProperty(kind="User")

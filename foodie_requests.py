@@ -45,6 +45,8 @@ class CreateRequestHandler(SessionHandler):
     location = cgi.escape(self.request.get("location"))
     date = cgi.escape(self.request.get("date"))
     time = cgi.escape(self.request.get("time"))
+    min_price = int(cgi.escape(self.request.get("min_price")))
+    max_price = int(cgi.escape(self.request.get("max_price")))
     
     # Convert date and time to datetime
     format_date = str(date+ " " +time+":00.0")
@@ -68,6 +70,8 @@ class CreateRequestHandler(SessionHandler):
       request.location = location
       request.start_time = start_time
       request.creation_time = datetime.datetime.now() - datetime.timedelta(hours=7) #PST
+      request.min_price = min_price
+      request.max_price = max_price
       request.put()
     else:
       print "Requst time conflict"

@@ -15,7 +15,8 @@
       <span class="title"><b>Requestor:</b><a href="/foodie/{{request.sender_name}}"> {{request.sender_name}}</a></span>
       <p><b>Location:</b> {{request.location}} <br />
         <b>For:</b> {{request.start_time.date}} <br />
-        <b> @ </b> {{request.start_time.time}}</p>
+        <b> @ </b> {{request.start_time.time}} <br />
+        <b>Price Range:</b> ${{request.min_price}} to ${{request.max_price}}</p>
       <div class="secondary-content">
         <!-- Uncomment and use JS to hide -->
         <!-- <button id="delete{{forloop.counter}}" style="border:none; background:none;" value={{request.key.urlsafe}}><i class="material-icons">clear</i></button> -->
@@ -39,7 +40,8 @@
       <span class="title"><b>Requestor:</b><a href="/foodie/{{request.sender_name}}"> {{request.sender_name}}</a></span>
       <p><b>Location:</b> {{request.location}} <br />
         <b>For:</b> {{request.start_time.date}} <br />
-        <b> @ </b> {{request.start_time.time}}</p>
+        <b> @ </b> {{request.start_time.time}} <br />
+        <b>Price Range:</b> ${{request.min_price}} to ${{request.max_price}}</p>
         <p> <b>Attendees:</b> 
         {% for person in request.recipient_name %}
         <a href="/foodie/{{person}}">{{person}}</a>  
@@ -66,7 +68,8 @@
     <span class="title"><b>Requestor:</b><a href="/foodie/{{request.sender_name}}"> {{request.sender_name}}</a></span>
     <p><b>Location:</b> {{request.location}} <br />
       <b>For:</b> {{request.start_time.date}} <br />
-      <b> @ </b> {{request.start_time.time}}</p>
+      <b> @ </b> {{request.start_time.time}}<br />
+      <b>Price Range:</b> ${{request.min_price}} to ${{request.max_price}}</p>
     <div class="secondary-content">
       <button id="delete{{forloop.counter}}" style="border:none; background:none;" value={{request.key.urlsafe}}><i class="material-icons">clear</i></button>
   </div>
@@ -93,7 +96,8 @@
       <span class="title"><b>Requestor:</b><a href="/foodie/{{request.sender_name}}"> {{request.sender_name}}</a></span>
       <p><b>Location:</b> {{request.location}} <br />
         <b>For:</b> {{request.start_time.date}} <br />
-        <b> @ </b> {{request.start_time.time}}</p>
+        <b> @ </b> {{request.start_time.time}}<br />
+        <b>Price Range:</b> ${{request.min_price}} to ${{request.max_price}}</p>
       <div class="secondary-content">
         <button id="delete{{forloop.counter}}" style="border:none; background:none;" value={{request.key.urlsafe}}><i class="material-icons">clear</i></button>
     </div>
