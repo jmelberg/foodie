@@ -149,8 +149,7 @@ class CheckTimeConflict(SessionHandler):
     date = cgi.escape(self.request.get("date"))
     time = cgi.escape(self.request.get("time"))
     active_request = cgi.escape(self.request.get("active_request"))
-    print "======="
-    print active_request
+    
     # Convert date and time to datetime
     format_date = str(date+ " " +time+":00.0")
     start_time = datetime.datetime.strptime(format_date, "%Y-%m-%d %H:%M:%S.%f")
@@ -174,10 +173,13 @@ def timeCheck(ongoing_request, alloted_date, start_time):
   print "Requested: ", start_time
   print "MAX: ", alloted_date
   current_time = datetime.datetime.now() - datetime.timedelta(hours=7)
+  min_time = start_time - datetime.timedelta(hours=2) #Min limit
   if len(ongoing_request) > 0:
     for request in ongoing_request:
       print "Reserved: " , request.start_time
-      if request.start_time > alloted_date or request.start_time < start_time:
+      if request.start_time > alloted_date or request.start_time < min_time:
+        print "Alloted: (should be more)", alloted_date
+        print "Start: (Should be less)", start_time
         if start_time > current_time:
           create = True
         else:
