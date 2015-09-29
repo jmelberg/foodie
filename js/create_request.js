@@ -61,21 +61,53 @@ $(document).ready(function(){
     });
   });
 });
+
 function checkTime(time, date) {
+  var selected_edit_request;
+  if (document.getElementById('edit_modal') != null){
+    selected_edit_request = document.getElementById('edit_modal').value;
+  }
   $.ajax({
     url: "/checktime",
     cache: false,
-    data:{'date':date, 'time':time},
+    data:{'date':date, 'time':time, 'edit_request': selected_edit_request},
     success: function(result){
-      $("#slot_available").text(result);
-      if(result == 'Available'){
-        $("#slot_available").show();
-        $("#send_request").show();
+      if (document.getElementById('edit_modal') != null){
+        if (document.getElementById('edit_modal').value != null){
+          $('#edit_slot_available').text(result);
+          if(result == 'Available'){
+            $("#edit_slot_available").show();
+            $("#submit_edit").show();
+          }
+          else {
+            $("#edit_slot_available").show();
+            $("#submit_edit").hide();
+          }
+        }
+        else {
+          $("#slot_available").text(result);
+          if(result == 'Available'){
+            $("#slot_available").show();
+            $("#send_request").show();
+          }
+          else {
+            $("#slot_available").show();
+            $("#send_request").hide();
+          }
+        }
       }
       else {
-        $("#slot_available").show();
-        $("#send_request").hide();
+        $("#slot_available").text(result);
+        if(result == 'Available'){
+         $("#slot_available").show();
+          $("#send_request").show();
+        }
+        else {
+          $("#slot_available").show();
+          $("#send_request").hide();
+        }
       }
+      
     }
   });
 }

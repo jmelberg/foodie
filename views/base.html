@@ -69,7 +69,6 @@
       <div class="input-field col s6">
         <input placeholder="Philz" id="location" name="location" type="text" class="validate">
         <label for="location">Location</label>
-        <p id="my_location" name="my_location" style="display:none"></p>
       </div>
       <div class="col s6">
         <button onclick="getLocation()">Use Current Location</button>
@@ -93,9 +92,7 @@
                 url: "/getlocation",
                 data: {'longitude' : longitude, 'latitude': latitude},
                 success: function(result){
-                  $('#location').hide();
-                  $("#my_location").text(result);
-                  $("#my_location").show();
+                  $("#location").val(result);
                 }
               });
         }

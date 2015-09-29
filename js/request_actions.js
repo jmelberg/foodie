@@ -1,3 +1,5 @@
+// Call functions from other js
+$.getScript("../js/create_request.js");
 var tab = getUrlParameter('q')
 var current_request;
 $(document).ready(function() {
@@ -64,7 +66,7 @@ $(document).ready(function() {
     var request = $(this).val();
     var active_request = request;
     returnRequest(request);    
-
+    document.getElementById('edit_modal').value=request;
     $('#edit_modal').openModal();
   });
 

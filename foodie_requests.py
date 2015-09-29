@@ -154,14 +154,27 @@ class CheckTimeConflict(SessionHandler):
     user = self.user_model
     date = cgi.escape(self.request.get("date"))
     time = cgi.escape(self.request.get("time"))
-    active_request = cgi.escape(self.request.get("active_request"))
-    
+    active_request = cgi.escape(self.request.get("edit_request"))
+    if active_request:
+      edit_request = ndb.Key(urlsafe=active_request).get()
+
+    # Check for lack of values
+    if len(date) < 1:
+      if active_request:
+        date = edit_request.start_time.strftime("%Y-%m-%d")
+      else:
+        self.response.out.write('Please choose date')
+
     # Convert date and time to datetime
     format_date = str(date+ " " +time+":00.0")
     start_time = datetime.datetime.strptime(format_date, "%Y-%m-%d %H:%M:%S.%f")
 
     # Check for current request within time limit
     ongoing_request = Request.query(Request.sender == user.key).fetch()
+
+    # Remove current request if applicable
+    if active_request:
+      ongoing_request.remove(edit_request)
     alloted_date = start_time + datetime.timedelta(hours=2) #Max limit
 
     create = timeCheck(ongoing_request, alloted_date, start_time)
@@ -184,8 +197,6 @@ def timeCheck(ongoing_request, alloted_date, start_time):
     for request in ongoing_request:
       print "Reserved: " , request.start_time
       if request.start_time > alloted_date or request.start_time < min_time:
-        print "Alloted: (should be more)", alloted_date
-        print "Start: (Should be less)", start_time
         if start_time > current_time:
           create = True
         else:
