@@ -22,6 +22,8 @@
     format: 'yyyy-mm-dd', // Format into datetime
   });
  });
+
+
  </script>
 
  <!--Let browser know website is optimized for mobile-->
@@ -67,6 +69,37 @@
       <div class="input-field col s6">
         <input placeholder="Philz" id="location" name="location" type="text" class="validate">
         <label for="location">Location</label>
+        <p id="my_location" name="my_location" style="display:none"></p>
+      </div>
+      <div class="col s6">
+        <button onclick="getLocation()">Use Current Location</button>
+        <p id="found_location"></p>
+        <script>
+        var x = document.getElementById("found_location");
+        var latitude;
+        var longitude;
+        function getLocation() {
+            if (navigator.geolocation) {
+              navigator.geolocation.getCurrentPosition(setPosition);
+            } else { 
+                x.innerHTML = "Geolocation is not supported by this browser.";
+            }
+        }
+
+        function setPosition(position) {
+            latitude = position.coords.latitude;
+            longitude = position.coords.longitude; 
+            $.ajax({
+                url: "/getlocation",
+                data: {'longitude' : longitude, 'latitude': latitude},
+                success: function(result){
+                  $('#location').hide();
+                  $("#my_location").text(result);
+                  $("#my_location").show();
+                }
+              });
+        }
+        </script>
       </div>
     </div>
     <div class="row">
@@ -97,7 +130,6 @@
     <button id="cancel_request" type="cancel" class="modal-action modal-close btn-flat">Cancel</button>
   </div>
 </div>
-
 </body>
 </html>
 

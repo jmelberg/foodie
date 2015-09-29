@@ -10,6 +10,12 @@ from webapp2_extras import sessions, auth
 from basehandler import SessionHandler, login_required
 from models import User, Profile, Request, Endorsement
 
+from urllib2 import urlopen
+import json
+
+api_key = 'AIzaSyBAO3qaYH4LGQky8vAA07gCVex1LBhUdbE'
+
+
 class RequestsHandler(SessionHandler):
   ''' Views current requests from other users '''
   @login_required
@@ -209,3 +215,22 @@ class ReturnRequestHandler(SessionHandler):
       self.response.out.write(json.dumps(results), )
     else:
       self.response.out.write("None")
+
+class GetLocationHandler(SessionHandler):
+  def get(self):
+    lat = cgi.escape(self.request.get('latitude'))
+    lon = cgi.escape(self.request.get('longitude'))
+    url = "https://maps.googleapis.com/maps/api/geocode/json?latlng="+ lat + "," + lon + "&key=" + api_key
+    v = urlopen(url).read()
+    j = json.loads(v)
+    if j:
+      city = j['results'][0]['address_components'][3]['long_name']
+      state = j['results'][0]['address_components'][5]['long_name']
+      zip_code = j['results'][0]['address_components'][7]['long_name']
+      current_location= city+ ", "+ state + " " + zip_code
+      self.response.out.write(current_location)
+    else:
+      self.response.out.write("Couldn't find location")
+
+
+

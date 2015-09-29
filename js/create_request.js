@@ -1,5 +1,4 @@
 $(document).ready(function(){
-
   // Variables
   var slider = document.getElementById('range-input');
   var min_price = document.getElementById('min_price');

@@ -48,6 +48,7 @@ class ProfileHandler(SessionHandler):
       new_profile.about_me = "I love to eat food"
       new_profile.put()
     endorsements = Endorsement.query(Endorsement.recipient == profile_owner.key).fetch()
+
     self.response.out.write(template.render('views/profile.html',
                              {'owner':profile_owner, 'profile':profile, 'endorsements':endorsements, 'user': viewer}))
     
@@ -78,6 +79,7 @@ app = webapp2.WSGIApplication([
                              ('/confirm', ApproveRequestHandler),
                              ('/delete', DeleteRequestHandler),
                              ('/request', CreateRequestHandler),
+                             ('/getlocation', GetLocationHandler),
                              ('/returnrequest', ReturnRequestHandler),
                              ('/logout', LogoutHandler),
                               ], debug=False, config=config)
