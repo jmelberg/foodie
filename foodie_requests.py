@@ -91,22 +91,22 @@ class EditRequestHandler(SessionHandler):
 
     previous_request_key = cgi.escape(self.request.get("request"))
     previous_request = ndb.Key(urlsafe=previous_request_key).get()
-    if previous_request:
-      previous_request.delete()
-    
+
     # Convert date and time to datetime
     format_date = str(date+ " " +time+":00.0")
     start_time = datetime.datetime.strptime(format_date, "%Y-%m-%d %H:%M:%S.%f")
     
-    # Create request
-    request = Request()
-    request.sender = user.key
-    request.sender_name = user.username
-    request.location = location
-    request.start_time = start_time
-    request.creation_time = datetime.datetime.now() - datetime.timedelta(hours=7) #PST
-    request.put()
-    print "Added request to queue"
+    if previous_request:
+      previous_request.sender = user.key
+      previous_request.sender = user.key
+      previous_request.sender_name = user.username
+      previous_request.location = location
+      previous_request.start_time = start_time
+      previous_request.creation_time = datetime.datetime.now() - datetime.timedelta(hours=7) #PST
+      request.put()
+      print "Added request to queue"
+    else:
+      print "Could not add"
 
     self.redirect('/')
 

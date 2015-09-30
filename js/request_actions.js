@@ -1,5 +1,6 @@
 // Call functions from other js
 $.getScript("../js/create_request.js");
+
 var tab = getUrlParameter('q')
 var current_request;
 $(document).ready(function() {
