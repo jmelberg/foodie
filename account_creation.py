@@ -19,20 +19,13 @@ class RegisterHandler(SessionHandler):
     password = cgi.escape(self.request.get('password'))
     first_name = cgi.escape(self.request.get('first_name'))
     last_name = cgi.escape(self.request.get('last_name'))
-    zip_code = int(cgi.escape(self.request.get('zip_code')))
-    credit_card = int(cgi.escape(self.request.get('credit_card')))
-    security_code = int(cgi.escape(self.request.get('security_code')))
-    expiration_month = int(cgi.escape(self.request.get('expiration_month')))
-    expiration_year = int(cgi.escape(self.request.get('expiration_year')))
-    expiration_date = datetime.date(expiration_year,expiration_month, 1)
+    
     unique_properties = ['email_address']
 
     # Creation of User
     user_data = User.create_user(username, unique_properties, username=username,
                                 email_address=email, password_raw=password, first_name = first_name,
-                                last_name=last_name, zip_code= zip_code, credit_card= credit_card, 
-                                security_code= security_code, 
-                                expiration_date = expiration_date , verified=False)
+                                last_name=last_name, verified=False)
     time.sleep(1)
     try:
       u = self.auth.get_user_by_password(username, password, remember=True,
