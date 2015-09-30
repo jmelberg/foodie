@@ -7,58 +7,8 @@
   <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.0/js/materialize.min.js"></script>
   <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
-  <script>
-  $(document).ready(function(){
-    $('#register_tab').click(function() {
-      window.location.href = '/register';
-    });
-    $('#login_tab').click(function() {
-      window.location.href = '/';
-    });
-    $('#settings_tab').click(function() {
-      window.location.href = '#';
-    });
-
-    $(function () {
-      $('#username').focus();
-      $('#username').keyup(function () {
-        if($(this).val().length != 0){
-          checkUsername($(this).val().toLowerCase());
-        }
-        else{
-          $("#available").hide();
-        }
-      });
-      $('#confirm_password').keyup(function () {
-        if($(this).val() != $('#password').val()){
-          $('#passwords_match').show();
-          $('#signup_button').hide();
-        }
-        else{
-          $('#passwords_match').hide();
-          $('#signup_button').show();
-        }
-      });
-    });
-    function checkUsername(username) {
-      $.ajax({
-        url: "/checkusername",
-        cache: false,
-        data:{'username' : username},
-        success: function(result){
-          $("#available").text(result);
-          if(result == 'Username is available'){
-            $("#available").show();
-            $("#signup_button").show();
-          }
-          else {
-            $("#available").show();
-            $("#signup_button").hide();
-          }
-      }});
-    }
-  });
-  </script>
+  <script type="text/javascript" src="../js/register.js"></script>
+  
   <!--Let browser know website is optimized for mobile-->
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 </head>
@@ -101,6 +51,15 @@
               <label for="confirm_password">Confirm Password</label>
               <small id="passwords_match" style="display:none;">Not matching passwords</small>
             </div>
+            <div class="input-field col s12">
+              <input id="first_name" name="first_name" type="text" class="validate">
+              <label for="first_name">Enter First Name</label>
+            </div>
+            <div class="input-field col s12">
+              <input id="last_name" name="last_name" type="text" class="validate">
+              <label for="last_name">Enter Last Name</label>
+            </div>
+
             <div class="card-action" style="text-align:right;">
               <a href="/">Cancel</a>
               <button id="signup_button" type="submit" style="background:none;

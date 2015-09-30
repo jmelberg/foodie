@@ -10,9 +10,12 @@ class User(auth_models.User):
   zip_code = ndb.IntegerProperty(default = 0)
   credit_card = ndb.IntegerProperty(default = 0)
   security_code = ndb.IntegerProperty(default = 0)
-  expiration_date = ndb.DateTimeProperty()
+  expiration_date = ndb.DateProperty()
   # Foodie/Expert
   account_type = ndb.StringProperty()
+  # Notifications
+  open_requests = ndb.IntegerProperty(default=0)
+
 
 ''' Profile entity hold information specific to user on profile '''
 class Profile(ndb.Model):
@@ -30,6 +33,8 @@ class Request(ndb.Model):
   creation_time = ndb.DateTimeProperty(auto_now_add=True)
   start_time = ndb.DateTimeProperty()
   priority = ndb.IntegerProperty(default = 0)
+  min_price = ndb.IntegerProperty(default = 0)
+  max_price = ndb.IntegerProperty(default = 0)
 
 class Endorsement(ndb.Model):
   recipient = ndb.KeyProperty(kind="User")

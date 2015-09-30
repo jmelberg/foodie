@@ -31,7 +31,7 @@ class LoginHandler(SessionHandler):
     except( auth.InvalidAuthIdError, auth.InvalidPasswordError):
       error = "Invalid Email/Password"
       print error
-      self.response.out.write(template.render('views/login.html', {'error':error}))
+      self.response.out.write(template.render('views/login.html', {'error': error}))
 
 class ProfileHandler(SessionHandler):
   """handler to display a profile page"""
@@ -48,8 +48,9 @@ class ProfileHandler(SessionHandler):
       new_profile.about_me = "I love to eat food"
       new_profile.put()
     endorsements = Endorsement.query(Endorsement.recipient == profile_owner.key).fetch()
-    self.response.out.write(template.render('views/profile-foodie.html',
-                             {'owner':profile_owner, 'profile':profile, 'endorsements':endorsements, 'viewer': viewer}))
+
+    self.response.out.write(template.render('views/profile.html',
+                             {'owner':profile_owner, 'profile':profile, 'endorsements':endorsements, 'user': viewer}))
     
 class LogoutHandler(SessionHandler):
   """ Terminate current session """
@@ -73,8 +74,12 @@ app = webapp2.WSGIApplication([
                              ('/checkusername', UsernameHandler),
                              ('/foodie/(\w+)', ProfileHandler),
                              ('/requests', RequestsHandler),
+                             ('/editrequest', EditRequestHandler),
+                             ('/checktime', CheckTimeConflict),
                              ('/confirm', ApproveRequestHandler),
                              ('/delete', DeleteRequestHandler),
                              ('/request', CreateRequestHandler),
+                             ('/getlocation', GetLocationHandler),
+                             ('/returnrequest', ReturnRequestHandler),
                              ('/logout', LogoutHandler),
                               ], debug=False, config=config)
