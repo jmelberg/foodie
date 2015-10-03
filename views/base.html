@@ -21,6 +21,7 @@
     selectYears: 15, // Creates a dropdown of 15 years to control year
     format: 'yyyy-mm-dd', // Format into datetime
   });
+  $('select').material_select();
  });
 
 
@@ -113,6 +114,17 @@
       </div>
     </div>
     <div class="row">
+     <div class="input-field col s6">
+      <select>
+        <option value="">Choose your option</option>
+        <option value="1">Italian</option>
+        <option value="2">Option 2</option>
+        <option value="3">Option 3</option>
+      </select>
+      <label>Food Type</label>
+      </div>
+    </div>
+    <div class="row">
       <div class="input-field col s6">
         <label>Price Range</label> <br /><br />
         <div id="range-input">
@@ -120,7 +132,21 @@
           <input type="number" id="max_price" name="max_price" hidden>
         </div>
       </div>
-    </div>    
+    </div>
+    <div class="row">
+      <div class="input-field col s6">
+        <label>Interest</label><br>
+        
+          <p>
+            <input name="group1" type="radio" id="test1">
+            <label for="test1">Food Lesson</label>
+          </p>
+          <p>
+            <input name="group1" type="radio" id="test2">
+            <label for="test2">Fun</label>
+          </p>        
+      </div>
+    </div>   
   </div>
   <div class="modal-footer">
     <button id="send_request" type="submit" class="modal-action modal-close btn-flat">Send</button>
