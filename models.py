@@ -35,6 +35,8 @@ class Request(ndb.Model):
   priority = ndb.IntegerProperty(default = 0)
   min_price = ndb.IntegerProperty(default = 0)
   max_price = ndb.IntegerProperty(default = 0)
+  food_type = ndb.StringProperty()
+  interest = ndb.StringProperty()
 
 class Endorsement(ndb.Model):
   recipient = ndb.KeyProperty(kind="User")

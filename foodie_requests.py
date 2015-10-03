@@ -57,6 +57,8 @@ class CreateRequestHandler(SessionHandler):
     time = cgi.escape(self.request.get("time"))
     min_price = int(cgi.escape(self.request.get("min_price")))
     max_price = int(cgi.escape(self.request.get("max_price")))
+    food_type = cgi.escape(self.request.get("food_type"))
+    interest = cgi.escape(self.request.get("interest"))
 
     # Convert date and time to datetime
     format_date = str(date+ " " +time+":00.0")
@@ -71,6 +73,8 @@ class CreateRequestHandler(SessionHandler):
     request.creation_time = datetime.datetime.now() - datetime.timedelta(hours=7) #PST
     request.min_price = min_price
     request.max_price = max_price
+    request.food_type = food_type
+    request.interest = interest
     request.put()
     print "Added request to queue"
     #Increment open requests
@@ -220,9 +224,11 @@ class ReturnRequestHandler(SessionHandler):
     time = request.start_time.strftime("%H:%M:%S")
     min_price = request.min_price
     max_price = request.max_price
+    food_type = request.food_type
+    interest = request.interest
     if request:
       results = {"location": request.location, "date": date, "time_slot": time,
-      'min_price':min_price, 'max_price':max_price,}
+      'min_price':min_price, 'max_price':max_price, 'food_type':food_type, 'interest': interest}
       self.response.out.write(json.dumps(results), )
     else:
       self.response.out.write("None")
