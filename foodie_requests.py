@@ -92,6 +92,8 @@ class EditRequestHandler(SessionHandler):
     time = cgi.escape(self.request.get("edit_time"))
     min_price = int(cgi.escape(self.request.get("edit_min_price")))
     max_price = int(cgi.escape(self.request.get("edit_max_price")))
+    food_type = cgi.escape(self.request.get("edit_food_type"))
+    interest = cgi.escape(self.request.get("edit_interest"))
 
     previous_request_key = cgi.escape(self.request.get("request"))
     previous_request = ndb.Key(urlsafe=previous_request_key).get()
