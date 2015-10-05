@@ -39,25 +39,37 @@ $(document).ready(function(){
       }
     });
 
+    $('#agreement').click(function(){
+      $('#send_request').removeClass('disabled');
+    });
+
     $('#cancel_request').click(function(){
       $('#requests').closeModal();
     });
 
     $('#send_request').click(function() {
+      if ($('#agreement:checked').length>0)
+      {
       var date = $('#date').val();
       var time = $('#time').val();
       var location = $('#location').val();
       var m_price = $('#min_price').val();
       var mx_price = $('#max_price').val();
+      var food_type = $('#food_type').val();
+      var interest = $('input[type="radio"]:checked').val();
+
+      console.log(interest);
+      
       $.ajax({
         type: "POST",
         url: '/request',
         data: {'date':date, 'time':time, 'location':location,
-        'max_price': mx_price, 'min_price':m_price}
+        'max_price': mx_price, 'min_price':m_price, 'food_type': food_type, 'interest': interest}
       });
       setTimeout(function(){ // Refresh after 1 second
       window.location.href = '/requests';
     }, 100);
+    }
     });
   });
 });
