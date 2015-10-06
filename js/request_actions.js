@@ -83,11 +83,13 @@ $(document).ready(function() {
       var location = $('#location').val();
       var m_price = $('#min_price').val();
       var mx_price = $('#max_price').val();
+      var food_type = $('#food_type').val();
+      var interest = $('input[type="radio"]:checked').val();
       $.ajax({
         type: "POST",
         url: '/editrequest',
         data: {'edit_date':date, 'edit_time':time, 'edit_location':location,
-        'edit_max_price': mx_price, 'edit_min_price':m_price}
+        'edit_max_price': mx_price, 'edit_min_price':m_price, 'edit_food_type': food_type, 'edit_interest': interest}
       });
       setTimeout(function(){ // Refresh after 1 second
       window.location.href = '/requests';
@@ -132,6 +134,7 @@ function returnRequest(key){
       $('#prev_time').attr("placeholder", json.time_slot);
       $('#edit_min_price').value = json.min_price;
       $('#edit_max_price').value = json.max_price;
+
       // Create slider
       var slider = document.getElementById('edit_slider');
       noUiSlider.create(slider, {

@@ -29,7 +29,10 @@
             <p><b>Location:</b> {{request.location}} <br />
               <b>For:</b> {{request.start_time.date}} <br />
               <b> @ </b> {{request.start_time.time}}</p>
+              <b>Food Type:</b> {{request.food_type}}</p>
               <b>Price Range:</b> ${{request.min_price}} to ${{request.max_price}}</p>
+              <b>Interest:</b> {{request.interest}}</p>
+
             <div class="secondary-content">
               <!-- Uncomment and use JS to hide -->
               <button id="hide{{forloop.counter}}" style="border:none; background:none;" value={{request.key.urlsafe}}><i class="material-icons">thumb_down</i></button>
@@ -66,6 +69,8 @@
               {% for person in request.recipient_name %}
               <a href="/foodie/{{person}}">{{person}}</a>  
               {% endfor %}</p>
+              <b>Food Type:</b> {{request.food_type}}</p>
+              <b>Interest:</b> {{request.interest}}</p>
             <div class="secondary-content">
               <button id="cancel_request{{forloop.counter}}" style="border:none; background:none;" value={{request.key.urlsafe}}><i class="material-icons">cancel</i></button>
             </div>
@@ -100,7 +105,9 @@
                 <a href="/foodie/{{person}}">{{person}}</a>  
                 {% endfor %}</p>
               {% endif %}
+              <b>Food Type:</b> {{request.food_type}}</p>
               <b>Price Range:</b> ${{request.min_price}} to ${{request.max_price}}</p>
+              <b>Interest:</b> {{request.interest}}</p>
             <div class="secondary-content">
               <button id="delete{{forloop.counter}}" style="border:none; background:none;" value={{request.key.urlsafe}}><i class="material-icons">clear</i></button>
               <button id="edit_request{{forloop.count}}" style="border:none; background:none;" value={{request.key.urlsafe}}><i class="material-icons">mode_edit</i></button>
@@ -136,7 +143,9 @@
                 <a href="/foodie/{{person}}">{{person}}</a>  
                 {% endfor %}</p>
               {% endif %}
+              <b>Food Type:</b> {{request.food_type}}</p>
               <b>Price Range:</b> ${{request.min_price}} to ${{request.max_price}}</p>
+              <b>Interest:</b> {{request.interest}}</p>
             <div class="secondary-content">
               <button id="delete{{forloop.counter}}" style="border:none; background:none;" value={{request.key.urlsafe}}><i class="material-icons">clear</i></button>
           </div>
@@ -200,14 +209,41 @@
           </div>
         </div>
         <div class="row">
-        <div class="input-field col s6">
-          <label>Price Range</label> <br /><br />
-          <div id="edit_slider">
-            <input type="number" id="edit_min_price" name="edit_min_price" hidden>
-            <input type="number" id="edit_max_price" name="edit_max_price" hidden>
+         <div class="input-field col s6">
+          <select  id="edit_food_type" name="edit_food_type">
+            <option value="">Choose your option</option>
+            <option value="Afghan">Afghan</option>
+            <option value="African">African</option>
+            <option value="American">American</option>
+            <option value="Arabian">Arabian</option>
+            <option value="Argentine">Argentine</option>
+            <option value="Armenian">Armenian</option>
+          </select>
+          <label>Food Type</label>
           </div>
         </div>
-    </div>  
+        <div class="row">
+          <div class="input-field col s6">
+            <label>Price Range</label> <br /><br />
+            <div id="edit_slider">
+              <input type="number" id="edit_min_price" name="edit_min_price" hidden>
+              <input type="number" id="edit_max_price" name="edit_max_price" hidden>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="input-field col s6">
+            <label>Interest</label><br>    
+              <p>
+                <input name="edit_interest" type="radio" id="edit_interest_food_lesson" value= "food lesson">
+                <label for="edit_interest_food_lesson">Food Lesson</label>
+              </p>
+              <p>
+                <input name="edit_interest" type="radio" id="edit_interest_fun" value = "fun">
+                <label for="edit_interest_fun">Fun</label>
+              </p>        
+          </div>
+        </div>  
   </div>
   <div class="modal-footer">
     <button id="submit_edit"class="modal-action modal-close btn-flat">Edit</button>
