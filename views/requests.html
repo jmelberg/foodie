@@ -24,7 +24,7 @@
           {% for request in empty_requests %}
           {% if request.sender != user.key %}
           <li class="collection-item avatar">
-            <img src ="http://cdn.wegotthiscovered.com/wp-content/uploads/hardwell-united-we-are-album-cover.jpg" class="circle">
+            <a href="/foodie/{{request.sender_name}}"><img src ="http://cdn.wegotthiscovered.com/wp-content/uploads/hardwell-united-we-are-album-cover.jpg" class="circle"></a>
             <span class="title"><b>Requestor:</b><a href="/foodie/{{request.sender_name}}"> {{request.sender_name}}</a></span>
             <p><b>Location:</b> {{request.location}} <br />
               <b>For:</b> {{request.start_time.date}} <br />
@@ -65,9 +65,9 @@
             <p><b>Location:</b> {{request.location}} <br />
               <b>For:</b> {{request.start_time.date}} <br />
               <b> @ </b> {{request.start_time.time}}</p>
-              <p> <b>Attendees:</b> 
+              <p> <b>Attendees:</b>
               {% for person in request.recipient_name %}
-              <a href="/foodie/{{person}}">{{person}}</a>  
+              <a href="/foodie/{{person}}">{{person}}</a>
               {% endfor %}</p>
               <b>Food Type:</b> {{request.food_type}}</p>
               <b>Interest:</b> {{request.interest}}</p>
@@ -88,7 +88,7 @@
     </div>
 
     <!-- My Requests -->
-    <div id="mine" class="col s12"> 
+    <div id="mine" class="col s12">
       <div class="row">
         <ul class="collection with-header col s12 m12">
         <br />
@@ -100,9 +100,9 @@
               <b>For:</b> {{request.start_time.date}} <br />
               <b> @ </b> {{request.start_time.time}}</p>
               {% if request.recipient_name|length > 0 %}
-                <p> <b>Attendees:</b> 
+                <p> <b>Attendees:</b>
                 {% for person in request.recipient_name %}
-                <a href="/foodie/{{person}}">{{person}}</a>  
+                <a href="/foodie/{{person}}">{{person}}</a>
                 {% endfor %}</p>
               {% endif %}
               <b>Food Type:</b> {{request.food_type}}</p>
@@ -138,9 +138,9 @@
               <b>For:</b> {{request.start_time.date}} <br />
               <b> @ </b> {{request.start_time.time}}</p>
               {% if request.recipient_name|length > 0 %}
-                <p> <b>Attendees:</b> 
+                <p> <b>Attendees:</b>
                 {% for person in request.recipient_name %}
-                <a href="/foodie/{{person}}">{{person}}</a>  
+                <a href="/foodie/{{person}}">{{person}}</a>
                 {% endfor %}</p>
               {% endif %}
               <b>Food Type:</b> {{request.food_type}}</p>
@@ -170,7 +170,7 @@
       <p> I agree to meet this person blah blah blah</p>
       <p> If I fail to appear, I accept the penalty of 50% of the agreed upon price. </p>
       <p> blah blah blah </b>
-        
+
       <br />
     </div>
     <div class="modal-footer">
@@ -233,7 +233,7 @@
         </div>
         <div class="row">
           <div class="input-field col s6">
-            <label>Interest</label><br>    
+            <label>Interest</label><br>
               <p>
                 <input name="edit_interest" type="radio" id="edit_interest_food_lesson" value= "food lesson">
                 <label for="edit_interest_food_lesson">Food Lesson</label>
@@ -241,9 +241,9 @@
               <p>
                 <input name="edit_interest" type="radio" id="edit_interest_fun" value = "fun">
                 <label for="edit_interest_fun">Fun</label>
-              </p>        
+              </p>
           </div>
-        </div>  
+        </div>
   </div>
   <div class="modal-footer">
     <button id="submit_edit"class="modal-action modal-close btn-flat">Edit</button>
