@@ -32,32 +32,59 @@
 </head>
 
 <body>
-<div class="row">
-  <ul class="side-nav col s2 fixed">
-    <li class="logo center">
-    <img class="responsive-img" src="https://m2.behance.net/rendition/pm/1406493/disp/f8264724f7d768741b8e5cccc9679b12.png" />
-    <span style="position: absolute; margin-top: -20%;">Foodie</span>
-    </li>
 
-    <li class="no-padding"><hr style="padding:0; margin:0;"></li>
-    <li><a href="/">Home</a></li>
-    <li><a href="/requests?q=all">Provide a Service</a></li>
-    <li><a data-target="requests" class="a modal-trigger">Request a Service</a></li>
-    <li><a href="/requests?q=mine">My Requests
-      {% if user.open_requests > 0 %} 
-      <span class="new badge" >
-      {{user.open_requests}}
-      </span>
-      {% else %}
-      {% endif %}
-    </a></li>
-    <li><a>Settings</a></li>
-    <li><a href="/logout">Log Out</a></li>
-  </ul>
-  <div class="col s6 s8 offset-m2">
-    {% block content %} {% endblock %}
-  </div>
-</div>
+<nav>
+    <div class="nav-wrapper">
+      <a href="" class="brand-logo"><img src="https://m2.behance.net/rendition/pm/1406493/disp/f8264724f7d768741b8e5cccc9679b12.png" width="75" height="75"></img></a>
+      <a href="/"><span style="position: absolute; margin-top: -20%;">Foodie</span></a>
+      <a href="#" data-activates="mobile-demo" class="button-collapse"><i class="material-icons">menu</i></a>
+      <ul class="right hide-on-med-and-down">
+        <li>
+          <form>
+            <div class="input-field">
+            <input id="search" type="search" required>
+            <label for="search"><i class="material-icons">search</i></label>
+            <i class="material-icons">close</i>
+            </div>
+          </form>
+        </li>
+        <li><a href="/">Home</a></li>
+        <li><a href="/requests?q=all">Provide a Service</a></li>
+        <li><a data-target="requests" class="a modal-trigger">Request a Service</a></li>
+        <li><a href="/requests?q=mine">My Requests
+          {% if user.open_requests > 0 %} 
+          <span class="new badge" >
+          {{user.open_requests}}
+          </span>
+          {% else %}
+          {% endif %}
+        </a></li>
+        <li><a>Settings</a></li>
+        <li><a href="/logout">Log Out</a></li>
+      </ul>
+
+      <ul class="side-nav" id="mobile-demo">
+        <li><a href="/">Home</a></li>
+        <li><a href="/requests?q=all">Provide a Service</a></li>
+        <li><a data-target="requests" class="a modal-trigger">Request a Service</a></li>
+        <li><a href="/requests?q=mine">My Requests
+          {% if user.open_requests > 0 %} 
+          <span class="new badge" >
+          {{user.open_requests}}
+          </span>
+          {% else %}
+          {% endif %}
+        </a></li>
+        <li><a>Settings</a></li>
+        <li><a href="/logout">Log Out</a></li>
+      </ul>
+    </div>
+  </nav>
+
+    <div class="row">
+      {% block content %} {% endblock %}
+    </div>
+
 
 <!-- Modal Trigger -->
 <!-- Modal Structure -->
