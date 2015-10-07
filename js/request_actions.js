@@ -134,6 +134,8 @@ function returnRequest(key){
       $('#prev_time').attr("placeholder", json.time_slot);
       $('#edit_min_price').value = json.min_price;
       $('#edit_max_price').value = json.max_price;
+      // var interest = "#edit_interest_"+json.interest;
+      // $(interest).prop('checked', true);
 
       // Create slider
       var slider = document.getElementById('edit_slider');

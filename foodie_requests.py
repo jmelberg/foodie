@@ -38,8 +38,7 @@ class RequestsHandler(SessionHandler):
         elif request.recipient is None:
           empty_requests.append(request)
           print "Added to empty"
-        
-  
+      
     self.response.out.write(template.render('views/requests.html',
                             {'user': user, 'my_requests': my_requests,
                             'empty_requests': empty_requests, 'accepted_requests':accepted_requests,
@@ -76,6 +75,7 @@ class CreateRequestHandler(SessionHandler):
     request.interest = interest
     request.put()
     print "Added request to queue"
+    
     #Increment open requests
     user.open_requests += 1
     user.put()
@@ -198,10 +198,13 @@ def timeCheck(ongoing_request, alloted_date, start_time):
   print "MAX: ", alloted_date
   current_time = datetime.datetime.now() - datetime.timedelta(hours=7)
   min_time = start_time - datetime.timedelta(hours=2) #Min limit
+  # Check to see if time has already passed
   if start_time > current_time:
+    # Check for current requests
     if len(ongoing_request) > 0:
       for request in ongoing_request:
         print "Reserved: " , request.start_time
+        # Create if time is outside of alloted period
         if request.start_time > alloted_date or request.start_time < min_time:
           create = True
         else:
@@ -229,7 +232,7 @@ class ReturnRequestHandler(SessionHandler):
     if request:
       results = {"location": request.location, "date": date, "time_slot": time,
       'min_price':min_price, 'max_price':max_price, 'food_type':food_type, 'interest': interest}
-      self.response.out.write(json.dumps(results), )
+      self.response.out.write(json.dumps(results))
     else:
       self.response.out.write("None")
 
