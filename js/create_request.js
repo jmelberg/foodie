@@ -3,6 +3,8 @@ $(document).ready(function(){
   var slider = document.getElementById('range-input');
   var min_price = document.getElementById('min_price');
   var max_price = document.getElementById('max_price');
+  var submit_button = document.getElementById('send_request');
+
 
   $(function () {
     $('#time').focus();
@@ -16,6 +18,29 @@ $(document).ready(function(){
         $('#slot_available').hide();
       }
     });
+
+    // Check for empty fields
+    // Location
+    $('#location').keyup(function() {
+      var location = $(this).val();
+      if(location.length > 0){
+      submit_button.style.visibility = "visible";
+      }
+      else{
+        submit_button.style.visibility = "hidden";
+      }
+    });
+    // Food Type
+    $('select').change(function(){
+      var selected_type = $("#food_type option:selected").text();
+      if(selected_type != "Choose your option"){
+        submit_button.style.visibility = "visible";
+      }
+      else{
+        submit_button.style.visibility = "hidden";
+      }
+    });
+    
 
     noUiSlider.create(slider, {
       start: [20, 80],
@@ -56,10 +81,7 @@ $(document).ready(function(){
       var m_price = $('#min_price').val();
       var mx_price = $('#max_price').val();
       var food_type = $('#food_type').val();
-      var interest = $('input[type="radio"]:checked').val();
-
-      console.log(interest);
-      
+      var interest = $('input[type="radio"]:checked').val();      
       $.ajax({
         type: "POST",
         url: '/request',
