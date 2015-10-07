@@ -118,8 +118,7 @@ function checkTime(time, date) {
           $("#slot_available").show();
           $("#send_request").hide();
         }
-      }
-      
+      } 
     }
   });
 }

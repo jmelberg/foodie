@@ -15,7 +15,6 @@ import json
 
 api_key = 'AIzaSyBAO3qaYH4LGQky8vAA07gCVex1LBhUdbE'
 
-
 class RequestsHandler(SessionHandler):
   ''' Views current requests from other users '''
   @login_required
@@ -199,20 +198,19 @@ def timeCheck(ongoing_request, alloted_date, start_time):
   print "MAX: ", alloted_date
   current_time = datetime.datetime.now() - datetime.timedelta(hours=7)
   min_time = start_time - datetime.timedelta(hours=2) #Min limit
-  if len(ongoing_request) > 0:
-    for request in ongoing_request:
-      print "Reserved: " , request.start_time
-      if request.start_time > alloted_date or request.start_time < min_time:
-        if start_time > current_time:
+  if start_time > current_time:
+    if len(ongoing_request) > 0:
+      for request in ongoing_request:
+        print "Reserved: " , request.start_time
+        if request.start_time > alloted_date or request.start_time < min_time:
           create = True
         else:
-          print "Request time already passed"
+          create = False
           break
-      else:
-        create = False
-        break
+    else:
+      create = True
   else:
-    create = True
+    print "Request time already passed"
   return create
 
 class ReturnRequestHandler(SessionHandler):
