@@ -14,13 +14,15 @@ class User(auth_models.User):
   # Foodie/Expert
   account_type = ndb.StringProperty()
   # Notifications
-  open_requests = ndb.IntegerProperty(default=0)
+  new_requests = ndb.IntegerProperty(default = 0)
+  accepted_requests = ndb.IntegerProperty(default = 0)
 
 
 ''' Profile entity hold information specific to user on profile '''
 class Profile(ndb.Model):
   owner = ndb.KeyProperty(kind= "User")
   about_me = ndb.StringProperty()
+
 
 ''' Handles the basic connection between foodie and expert'''
 class Request(ndb.Model):

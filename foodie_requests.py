@@ -46,8 +46,12 @@ class RequestsHandler(SessionHandler):
 
 
 class CreateRequestHandler(SessionHandler):
-  ''' Create request from html modal '''
+  ''' Create request '''
   @login_required
+  def get(self):
+    user = self.user_model
+    self.response.out.write(template.render('views/create_request.html', {'user': user}))
+
   def post(self):
     user = self.user_model
     location = cgi.escape(self.request.get("location"))
@@ -75,10 +79,6 @@ class CreateRequestHandler(SessionHandler):
     request.interest = interest
     request.put()
     print "Added request to queue"
-    
-    #Increment open requests
-    user.open_requests += 1
-    user.put()
 
     self.redirect('/')
 
@@ -131,9 +131,6 @@ class ApproveRequestHandler(SessionHandler):
           request.recipient = approver.key
           request.recipient_name.append(approver.username)
           request.put()
-          # Decrement open requests
-          approver.open_requests -= 1
-          approver.put()
         else:
           print "Already connected"
     self.redirect('/requests')

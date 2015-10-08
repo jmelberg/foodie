@@ -15,151 +15,151 @@
     </ul>
   </div>
 
-    <!-- All Requests -->
-    <div id="all" class="col s12">
-      <div class="row">
-        <ul class="collection with-header col s12 m12">
-          <br />
-          {% for request in empty_requests %}
-          {% if request.sender != user.key %}
-          <li class="collection-item avatar">
-            <img src ="http://cdn.wegotthiscovered.com/wp-content/uploads/hardwell-united-we-are-album-cover.jpg" class="circle">
-            <span class="title"><b>Requestor:</b><a href="/foodie/{{request.sender_name}}"> {{request.sender_name}}</a></span>
-            <p><b>Location:</b> {{request.location}} <br />
-              <b>For:</b> {{request.start_time.date}} <br />
-              <b> @ </b> {{request.start_time.time}}</p>
-              <b>Food Type:</b> {{request.food_type}}</p>
-              <b>Price Range:</b> ${{request.min_price}} to ${{request.max_price}}</p>
-              <b>Interest:</b> {{request.interest}}</p>
+  <!-- All Requests -->
+  <div id="all" class="col s12">
+    <div class="row">
+      <ul class="collection with-header col s12 m12">
+        <br />
+        {% for request in empty_requests %}
+        {% if request.sender != user.key %}
+        <li class="collection-item avatar">
+          <img src ="http://cdn.wegotthiscovered.com/wp-content/uploads/hardwell-united-we-are-album-cover.jpg" class="circle">
+          <span class="title"><b>Requestor:</b><a href="/foodie/{{request.sender_name}}"> {{request.sender_name}}</a></span>
+          <p><b>Location:</b> {{request.location}} <br />
+            <b>For:</b> {{request.start_time.date}} <br />
+            <b> @ </b> {{request.start_time.time}}</p>
+            <b>Food Type:</b> {{request.food_type}}</p>
+            <b>Price Range:</b> ${{request.min_price}} to ${{request.max_price}}</p>
+            <b>Interest:</b> {{request.interest}}</p>
 
-            <div class="secondary-content">
-              <!-- Uncomment and use JS to hide -->
-              <button id="hide{{forloop.counter}}" style="border:none; background:none;" value={{request.key.urlsafe}}><i class="material-icons">thumb_down</i></button>
-              <button id="confirm_modal{{forloop.counter}}" value={{request.key.urlsafe}} style="background:none; border:none;"><i class="material-icons">thumb_up</i></button>
-            </div>
-          </li>
+          <div class="secondary-content">
+            <!-- Uncomment and use JS to hide -->
+            <button id="hide{{forloop.counter}}" style="border:none; background:none;" value={{request.key.urlsafe}}><i class="material-icons">thumb_down</i></button>
+            <button id="confirm_modal{{forloop.counter}}" value={{request.key.urlsafe}} style="background:none; border:none;"><i class="material-icons">thumb_up</i></button>
+          </div>
+        </li>
 
-          {% endif %}
-          {% empty %}
-          <li class="collection-header">
-           <center>
-            <h5>No Requests Yet</h5>
-           </center>
-          </li>
-          {% endfor %}
-        </ul>
-      </div>
+        {% endif %}
+        {% empty %}
+        <li class="collection-header">
+         <center>
+          <h5>No Requests Yet</h5>
+         </center>
+        </li>
+        {% endfor %}
+      </ul>
     </div>
+  </div>
 
-    <!-- Requests that have at least one attending -->
-    <div id="accepted" class="col s12">
-     <div class="row">
-        <ul class="collection with-header col s12 m12">
-          <br />
-          {% for request in accepted_requests %}
-          {% if request.sender != user.key %}
-          <li class="collection-item avatar">
-            <img src ="http://cdn.wegotthiscovered.com/wp-content/uploads/hardwell-united-we-are-album-cover.jpg" class="circle">
-            <span class="title"><b>Requestor:</b><a href="/foodie/{{request.sender_name}}"> {{request.sender_name}}</a></span>
-            <p><b>Location:</b> {{request.location}} <br />
-              <b>For:</b> {{request.start_time.date}} <br />
-              <b> @ </b> {{request.start_time.time}}</p>
+  <!-- Requests that have at least one attending -->
+  <div id="accepted" class="col s12">
+   <div class="row">
+      <ul class="collection with-header col s12 m12">
+        <br />
+        {% for request in accepted_requests %}
+        {% if request.sender != user.key %}
+        <li class="collection-item avatar">
+          <img src ="http://cdn.wegotthiscovered.com/wp-content/uploads/hardwell-united-we-are-album-cover.jpg" class="circle">
+          <span class="title"><b>Requestor:</b><a href="/foodie/{{request.sender_name}}"> {{request.sender_name}}</a></span>
+          <p><b>Location:</b> {{request.location}} <br />
+            <b>For:</b> {{request.start_time.date}} <br />
+            <b> @ </b> {{request.start_time.time}}</p>
+            <p> <b>Attendees:</b> 
+            {% for person in request.recipient_name %}
+            <a href="/foodie/{{person}}">{{person}}</a>  
+            {% endfor %}</p>
+            <b>Food Type:</b> {{request.food_type}}</p>
+            <b>Interest:</b> {{request.interest}}</p>
+          <div class="secondary-content">
+            <button id="cancel_request{{forloop.counter}}" style="border:none; background:none;" value={{request.key.urlsafe}}><i class="material-icons">cancel</i></button>
+          </div>
+        </li>
+        {% endif %}
+        {% empty %}
+        <li class="collection-header">
+         <center>
+          <h5>No Accepted Requests</h5>
+         </center>
+        </li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+
+  <!-- My Requests -->
+  <div id="mine" class="col s12"> 
+    <div class="row">
+      <ul class="collection with-header col s12 m12">
+      <br />
+      {% for request in my_requests %}
+        <li class="collection-item avatar">
+          <img src ="http://cdn.wegotthiscovered.com/wp-content/uploads/hardwell-united-we-are-album-cover.jpg" class="circle">
+          <span class="title"><b>Requestor:</b><a href="/foodie/{{request.sender_name}}"> {{request.sender_name}}</a></span>
+          <p><b>Location:</b> {{request.location}} <br />
+            <b>For:</b> {{request.start_time.date}} <br />
+            <b> @ </b> {{request.start_time.time}}</p>
+            {% if request.recipient_name|length > 0 %}
               <p> <b>Attendees:</b> 
               {% for person in request.recipient_name %}
               <a href="/foodie/{{person}}">{{person}}</a>  
               {% endfor %}</p>
-              <b>Food Type:</b> {{request.food_type}}</p>
-              <b>Interest:</b> {{request.interest}}</p>
-            <div class="secondary-content">
-              <button id="cancel_request{{forloop.counter}}" style="border:none; background:none;" value={{request.key.urlsafe}}><i class="material-icons">cancel</i></button>
-            </div>
-          </li>
-          {% endif %}
-          {% empty %}
-          <li class="collection-header">
-           <center>
-            <h5>No Accepted Requests</h5>
-           </center>
-          </li>
-          {% endfor %}
-        </ul>
-      </div>
+            {% endif %}
+            <b>Food Type:</b> {{request.food_type}}</p>
+            <b>Price Range:</b> ${{request.min_price}} to ${{request.max_price}}</p>
+            <b>Interest:</b> {{request.interest}}</p>
+          <div class="secondary-content">
+            <button id="delete{{forloop.counter}}" style="border:none; background:none;" value={{request.key.urlsafe}}><i class="material-icons">clear</i></button>
+            <button id="edit_request{{forloop.count}}" style="border:none; background:none;" value={{request.key.urlsafe}}><i class="material-icons">mode_edit</i></button>
+        </div>
+        </li>
+      {% empty %}
+      <li class="collection-header">
+       <center>
+        <h5>No Requests</h5>
+        <p>Find someone now!</p>
+       </center>
+      </li>
+      {% endfor %}
+      </ul>
     </div>
+  </div>
 
-    <!-- My Requests -->
-    <div id="mine" class="col s12"> 
-      <div class="row">
-        <ul class="collection with-header col s12 m12">
+  <!-- Dead Requests -->
+  <div id="dead" class="col s12">
+    <div class="row">
+      <ul class="collection with-header col s12 m12">
         <br />
-        {% for request in my_requests %}
-          <li class="collection-item avatar">
-            <img src ="http://cdn.wegotthiscovered.com/wp-content/uploads/hardwell-united-we-are-album-cover.jpg" class="circle">
-            <span class="title"><b>Requestor:</b><a href="/foodie/{{request.sender_name}}"> {{request.sender_name}}</a></span>
-            <p><b>Location:</b> {{request.location}} <br />
-              <b>For:</b> {{request.start_time.date}} <br />
-              <b> @ </b> {{request.start_time.time}}</p>
-              {% if request.recipient_name|length > 0 %}
-                <p> <b>Attendees:</b> 
-                {% for person in request.recipient_name %}
-                <a href="/foodie/{{person}}">{{person}}</a>  
-                {% endfor %}</p>
-              {% endif %}
-              <b>Food Type:</b> {{request.food_type}}</p>
-              <b>Price Range:</b> ${{request.min_price}} to ${{request.max_price}}</p>
-              <b>Interest:</b> {{request.interest}}</p>
-            <div class="secondary-content">
-              <button id="delete{{forloop.counter}}" style="border:none; background:none;" value={{request.key.urlsafe}}><i class="material-icons">clear</i></button>
-              <button id="edit_request{{forloop.count}}" style="border:none; background:none;" value={{request.key.urlsafe}}><i class="material-icons">mode_edit</i></button>
-          </div>
-          </li>
+        {% for request in dead_requests %}
+        <li class="collection-item avatar">
+          <img src ="http://cdn.wegotthiscovered.com/wp-content/uploads/hardwell-united-we-are-album-cover.jpg" class="circle">
+          <span class="title"><b>Requestor:</b><a href="/foodie/{{request.sender_name}}"> {{request.sender_name}}</a></span>
+          <p><b>Location:</b> {{request.location}} <br />
+            <b>For:</b> {{request.start_time.date}} <br />
+            <b> @ </b> {{request.start_time.time}}</p>
+            {% if request.recipient_name|length > 0 %}
+              <p> <b>Attendees:</b> 
+              {% for person in request.recipient_name %}
+              <a href="/foodie/{{person}}">{{person}}</a>  
+              {% endfor %}</p>
+            {% endif %}
+            <b>Food Type:</b> {{request.food_type}}</p>
+            <b>Price Range:</b> ${{request.min_price}} to ${{request.max_price}}</p>
+            <b>Interest:</b> {{request.interest}}</p>
+          <div class="secondary-content">
+            <button id="delete{{forloop.counter}}" style="border:none; background:none;" value={{request.key.urlsafe}}><i class="material-icons">clear</i></button>
+        </div>
+        </li>
         {% empty %}
         <li class="collection-header">
          <center>
-          <h5>No Requests</h5>
-          <p>Find someone now!</p>
+          <h5>No Dead Requests</h5>
          </center>
         </li>
         {% endfor %}
-        </ul>
-      </div>
-    </div>
-
-    <!-- Dead Requests -->
-    <div id="dead" class="col s12">
-      <div class="row">
-        <ul class="collection with-header col s12 m12">
-          <br />
-          {% for request in dead_requests %}
-          <li class="collection-item avatar">
-            <img src ="http://cdn.wegotthiscovered.com/wp-content/uploads/hardwell-united-we-are-album-cover.jpg" class="circle">
-            <span class="title"><b>Requestor:</b><a href="/foodie/{{request.sender_name}}"> {{request.sender_name}}</a></span>
-            <p><b>Location:</b> {{request.location}} <br />
-              <b>For:</b> {{request.start_time.date}} <br />
-              <b> @ </b> {{request.start_time.time}}</p>
-              {% if request.recipient_name|length > 0 %}
-                <p> <b>Attendees:</b> 
-                {% for person in request.recipient_name %}
-                <a href="/foodie/{{person}}">{{person}}</a>  
-                {% endfor %}</p>
-              {% endif %}
-              <b>Food Type:</b> {{request.food_type}}</p>
-              <b>Price Range:</b> ${{request.min_price}} to ${{request.max_price}}</p>
-              <b>Interest:</b> {{request.interest}}</p>
-            <div class="secondary-content">
-              <button id="delete{{forloop.counter}}" style="border:none; background:none;" value={{request.key.urlsafe}}><i class="material-icons">clear</i></button>
-          </div>
-          </li>
-          {% empty %}
-          <li class="collection-header">
-           <center>
-            <h5>No Dead Requests</h5>
-           </center>
-          </li>
-          {% endfor %}
-        </ul>
-      </div>
+      </ul>
     </div>
   </div>
+</div>
 </div>
 
 <!-- Respond Modal -->
@@ -169,7 +169,6 @@
       <p> I agree to meet this person blah blah blah</p>
       <p> If I fail to appear, I accept the penalty of 50% of the agreed upon price. </p>
       <p> blah blah blah </b>
-        
       <br />
     </div>
     <div class="modal-footer">
