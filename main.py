@@ -51,7 +51,10 @@ class ProfileHandler(SessionHandler):
     
     #Get Requests for Notifications
     accepted_requests = []
+    new_requests = []
+
     current_date = datetime.datetime.now() - datetime.timedelta(hours=7)
+    
     available_requests = Request.query(Request.sender == profile_owner.key).fetch()
     for request in available_requests:
       if request.start_time > current_date and request.recipient != None:
@@ -60,7 +63,10 @@ class ProfileHandler(SessionHandler):
     viewer.accepted_requests = len(accepted_requests)
     
     # Get new requests
-    new_requests = Request.query(Request.start_time > current_date, Request.recipient == None).fetch()
+    active_requests = Request.query(Request.start_time > current_date, Request.recipient == None).fetch()
+    for request in active_requests:
+      if request.sender != viewer.key:
+        new_requests.append(request)
     viewer.new_requests = len(new_requests)
     viewer.put()
 
@@ -89,12 +95,11 @@ app = webapp2.WSGIApplication([
                              ('/checkusername', UsernameHandler),
                              ('/foodie/(\w+)', ProfileHandler),
                              ('/requests', RequestsHandler),
-                             ('/editrequest', EditRequestHandler),
+                             ('/editrequest/(.+)', EditRequestHandler),
                              ('/checktime', CheckTimeConflict),
                              ('/confirm', ApproveRequestHandler),
                              ('/delete', DeleteRequestHandler),
                              ('/request', CreateRequestHandler),
                              ('/getlocation', GetLocationHandler),
-                             ('/returnrequest', ReturnRequestHandler),
                              ('/logout', LogoutHandler),
                               ], debug=False, config=config)

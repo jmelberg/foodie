@@ -109,7 +109,7 @@
             <b>Interest:</b> {{request.interest}}</p>
           <div class="secondary-content">
             <button id="delete{{forloop.counter}}" style="border:none; background:none;" value={{request.key.urlsafe}}><i class="material-icons">clear</i></button>
-            <button id="edit_request{{forloop.count}}" style="border:none; background:none;" value={{request.key.urlsafe}}><i class="material-icons">mode_edit</i></button>
+            <a href="/editrequest/{{request.key.urlsafe}}" style="border:none; background:none;"><i class="material-icons">mode_edit</i></a>
         </div>
         </li>
       {% empty %}
@@ -176,6 +176,4 @@
       <button type="cancel" id="close_modal" class="modal-action modal-close btn-flat">Cancel</button>
     </div>
 </div>
-
-{% include 'edit_request.html' %}
 {% endblock %}

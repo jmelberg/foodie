@@ -84,31 +84,45 @@ class CreateRequestHandler(SessionHandler):
 
 class EditRequestHandler(SessionHandler):
   ''' Edit current request '''
-  def post(self):
+  def get(self, request_id):
     user = self.user_model
-    location = cgi.escape(self.request.get("edit_location"))
-    date = cgi.escape(self.request.get("edit_date"))
-    time = cgi.escape(self.request.get("edit_time"))
-    min_price = int(cgi.escape(self.request.get("edit_min_price")))
-    max_price = int(cgi.escape(self.request.get("edit_max_price")))
-    food_type = cgi.escape(self.request.get("edit_food_type"))
-    interest = cgi.escape(self.request.get("edit_interest"))
+    request = ndb.Key(urlsafe=request_id).get()
+    edit_date = request.start_time.strftime("%Y-%m-%d")
+    edit_time = request.start_time.strftime("%H:%M:%S")
+    min_price = request.min_price
+    max_price = request.max_price
+    food_type = request.food_type
+    interest = request.interest
+    self.response.out.write(template.render('views/edit_request.html', {'request': request, 'edit_time': edit_time, 'edit_date': edit_date}))
 
-    previous_request_key = cgi.escape(self.request.get("request"))
-    previous_request = ndb.Key(urlsafe=previous_request_key).get()
+  def post(self, request_id):
+    print "in post"
+    user = self.user_model
+    location = cgi.escape(self.request.get("location"))
+    date = cgi.escape(self.request.get("date"))
+    time = cgi.escape(self.request.get("time"))
+    min_price = int(cgi.escape(self.request.get("min_price")))
+    max_price = int(cgi.escape(self.request.get("max_price")))
+    food_type = cgi.escape(self.request.get("food_type"))
+    interest = cgi.escape(self.request.get("interest"))
 
+    previous_request = ndb.Key(urlsafe=request_id).get()
+    print location, "date: ", date, "time: ", time, min_price, max_price, food_type, interest
     # Convert date and time to datetime
-    format_date = str(date+ " " +time+":00.0")
+    if previous_request.start_time.strftime("%H:%M:%S") == time:
+      format_date = str(date+ " " + time+ ".0")
+    else:
+      format_date = str(date+ " " +time+":00.0")
     start_time = datetime.datetime.strptime(format_date, "%Y-%m-%d %H:%M:%S.%f")
     
     if previous_request:
-      previous_request.sender = user.key
-      previous_request.sender = user.key
-      previous_request.sender_name = user.username
       previous_request.location = location
       previous_request.start_time = start_time
-      previous_request.creation_time = datetime.datetime.now() - datetime.timedelta(hours=7) #PST
-      request.put()
+      previous_request.food_type = food_type
+      previous_request.interest = interest
+      previous_request.min_price = min_price
+      previous_request.max_price = max_price
+      previous_request.put()
       print "Added request to queue"
     else:
       print "Could not add"
@@ -212,26 +226,6 @@ def timeCheck(ongoing_request, alloted_date, start_time):
   else:
     print "Request time already passed"
   return create
-
-class ReturnRequestHandler(SessionHandler):
-  ''' Returns request object specifics '''
-  def get(self):
-    user = self.user_model
-    print "In Return"
-    key = cgi.escape(self.request.get("key"))
-    request = ndb.Key(urlsafe=key).get()
-    date = request.start_time.strftime("%B %d, %Y")
-    time = request.start_time.strftime("%H:%M:%S")
-    min_price = request.min_price
-    max_price = request.max_price
-    food_type = request.food_type
-    interest = request.interest
-    if request:
-      results = {"location": request.location, "date": date, "time_slot": time,
-      'min_price':min_price, 'max_price':max_price, 'food_type':food_type, 'interest': interest}
-      self.response.out.write(json.dumps(results))
-    else:
-      self.response.out.write("None")
 
 class GetLocationHandler(SessionHandler):
   def get(self):
