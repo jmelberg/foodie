@@ -39,12 +39,6 @@ $(document).ready(function(){
   var min_price = $('#edit_min_price').val();
   var max_price = $('#edit_max_price').val();
   var interest = $('#edit_interest').val();
-  if(interest == "food"){
-    $('#edit_interest_food_lesson').prop('checked', true);
-  }
-  else{
-    $('#edit_interest_fun').prop('checked', true);
-  }
 
   // Create slider
   var slider = document.getElementById('edit_slider');

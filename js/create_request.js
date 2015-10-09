@@ -5,7 +5,6 @@ $(document).ready(function(){
   var max_price = document.getElementById('max_price');
   var submit_button = document.getElementById('send_request');
 
-
   $(function () {
     $('#time').focus();
     $('#time').keyup(function () {
@@ -30,6 +29,7 @@ $(document).ready(function(){
         submit_button.style.visibility = "hidden";
       }
     });
+
     // // Food Type
     // $('select').change(function(){
     //   var selected_type = $("#food_type option:selected").text();
@@ -67,10 +67,6 @@ $(document).ready(function(){
       $('#send_request').removeClass('disabled');
     });
 
-    $('#cancel_request').click(function(){
-      $('#requests').closeModal();
-    });
-
     $('#send_request').click(function() {
       if ($('#agreement:checked').length>0){
         var date = $('#date').val();
@@ -96,7 +92,7 @@ $(document).ready(function(){
 
 function checkTime(time, date) {
   var selected_edit_request;
-  if (document.getElementById('edit_modal') != null){
+  if (document.getElementById('edit_request') != null){
     selected_edit_request = document.getElementById('edit_request').value;
   }
   $.ajax({
