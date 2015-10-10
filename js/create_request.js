@@ -30,16 +30,15 @@ $(document).ready(function(){
       }
     });
 
-    // // Food Type
-    // $('select').change(function(){
-    //   var selected_type = $("#food_type option:selected").text();
-    //   if(selected_type != "Choose your option"){
-    //     submit_button.style.visibility = "visible";
-    //   }
-    //   else{
-    //     submit_button.style.visibility = "hidden";
-    //   }
-    // });
+    $('#food_type').keyup(function() {
+      var food_type = $(this).val();
+      if(food_type.length > 0){
+      submit_button.style.visibility = "visible";
+      }
+      else{
+        submit_button.style.visibility = "hidden";
+      }
+    });
 
     noUiSlider.create(slider, {
       start: [20, 80],

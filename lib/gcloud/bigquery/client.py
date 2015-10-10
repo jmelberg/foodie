@@ -12,12 +12,17 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""gcloud bigquery client for interacting with API."""
+"""Client for interacting with the Google BigQuery API."""
 
 
 from gcloud.client import JSONClient
 from gcloud.bigquery.connection import Connection
 from gcloud.bigquery.dataset import Dataset
+from gcloud.bigquery.job import CopyJob
+from gcloud.bigquery.job import ExtractTableToStorageJob
+from gcloud.bigquery.job import LoadTableFromStorageJob
+from gcloud.bigquery.job import RunAsyncQueryJob
+from gcloud.bigquery.job import RunSyncQueryJob
 
 
 class Client(JSONClient):
@@ -96,3 +101,82 @@ class Client(JSONClient):
         :returns: a new ``Dataset`` instance
         """
         return Dataset(name, client=self)
+
+    def load_table_from_storage(self, name, destination, *source_uris):
+        """Construct a job for loading data into a table from CloudStorage.
+
+        :type name: string
+        :param name: Name of the job.
+
+        :type destination: :class:`gcloud.bigquery.table.Table`
+        :param destination: Table into which data is to be loaded.
+
+        :type source_uris: sequence of string
+        :param source_uris: URIs of data files to be loaded.
+
+        :rtype: :class:`gcloud.bigquery.job.LoadTableFromStorageJob`
+        :returns: a new ``LoadTableFromStorageJob`` instance
+        """
+        return LoadTableFromStorageJob(name, destination, source_uris,
+                                       client=self)
+
+    def copy_table(self, name, destination, *sources):
+        """Construct a job for copying one or more tables into another table.
+
+        :type name: string
+        :param name: Name of the job.
+
+        :type destination: :class:`gcloud.bigquery.table.Table`
+        :param destination: Table into which data is to be copied.
+
+        :type sources: sequence of :class:`gcloud.bigquery.table.Table`
+        :param sources: tables to be copied.
+
+        :rtype: :class:`gcloud.bigquery.job.CopyJob`
+        :returns: a new ``CopyJob`` instance
+        """
+        return CopyJob(name, destination, sources, client=self)
+
+    def extract_table_to_storage(self, name, source, *destination_uris):
+        """Construct a job for extracting a table into Cloud Storage files.
+
+        :type name: string
+        :param name: Name of the job.
+
+        :type source: :class:`gcloud.bigquery.table.Table`
+        :param source: table to be extracted.
+
+        :type destination_uris: sequence of string
+        :param destination_uris: URIs of CloudStorage file(s) into which
+                                 table data is to be extracted.
+
+        :rtype: :class:`gcloud.bigquery.job.ExtractTableToStorageJob`
+        :returns: a new ``ExtractTableToStorageJob`` instance
+        """
+        return ExtractTableToStorageJob(name, source, destination_uris,
+                                        client=self)
+
+    def run_async_query(self, name, query):
+        """Construct a job for running a SQL query asynchronously.
+
+        :type name: string
+        :param name: Name of the job.
+
+        :type query: string
+        :param query: SQL query to be executed
+
+        :rtype: :class:`gcloud.bigquery.job.RunAsyncQueryJob`
+        :returns: a new ``RunAsyncQueryJob`` instance
+        """
+        return RunAsyncQueryJob(name, query, client=self)
+
+    def run_sync_query(self, query):
+        """Construct a job for running a SQL query synchronously.
+
+        :type query: string
+        :param query: SQL query to be executed
+
+        :rtype: :class:`gcloud.bigquery.job.RunSyncQueryJob`
+        :returns: a new ``RunSyncQueryJob`` instance
+        """
+        return RunSyncQueryJob(query, client=self)

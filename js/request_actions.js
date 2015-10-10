@@ -11,30 +11,6 @@ $(document).ready(function() {
     $(this).parents().eq(1).hide();
   });
 
-  // Confirm requests modal
-  $("[id^='confirm_modal']").click(function() {
-    var request = $(this).val();
-    current_request = request;
-    $('#respond').openModal();
-  });
-
-  // Accept confirm request
-  $("#accept_button").click(function() {
-    $.ajax({
-      type: "POST",
-      url: "/confirm",
-      data: {'request' : current_request, 'approver': user},
-    });
-    setTimeout(function(){ // Refresh after 1 second
-      window.location.href = '/requests';
-    }, 100);
-  });
-
-  // Close confirm request modal
-  $('#close_modal').click(function(){
-    $('#respond').closeModal();
-  });
-
   //Delete Selected
   $("[id^='delete']").click(function(){
     // Delete function
@@ -46,8 +22,6 @@ $(document).ready(function() {
     });
     top.location.href = '/requests';
   });
-
-
 
   // Set active tab
   if(tab == 'mine'){

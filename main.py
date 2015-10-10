@@ -97,7 +97,7 @@ app = webapp2.WSGIApplication([
                              ('/requests', RequestsHandler),
                              ('/editrequest/(.+)', EditRequestHandler),
                              ('/checktime', CheckTimeConflict),
-                             ('/confirm', ApproveRequestHandler),
+                             ('/confirm/(.+)', ApproveRequestHandler),
                              ('/delete', DeleteRequestHandler),
                              ('/request', CreateRequestHandler),
                              ('/getlocation', GetLocationHandler),

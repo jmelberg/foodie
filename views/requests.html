@@ -24,18 +24,20 @@
         {% if request.sender != user.key %}
         <li class="collection-item avatar">
           <img src ="http://cdn.wegotthiscovered.com/wp-content/uploads/hardwell-united-we-are-album-cover.jpg" class="circle">
-          <span class="title"><b>Requestor:</b><a href="/foodie/{{request.sender_name}}"> {{request.sender_name}}</a></span>
-          <p><b>Location:</b> {{request.location}} <br />
-            <b>For:</b> {{request.start_time.date}} <br />
-            <b> @ </b> {{request.start_time.time}}</p>
+          <span class="title">
+            <b>Requestor:</b><a href="/foodie/{{request.sender_name}}"> {{request.sender_name}}</a></span>
+          <p>
             <b>Food Type:</b> {{request.food_type}}</p>
+            <b>Location:</b> {{request.location}} <br />
+            <b>For:</b> {{request.start_time.date}} <b> @ </b> {{request.start_time.time}}</p>
             <b>Price Range:</b> ${{request.min_price}} to ${{request.max_price}}</p>
-            <b>Interest:</b> {{request.interest}}</p>
+            <b>Interest:</b> {{request.interest}}</p><br />
+
 
           <div class="secondary-content">
             <!-- Uncomment and use JS to hide -->
-            <button id="hide{{forloop.counter}}" style="border:none; background:none;" value={{request.key.urlsafe}}><i class="material-icons">thumb_down</i></button>
-            <button id="confirm_modal{{forloop.counter}}" value={{request.key.urlsafe}} style="background:none; border:none;"><i class="material-icons">thumb_up</i></button>
+            <button id="hide{{forloop.counter}}" style="border:none; background:none;" value={{request.key.urlsafe}}><i class="material-icons" style="color:red;">thumb_down</i></button>
+            <a href="/confirm/{{request.key.urlsafe}}" style="border:none; background:none;"><i class="material-icons">thumb_up</i></a>
           </div>
         </li>
 
@@ -61,14 +63,14 @@
         <li class="collection-item avatar">
           <img src ="http://cdn.wegotthiscovered.com/wp-content/uploads/hardwell-united-we-are-album-cover.jpg" class="circle">
           <span class="title"><b>Requestor:</b><a href="/foodie/{{request.sender_name}}"> {{request.sender_name}}</a></span>
-          <p><b>Location:</b> {{request.location}} <br />
-            <b>For:</b> {{request.start_time.date}} <br />
-            <b> @ </b> {{request.start_time.time}}</p>
+          <p>
+            <b>Type:</b> {{request.food_type}}</p>
+            <b>Location:</b> {{request.location}} <br />
+            <b>For:</b> {{request.start_time.date}} <b> @ </b> {{request.start_time.time}}</p>
             <p> <b>Attendees:</b> 
             {% for person in request.recipient_name %}
             <a href="/foodie/{{person}}">{{person}}</a>  
             {% endfor %}</p>
-            <b>Food Type:</b> {{request.food_type}}</p>
             <b>Interest:</b> {{request.interest}}</p>
           <div class="secondary-content">
             <button id="cancel_request{{forloop.counter}}" style="border:none; background:none;" value={{request.key.urlsafe}}><i class="material-icons">cancel</i></button>
@@ -95,16 +97,16 @@
         <li class="collection-item avatar">
           <img src ="http://cdn.wegotthiscovered.com/wp-content/uploads/hardwell-united-we-are-album-cover.jpg" class="circle">
           <span class="title"><b>Requestor:</b><a href="/foodie/{{request.sender_name}}"> {{request.sender_name}}</a></span>
-          <p><b>Location:</b> {{request.location}} <br />
-            <b>For:</b> {{request.start_time.date}} <br />
-            <b> @ </b> {{request.start_time.time}}</p>
+          <p>
+            <b>Type:</b> {{request.food_type}}</p>
+            <b>Location:</b> {{request.location}} <br />
+            <b>For:</b> {{request.start_time.date}} <b> @ </b> {{request.start_time.time}}</p>
             {% if request.recipient_name|length > 0 %}
               <p> <b>Attendees:</b> 
               {% for person in request.recipient_name %}
               <a href="/foodie/{{person}}">{{person}}</a>  
               {% endfor %}</p>
             {% endif %}
-            <b>Food Type:</b> {{request.food_type}}</p>
             <b>Price Range:</b> ${{request.min_price}} to ${{request.max_price}}</p>
             <b>Interest:</b> {{request.interest}}</p>
           <div class="secondary-content">
@@ -133,21 +135,18 @@
         <li class="collection-item avatar">
           <img src ="http://cdn.wegotthiscovered.com/wp-content/uploads/hardwell-united-we-are-album-cover.jpg" class="circle">
           <span class="title"><b>Requestor:</b><a href="/foodie/{{request.sender_name}}"> {{request.sender_name}}</a></span>
-          <p><b>Location:</b> {{request.location}} <br />
-            <b>For:</b> {{request.start_time.date}} <br />
-            <b> @ </b> {{request.start_time.time}}</p>
+          <p>
+            <b>Type:</b> {{request.food_type}}</p>
+            <b>Location:</b> {{request.location}} <br />
+            <b>For:</b> {{request.start_time.date}} <b> @ </b> {{request.start_time.time}}</p>
             {% if request.recipient_name|length > 0 %}
               <p> <b>Attendees:</b> 
               {% for person in request.recipient_name %}
               <a href="/foodie/{{person}}">{{person}}</a>  
               {% endfor %}</p>
             {% endif %}
-            <b>Food Type:</b> {{request.food_type}}</p>
             <b>Price Range:</b> ${{request.min_price}} to ${{request.max_price}}</p>
             <b>Interest:</b> {{request.interest}}</p>
-          <div class="secondary-content">
-            <button id="delete{{forloop.counter}}" style="border:none; background:none;" value={{request.key.urlsafe}}><i class="material-icons">clear</i></button>
-        </div>
         </li>
         {% empty %}
         <li class="collection-header">
@@ -160,20 +159,5 @@
     </div>
   </div>
 </div>
-</div>
-
-<!-- Respond Modal -->
-<div id="respond" class="modal modal-fixed-footer">
-    <div class="modal-content">
-      <h4>Confirm Request</h4>
-      <p> I agree to meet this person blah blah blah</p>
-      <p> If I fail to appear, I accept the penalty of 50% of the agreed upon price. </p>
-      <p> blah blah blah </b>
-      <br />
-    </div>
-    <div class="modal-footer">
-      <button id="accept_button" class="modal-action modal-close btn-flat" value={{request.key.urlsafe}} >Accept</button>
-      <button type="cancel" id="close_modal" class="modal-action modal-close btn-flat">Cancel</button>
-    </div>
 </div>
 {% endblock %}

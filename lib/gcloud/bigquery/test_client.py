@@ -34,18 +34,6 @@ class TestClient(unittest2.TestCase):
         self.assertTrue(client.connection.credentials is creds)
         self.assertTrue(client.connection.http is http)
 
-    def test_dataset(self):
-        from gcloud.bigquery.dataset import Dataset
-        PROJECT = 'PROJECT'
-        DATASET = 'dataset_name'
-        creds = _Credentials()
-        http = object()
-        client = self._makeOne(project=PROJECT, credentials=creds, http=http)
-        dataset = client.dataset(DATASET)
-        self.assertTrue(isinstance(dataset, Dataset))
-        self.assertEqual(dataset.name, DATASET)
-        self.assertTrue(dataset._client is client)
-
     def test_list_datasets_defaults(self):
         from gcloud.bigquery.dataset import Dataset
         PROJECT = 'PROJECT'
@@ -127,6 +115,103 @@ class TestClient(unittest2.TestCase):
         self.assertEqual(req['path'], '/%s' % PATH)
         self.assertEqual(req['query_params'],
                          {'all': True, 'maxResults': 3, 'pageToken': TOKEN})
+
+    def test_dataset(self):
+        from gcloud.bigquery.dataset import Dataset
+        PROJECT = 'PROJECT'
+        DATASET = 'dataset_name'
+        creds = _Credentials()
+        http = object()
+        client = self._makeOne(project=PROJECT, credentials=creds, http=http)
+        dataset = client.dataset(DATASET)
+        self.assertTrue(isinstance(dataset, Dataset))
+        self.assertEqual(dataset.name, DATASET)
+        self.assertTrue(dataset._client is client)
+
+    def test_load_table_from_storage(self):
+        from gcloud.bigquery.job import LoadTableFromStorageJob
+        PROJECT = 'PROJECT'
+        JOB = 'job_name'
+        DATASET = 'dataset_name'
+        DESTINATION = 'destination_table'
+        SOURCE_URI = 'http://example.com/source.csv'
+        creds = _Credentials()
+        http = object()
+        client = self._makeOne(project=PROJECT, credentials=creds, http=http)
+        dataset = client.dataset(DATASET)
+        destination = dataset.table(DESTINATION)
+        job = client.load_table_from_storage(JOB, destination, SOURCE_URI)
+        self.assertTrue(isinstance(job, LoadTableFromStorageJob))
+        self.assertTrue(job._client is client)
+        self.assertEqual(job.name, JOB)
+        self.assertEqual(list(job.source_uris), [SOURCE_URI])
+        self.assertTrue(job.destination is destination)
+
+    def test_copy_table(self):
+        from gcloud.bigquery.job import CopyJob
+        PROJECT = 'PROJECT'
+        JOB = 'job_name'
+        DATASET = 'dataset_name'
+        SOURCE = 'source_table'
+        DESTINATION = 'destination_table'
+        creds = _Credentials()
+        http = object()
+        client = self._makeOne(project=PROJECT, credentials=creds, http=http)
+        dataset = client.dataset(DATASET)
+        source = dataset.table(SOURCE)
+        destination = dataset.table(DESTINATION)
+        job = client.copy_table(JOB, destination, source)
+        self.assertTrue(isinstance(job, CopyJob))
+        self.assertTrue(job._client is client)
+        self.assertEqual(job.name, JOB)
+        self.assertEqual(list(job.sources), [source])
+        self.assertTrue(job.destination is destination)
+
+    def test_extract_table_to_storage(self):
+        from gcloud.bigquery.job import ExtractTableToStorageJob
+        PROJECT = 'PROJECT'
+        JOB = 'job_name'
+        DATASET = 'dataset_name'
+        SOURCE = 'source_table'
+        DESTINATION = 'gs://bucket_name/object_name'
+        creds = _Credentials()
+        http = object()
+        client = self._makeOne(project=PROJECT, credentials=creds, http=http)
+        dataset = client.dataset(DATASET)
+        source = dataset.table(SOURCE)
+        job = client.extract_table_to_storage(JOB, source, DESTINATION)
+        self.assertTrue(isinstance(job, ExtractTableToStorageJob))
+        self.assertTrue(job._client is client)
+        self.assertEqual(job.name, JOB)
+        self.assertEqual(job.source, source)
+        self.assertEqual(list(job.destination_uris), [DESTINATION])
+
+    def test_run_async_query(self):
+        from gcloud.bigquery.job import RunAsyncQueryJob
+        PROJECT = 'PROJECT'
+        JOB = 'job_name'
+        QUERY = 'select count(*) from persons'
+        creds = _Credentials()
+        http = object()
+        client = self._makeOne(project=PROJECT, credentials=creds, http=http)
+        job = client.run_async_query(JOB, QUERY)
+        self.assertTrue(isinstance(job, RunAsyncQueryJob))
+        self.assertTrue(job._client is client)
+        self.assertEqual(job.name, JOB)
+        self.assertEqual(job.query, QUERY)
+
+    def test_run_sync_query(self):
+        from gcloud.bigquery.job import RunSyncQueryJob
+        PROJECT = 'PROJECT'
+        QUERY = 'select count(*) from persons'
+        creds = _Credentials()
+        http = object()
+        client = self._makeOne(project=PROJECT, credentials=creds, http=http)
+        job = client.run_sync_query(QUERY)
+        self.assertTrue(isinstance(job, RunSyncQueryJob))
+        self.assertTrue(job._client is client)
+        self.assertEqual(job.name, None)
+        self.assertEqual(job.query, QUERY)
 
 
 class _Credentials(object):

@@ -62,7 +62,22 @@ class TestSchemaField(unittest2.TestCase):
         self.assertEqual(field.fields[1].fields, None)
 
 
-class TestTable(unittest2.TestCase):
+class _SchemaBase(object):
+
+    def _verify_field(self, field, r_field):
+        self.assertEqual(field.name, r_field['name'])
+        self.assertEqual(field.field_type, r_field['type'])
+        self.assertEqual(field.mode, r_field['mode'])
+
+    def _verifySchema(self, schema, resource):
+        r_fields = resource['schema']['fields']
+        self.assertEqual(len(schema), len(r_fields))
+
+        for field, r_field in zip(schema, r_fields):
+            self._verify_field(field, r_field)
+
+
+class TestTable(unittest2.TestCase, _SchemaBase):
     PROJECT = 'project'
     DS_NAME = 'dataset-name'
     TABLE_NAME = 'table-name'
@@ -108,18 +123,6 @@ class TestTable(unittest2.TestCase):
             'numBytes': self.NUM_BYTES,
             'type': 'TABLE',
         }
-
-    def _verify_field(self, field, r_field):
-        self.assertEqual(field.name, r_field['name'])
-        self.assertEqual(field.field_type, r_field['type'])
-        self.assertEqual(field.mode, r_field['mode'])
-
-    def _verifySchema(self, schema, resource):
-        r_fields = resource['schema']['fields']
-        self.assertEqual(len(schema), len(r_fields))
-
-        for field, r_field in zip(schema, r_fields):
-            self._verify_field(field, r_field)
 
     def _verifyReadonlyResourceProperties(self, table, resource):
         if 'creationTime' in resource:
@@ -180,6 +183,8 @@ class TestTable(unittest2.TestCase):
         table = self._makeOne(self.TABLE_NAME, dataset)
         self.assertEqual(table.name, self.TABLE_NAME)
         self.assertTrue(table._dataset is dataset)
+        self.assertEqual(table.project, self.PROJECT)
+        self.assertEqual(table.dataset_name, self.DS_NAME)
         self.assertEqual(
             table.path,
             '/projects/%s/datasets/%s/tables/%s' % (
@@ -387,101 +392,6 @@ class TestTable(unittest2.TestCase):
         table = klass.from_api_repr(RESOURCE, dataset)
         self.assertTrue(table._dataset._client is client)
         self._verifyResourceProperties(table, RESOURCE)
-
-    def test__parse_schema_resource_defaults(self):
-        client = _Client(self.PROJECT)
-        dataset = _Dataset(client)
-        table = self._makeOne(self.TABLE_NAME, dataset)
-        RESOURCE = self._makeResource()
-        schema = table._parse_schema_resource(RESOURCE['schema'])
-        self._verifySchema(schema, RESOURCE)
-
-    def test__parse_schema_resource_subfields(self):
-        client = _Client(self.PROJECT)
-        dataset = _Dataset(client)
-        table = self._makeOne(self.TABLE_NAME, dataset)
-        RESOURCE = self._makeResource()
-        RESOURCE['schema']['fields'].append(
-            {'name': 'phone',
-             'type': 'RECORD',
-             'mode': 'REPEATABLE',
-             'fields': [{'name': 'type',
-                         'type': 'STRING',
-                         'mode': 'REQUIRED'},
-                        {'name': 'number',
-                         'type': 'STRING',
-                         'mode': 'REQUIRED'}]})
-        schema = table._parse_schema_resource(RESOURCE['schema'])
-        self._verifySchema(schema, RESOURCE)
-
-    def test__build_schema_resource_defaults(self):
-        from gcloud.bigquery.table import SchemaField
-        client = _Client(self.PROJECT)
-        dataset = _Dataset(client)
-        full_name = SchemaField('full_name', 'STRING', mode='REQUIRED')
-        age = SchemaField('age', 'INTEGER', mode='REQUIRED')
-        table = self._makeOne(self.TABLE_NAME, dataset,
-                              schema=[full_name, age])
-        resource = table._build_schema_resource()
-        self.assertEqual(len(resource), 2)
-        self.assertEqual(resource[0],
-                         {'name': 'full_name',
-                          'type': 'STRING',
-                          'mode': 'REQUIRED'})
-        self.assertEqual(resource[1],
-                         {'name': 'age',
-                          'type': 'INTEGER',
-                          'mode': 'REQUIRED'})
-
-    def test__build_schema_resource_w_description(self):
-        from gcloud.bigquery.table import SchemaField
-        client = _Client(self.PROJECT)
-        dataset = _Dataset(client)
-        DESCRIPTION = 'DESCRIPTION'
-        full_name = SchemaField('full_name', 'STRING', mode='REQUIRED',
-                                description=DESCRIPTION)
-        age = SchemaField('age', 'INTEGER', mode='REQUIRED')
-        table = self._makeOne(self.TABLE_NAME, dataset,
-                              schema=[full_name, age])
-        resource = table._build_schema_resource()
-        self.assertEqual(len(resource), 2)
-        self.assertEqual(resource[0],
-                         {'name': 'full_name',
-                          'type': 'STRING',
-                          'mode': 'REQUIRED',
-                          'description': DESCRIPTION})
-        self.assertEqual(resource[1],
-                         {'name': 'age',
-                          'type': 'INTEGER',
-                          'mode': 'REQUIRED'})
-
-    def test__build_schema_resource_w_subfields(self):
-        from gcloud.bigquery.table import SchemaField
-        client = _Client(self.PROJECT)
-        dataset = _Dataset(client)
-        full_name = SchemaField('full_name', 'STRING', mode='REQUIRED')
-        ph_type = SchemaField('type', 'STRING', 'REQUIRED')
-        ph_num = SchemaField('number', 'STRING', 'REQUIRED')
-        phone = SchemaField('phone', 'RECORD', mode='REPEATABLE',
-                            fields=[ph_type, ph_num])
-        table = self._makeOne(self.TABLE_NAME, dataset,
-                              schema=[full_name, phone])
-        resource = table._build_schema_resource()
-        self.assertEqual(len(resource), 2)
-        self.assertEqual(resource[0],
-                         {'name': 'full_name',
-                          'type': 'STRING',
-                          'mode': 'REQUIRED'})
-        self.assertEqual(resource[1],
-                         {'name': 'phone',
-                          'type': 'RECORD',
-                          'mode': 'REPEATABLE',
-                          'fields': [{'name': 'type',
-                                      'type': 'STRING',
-                                      'mode': 'REQUIRED'},
-                                     {'name': 'number',
-                                      'type': 'STRING',
-                                      'mode': 'REQUIRED'}]})
 
     def test_create_w_bound_client(self):
         from gcloud.bigquery.table import SchemaField
@@ -914,7 +824,6 @@ class TestTable(unittest2.TestCase):
         import datetime
         from gcloud._helpers import UTC
         from gcloud.bigquery.table import SchemaField
-        from gcloud._helpers import _millis_from_datetime
 
         PATH = 'projects/%s/datasets/%s/tables/%s/data' % (
             self.PROJECT, self.DS_NAME, self.TABLE_NAME)
@@ -925,6 +834,11 @@ class TestTable(unittest2.TestCase):
         WHEN_2 = WHEN + datetime.timedelta(seconds=2)
         ROWS = 1234
         TOKEN = 'TOKEN'
+
+        def _bigquery_timestamp_float_repr(ts_float):
+            # Preserve microsecond precision for E+09 timestamps
+            return '%0.15E' % (ts_float,)
+
         DATA = {
             'totalRows': ROWS,
             'pageToken': TOKEN,
@@ -932,17 +846,17 @@ class TestTable(unittest2.TestCase):
                 {'f': [
                     {'v': 'Phred Phlyntstone'},
                     {'v': '32'},
-                    {'v': _millis_from_datetime(WHEN)},
+                    {'v': _bigquery_timestamp_float_repr(WHEN_TS)},
                 ]},
                 {'f': [
                     {'v': 'Bharney Rhubble'},
                     {'v': '33'},
-                    {'v': _millis_from_datetime(WHEN_1)},
+                    {'v': _bigquery_timestamp_float_repr(WHEN_TS + 1)},
                 ]},
                 {'f': [
                     {'v': 'Wylma Phlyntstone'},
                     {'v': '29'},
-                    {'v': _millis_from_datetime(WHEN_2)},
+                    {'v': _bigquery_timestamp_float_repr(WHEN_TS + 2)},
                 ]},
                 {'f': [
                     {'v': 'Bhettye Rhubble'},
@@ -951,6 +865,7 @@ class TestTable(unittest2.TestCase):
                 ]},
             ]
         }
+
         conn = _Connection(DATA)
         client = _Client(project=self.PROJECT, connection=conn)
         dataset = _Dataset(client)
@@ -1323,6 +1238,105 @@ class TestTable(unittest2.TestCase):
         self.assertEqual(req['method'], 'POST')
         self.assertEqual(req['path'], '/%s' % PATH)
         self.assertEqual(req['data'], SENT)
+
+
+class Test_parse_schema_resource(unittest2.TestCase, _SchemaBase):
+
+    def _callFUT(self, resource):
+        from gcloud.bigquery.table import _parse_schema_resource
+        return _parse_schema_resource(resource)
+
+    def _makeResource(self):
+        return {
+            'schema': {'fields': [
+                {'name': 'full_name', 'type': 'STRING', 'mode': 'REQUIRED'},
+                {'name': 'age', 'type': 'INTEGER', 'mode': 'REQUIRED'},
+            ]},
+        }
+
+    def test__parse_schema_resource_defaults(self):
+        RESOURCE = self._makeResource()
+        schema = self._callFUT(RESOURCE['schema'])
+        self._verifySchema(schema, RESOURCE)
+
+    def test__parse_schema_resource_subfields(self):
+        RESOURCE = self._makeResource()
+        RESOURCE['schema']['fields'].append(
+            {'name': 'phone',
+             'type': 'RECORD',
+             'mode': 'REPEATABLE',
+             'fields': [{'name': 'type',
+                         'type': 'STRING',
+                         'mode': 'REQUIRED'},
+                        {'name': 'number',
+                         'type': 'STRING',
+                         'mode': 'REQUIRED'}]})
+        schema = self._callFUT(RESOURCE['schema'])
+        self._verifySchema(schema, RESOURCE)
+
+
+class Test_build_schema_resource(unittest2.TestCase, _SchemaBase):
+
+    def _callFUT(self, resource):
+        from gcloud.bigquery.table import _build_schema_resource
+        return _build_schema_resource(resource)
+
+    def test_defaults(self):
+        from gcloud.bigquery.table import SchemaField
+        full_name = SchemaField('full_name', 'STRING', mode='REQUIRED')
+        age = SchemaField('age', 'INTEGER', mode='REQUIRED')
+        resource = self._callFUT([full_name, age])
+        self.assertEqual(len(resource), 2)
+        self.assertEqual(resource[0],
+                         {'name': 'full_name',
+                          'type': 'STRING',
+                          'mode': 'REQUIRED'})
+        self.assertEqual(resource[1],
+                         {'name': 'age',
+                          'type': 'INTEGER',
+                          'mode': 'REQUIRED'})
+
+    def test_w_description(self):
+        from gcloud.bigquery.table import SchemaField
+        DESCRIPTION = 'DESCRIPTION'
+        full_name = SchemaField('full_name', 'STRING', mode='REQUIRED',
+                                description=DESCRIPTION)
+        age = SchemaField('age', 'INTEGER', mode='REQUIRED')
+        resource = self._callFUT([full_name, age])
+        self.assertEqual(len(resource), 2)
+        self.assertEqual(resource[0],
+                         {'name': 'full_name',
+                          'type': 'STRING',
+                          'mode': 'REQUIRED',
+                          'description': DESCRIPTION})
+        self.assertEqual(resource[1],
+                         {'name': 'age',
+                          'type': 'INTEGER',
+                          'mode': 'REQUIRED'})
+
+    def test_w_subfields(self):
+        from gcloud.bigquery.table import SchemaField
+        full_name = SchemaField('full_name', 'STRING', mode='REQUIRED')
+        ph_type = SchemaField('type', 'STRING', 'REQUIRED')
+        ph_num = SchemaField('number', 'STRING', 'REQUIRED')
+        phone = SchemaField('phone', 'RECORD', mode='REPEATABLE',
+                            fields=[ph_type, ph_num])
+        resource = self._callFUT([full_name, phone])
+        self.assertEqual(len(resource), 2)
+        self.assertEqual(resource[0],
+                         {'name': 'full_name',
+                          'type': 'STRING',
+                          'mode': 'REQUIRED'})
+        self.assertEqual(resource[1],
+                         {'name': 'phone',
+                          'type': 'RECORD',
+                          'mode': 'REPEATABLE',
+                          'fields': [{'name': 'type',
+                                      'type': 'STRING',
+                                      'mode': 'REQUIRED'},
+                                     {'name': 'number',
+                                      'type': 'STRING',
+                                      'mode': 'REQUIRED'}]})
 
 
 class _Client(object):

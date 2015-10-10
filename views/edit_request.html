@@ -4,19 +4,21 @@
 
 <h4>Edit Request</h4>
 <div class="row">
-  <div class="input-field col s5">
+  <div class="input-field col s3">
+    <label>Food Type</label><br />
+    <input id="edit_food_type" name="edit_food_type" type="text" class="validate" value={{request.food_type}}>
+  </div>
+  <div class="input-field col s3">
     <label>Location</label><br/>
-    <input id="edit_location" name="edit_location" type="text" value={{request.location}} class="validate">
+    <input id="edit_location" name="edit_location" type="text" class="validate" value={{request.location}} >
   </div>
 </div>
 <div class="row">
-  <div class="input-field col s5">
+  <div class="input-field col s3">
     <label>Date</label><br/>
     <input type="date" class="datepicker" id="edit_date" name="edit_date" value={{edit_date}} required>
   </div>
-</div>
-<div class="row">
-  <div class="input-field col s5">
+  <div class="input-field col s3">
     <label>Time</label><br />
     <input type="time" class="timepicker" id="edit_time" name="edit_time" value={{edit_time}} required>
     <small id="edit_slot_available" style="display:none;"></small>
@@ -24,25 +26,10 @@
 </div>
 <div class="row">
   <div class="input-field col s5">
-    <input id="edit_food_type_input" name="edit_food_type_input" value={{request.food_type}} style="display:none;"></input>
-    <select id="edit_food_type" name="edit_food_type" value={{request.food_type}}>
-      <option value="">Choose your option</option>
-      <option value="Afghan">Afghan</option>
-      <option value="African">African</option>
-      <option value="American">American</option>
-      <option value="Arabian">Arabian</option>
-      <option value="Argentine">Argentine</option>
-      <option value="Armenian">Armenian</option>
-    </select>
-    <label>Food Type</label>
-  </div>
-</div>
-<div class="row">
-  <div class="input-field col s5">
     <label>Price Range</label> <br /><br />
     <div id="edit_slider">
-      <input type="number" id="edit_min_price" name="edit_min_price" value={{request.min_price}} hidden>
-      <input type="number" id="edit_max_price" name="edit_max_price" value={{request.max_price}} hidden>
+      <input type="number" id="edit_min_price" name="edit_min_price" style="display:none;" value={{request.min_price}} >
+      <input type="number" id="edit_max_price" name="edit_max_price" style="display:none;" value={{request.max_price}} >
     </div>
   </div>
 </div>

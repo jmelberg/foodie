@@ -21,7 +21,7 @@ $(document).ready(function(){
     var location = $('#edit_location').val();
     var m_price = $('#edit_min_price').val();
     var mx_price = $('#edit_max_price').val();
-    var food_type = $('#edit_food_type_input').val();
+    var food_type = $('#edit_food_type').val();
     var interest = $('input[type="radio"]:checked').val();
     var request = $('#edit_request').val();
     $.ajax({

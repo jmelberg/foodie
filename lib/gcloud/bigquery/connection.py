@@ -17,13 +17,8 @@
 from gcloud import connection as base_connection
 
 
-SCOPE = ('https://www.googleapis.com/auth/bigquery',
-         'https://www.googleapis.com/auth/cloud-platform')
-"""The scopes required for authenticating as a Cloud BigQuery consumer."""
-
-
 class Connection(base_connection.JSONConnection):
-    """A connection to Google Cloud Pubsub via the JSON REST API."""
+    """A connection to Google Cloud BigQuery via the JSON REST API."""
 
     API_BASE_URL = 'https://www.googleapis.com'
     """The base of the API call URL."""
@@ -34,6 +29,6 @@ class Connection(base_connection.JSONConnection):
     API_URL_TEMPLATE = '{api_base_url}/bigquery/{api_version}{path}'
     """A template for the URL of a particular API call."""
 
-    def __init__(self, credentials=None, http=None):
-        credentials = self._create_scoped_credentials(credentials, SCOPE)
-        super(Connection, self).__init__(credentials=credentials, http=http)
+    SCOPE = ('https://www.googleapis.com/auth/bigquery',
+             'https://www.googleapis.com/auth/cloud-platform')
+    """The scopes required for authenticating as a Cloud BigQuery consumer."""

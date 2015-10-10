@@ -9,9 +9,11 @@ from google.appengine.api import images
 from webapp2_extras import sessions, auth
 from basehandler import SessionHandler, login_required
 from models import User, Profile, Request, Endorsement
+from yelp_api import query_api
 
 from urllib2 import urlopen
 import json
+
 
 api_key = 'AIzaSyBAO3qaYH4LGQky8vAA07gCVex1LBhUdbE'
 
@@ -131,19 +133,43 @@ class EditRequestHandler(SessionHandler):
 
 class ApproveRequestHandler(SessionHandler):
   ''' Processes current requests and removes from database '''
-  def post(self):
-    approver = User.query(User.username == cgi.escape(self.request.get('approver'))).get()
-    request_key = self.request.get('request')
-    
+  def get(self, request_id):
+    request = ndb.Key(urlsafe=request_id).get()
+    response = query_api(request.food_type, request.location)
+    results = []
+    for business in response:
+      print business
+      location = {}
+      if business['name']:
+        location['name'] = business['name']
+      if business['rating']:
+        location['rating'] = business['rating']
+      if business['url']:
+        location['url'] = business['url']
+      if business['image_url']:
+        location['image_url'] = business['image_url']
+      food_type = []
+      for a in business['categories']:
+        food_type.append(a[0])
+      location['categories'] = food_type
+      location['location'] = business['location']['display_address'][0]
+      results.append(location)
+    print results
+    self.response.out.write(template.render('views/confirm_request.html', {'results':results, 'request': request}))
+  
+  def post(self, request_id):
+    print "made it to post"
+    location = self.request.get('location')
+    print request_id
+    print location
     # Get request
-    request = ndb.Key(urlsafe=request_key).get()
+    request = ndb.Key(urlsafe=request_id).get()
     if request != None:
-        # TODO Remove request
-
         # Check if already appended
-        if approver.username not in request.recipient_name:
-          request.recipient = approver.key
-          request.recipient_name.append(approver.username)
+        if self.user_model.username not in request.recipient_name:
+          request.recipient = self.user_model.key
+          request.recipient_name.append(self.user_model.username)
+          request.description = location
           request.put()
         else:
           print "Already connected"
@@ -235,13 +261,11 @@ class GetLocationHandler(SessionHandler):
     v = urlopen(url).read()
     j = json.loads(v)
     if j:
+      print j['results'][0]['address_components']
       city = j['results'][0]['address_components'][3]['long_name']
       state = j['results'][0]['address_components'][5]['long_name']
-      zip_code = j['results'][0]['address_components'][7]['long_name']
+      zip_code = j['results'][0]['address_components'][6]['long_name']
       current_location= city+ ", "+ state + " " + zip_code
       self.response.out.write(current_location)
     else:
       self.response.out.write("Couldn't find location")
-
-
-

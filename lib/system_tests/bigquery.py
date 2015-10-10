@@ -24,6 +24,7 @@ from gcloud import bigquery
 
 _helpers.PROJECT = TESTS_PROJECT
 CLIENT = bigquery.Client()
+DATASET_NAME = 'system_tests_%012d' % (1000 * time.time(),)
 
 
 class TestBigQuery(unittest2.TestCase):
@@ -36,7 +37,6 @@ class TestBigQuery(unittest2.TestCase):
             doomed.delete()
 
     def test_create_dataset(self):
-        DATASET_NAME = 'system_tests'
         dataset = CLIENT.dataset(DATASET_NAME)
         self.assertFalse(dataset.exists())
         dataset.create()
@@ -45,7 +45,6 @@ class TestBigQuery(unittest2.TestCase):
         self.assertEqual(dataset.name, DATASET_NAME)
 
     def test_reload_dataset(self):
-        DATASET_NAME = 'system_tests'
         dataset = CLIENT.dataset(DATASET_NAME)
         dataset.friendly_name = 'Friendly'
         dataset.description = 'Description'
@@ -57,7 +56,6 @@ class TestBigQuery(unittest2.TestCase):
         self.assertEqual(other.description, 'Description')
 
     def test_patch_dataset(self):
-        DATASET_NAME = 'system_tests'
         dataset = CLIENT.dataset(DATASET_NAME)
         self.assertFalse(dataset.exists())
         dataset.create()
@@ -70,7 +68,6 @@ class TestBigQuery(unittest2.TestCase):
         self.assertEqual(dataset.description, 'Description')
 
     def test_update_dataset(self):
-        DATASET_NAME = 'system_tests'
         dataset = CLIENT.dataset(DATASET_NAME)
         self.assertFalse(dataset.exists())
         dataset.create()
@@ -106,7 +103,6 @@ class TestBigQuery(unittest2.TestCase):
         self.assertEqual(len(created), len(datasets_to_create))
 
     def test_create_table(self):
-        DATASET_NAME = 'system_tests'
         dataset = CLIENT.dataset(DATASET_NAME)
         self.assertFalse(dataset.exists())
         dataset.create()
@@ -124,7 +120,6 @@ class TestBigQuery(unittest2.TestCase):
         self.assertTrue(table._dataset is dataset)
 
     def test_list_tables(self):
-        DATASET_NAME = 'system_tests'
         dataset = CLIENT.dataset(DATASET_NAME)
         self.assertFalse(dataset.exists())
         dataset.create()
@@ -151,7 +146,6 @@ class TestBigQuery(unittest2.TestCase):
         self.assertEqual(len(created), len(tables_to_create))
 
     def test_patch_table(self):
-        DATASET_NAME = 'system_tests'
         dataset = CLIENT.dataset(DATASET_NAME)
         self.assertFalse(dataset.exists())
         dataset.create()
@@ -172,7 +166,6 @@ class TestBigQuery(unittest2.TestCase):
         self.assertEqual(table.description, 'Description')
 
     def test_update_table(self):
-        DATASET_NAME = 'system_tests'
         dataset = CLIENT.dataset(DATASET_NAME)
         self.assertFalse(dataset.exists())
         dataset.create()
@@ -205,7 +198,6 @@ class TestBigQuery(unittest2.TestCase):
             ('Bhettye Rhubble', 27),
         ]
         ROW_IDS = range(len(ROWS))
-        DATASET_NAME = 'system_tests'
         dataset = CLIENT.dataset(DATASET_NAME)
         self.assertFalse(dataset.exists())
         dataset.create()
@@ -234,6 +226,75 @@ class TestBigQuery(unittest2.TestCase):
             if len(rows) == 0:
                 time.sleep(10)
 
+        by_age = operator.itemgetter(1)
+        self.assertEqual(sorted(rows, key=by_age),
+                         sorted(ROWS, key=by_age))
+
+    def test_load_table_from_storage_then_dump_table(self):
+        import csv
+        import tempfile
+        from gcloud.storage import Client as StorageClient
+        TIMESTAMP = 1000 * time.time()
+        BUCKET_NAME = 'bq_load_test_%d' % (TIMESTAMP,)
+        BLOB_NAME = 'person_ages.csv'
+        GS_URL = 'gs://%s/%s' % (BUCKET_NAME, BLOB_NAME)
+        ROWS = [
+            ('Phred Phlyntstone', 32),
+            ('Bharney Rhubble', 33),
+            ('Wylma Phlyntstone', 29),
+            ('Bhettye Rhubble', 27),
+        ]
+        TABLE_NAME = 'test_table'
+
+        s_client = StorageClient()
+
+        # In the **very** rare case the bucket name is reserved, this
+        # fails with a ConnectionError.
+        bucket = s_client.create_bucket(BUCKET_NAME)
+        self.to_delete.append(bucket)
+
+        blob = bucket.blob(BLOB_NAME)
+
+        with tempfile.TemporaryFile(mode='w+') as csv_file:
+            writer = csv.writer(csv_file)
+            writer.writerow(('Full Name', 'Age'))
+            writer.writerows(ROWS)
+            blob.upload_from_file(
+                csv_file, rewind=True, content_type='text/csv')
+
+        self.to_delete.insert(0, blob)
+
+        dataset = CLIENT.dataset(DATASET_NAME)
+        dataset.create()
+        self.to_delete.append(dataset)
+
+        full_name = bigquery.SchemaField('full_name', 'STRING',
+                                         mode='REQUIRED')
+        age = bigquery.SchemaField('age', 'INTEGER', mode='REQUIRED')
+        table = dataset.table(TABLE_NAME, schema=[full_name, age])
+        table.create()
+        self.to_delete.insert(0, table)
+
+        job = CLIENT.load_table_from_storage(
+            'bq_load_storage_test_%d' % (TIMESTAMP,), table, GS_URL)
+        job.create_disposition = 'CREATE_NEVER'
+        job.skip_leading_rows = 1
+        job.source_format = 'CSV'
+        job.write_disposition = 'WRITE_EMPTY'
+
+        job.begin()
+
+        counter = 9  # Allow for 90 seconds of lag.
+
+        while job.state not in ('DONE', 'done') and counter > 0:
+            counter -= 1
+            job.reload()
+            if job.state not in ('DONE', 'done'):
+                time.sleep(10)
+
+        self.assertTrue(job.state in ('DONE', 'done'))
+
+        rows, _, _ = table.fetch_data()
         by_age = operator.itemgetter(1)
         self.assertEqual(sorted(rows, key=by_age),
                          sorted(ROWS, key=by_age))

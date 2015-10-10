@@ -21,6 +21,7 @@ import six
 from gcloud._helpers import _datetime_from_microseconds
 from gcloud._helpers import _millis_from_datetime
 from gcloud.exceptions import NotFound
+from gcloud.bigquery._helpers import _rows_from_json
 
 
 _MARKER = object()
@@ -76,6 +77,24 @@ class Table(object):
         self._dataset = dataset
         self._properties = {}
         self.schema = schema
+
+    @property
+    def project(self):
+        """Project bound to the table.
+
+        :rtype: string
+        :returns: the project (derived from the dataset).
+        """
+        return self._dataset.project
+
+    @property
+    def dataset_name(self):
+        """Name of dataset containing the table.
+
+        :rtype: string
+        :returns: the ID (derived from the dataset).
+        """
+        return self._dataset.name
 
     @property
     def path(self):
@@ -343,30 +362,6 @@ class Table(object):
             client = self._dataset._client
         return client
 
-    def _parse_schema_resource(self, info):
-        """Parse a resource fragment into a schema field.
-
-        :type info: mapping
-        :param info: should contain a "fields" key to be parsed
-
-        :rtype: list of :class:`SchemaField`, or ``NoneType``
-        :returns: a list of parsed fields, or ``None`` if no "fields" key is
-                  present in ``info``.
-        """
-        if 'fields' not in info:
-            return None
-
-        schema = []
-        for r_field in info['fields']:
-            name = r_field['name']
-            field_type = r_field['type']
-            mode = r_field['mode']
-            description = r_field.get('description')
-            sub_fields = self._parse_schema_resource(r_field)
-            schema.append(
-                SchemaField(name, field_type, mode, description, sub_fields))
-        return schema
-
     def _set_properties(self, api_response):
         """Update properties from resource in body of ``api_response``
 
@@ -376,7 +371,7 @@ class Table(object):
         self._properties.clear()
         cleaned = api_response.copy()
         schema = cleaned.pop('schema', {'fields': ()})
-        self.schema = self._parse_schema_resource(schema)
+        self.schema = _parse_schema_resource(schema)
         if 'creationTime' in cleaned:
             cleaned['creationTime'] = float(cleaned['creationTime'])
         if 'lastModifiedTime' in cleaned:
@@ -385,22 +380,6 @@ class Table(object):
             cleaned['expirationTime'] = float(cleaned['expirationTime'])
         self._properties.update(cleaned)
 
-    def _build_schema_resource(self, fields=None):
-        """Generate a resource fragment for table's schema."""
-        if fields is None:
-            fields = self._schema
-        infos = []
-        for field in fields:
-            info = {'name': field.name,
-                    'type': field.field_type,
-                    'mode': field.mode}
-            if field.description is not None:
-                info['description'] = field.description
-            if field.fields is not None:
-                info['fields'] = self._build_schema_resource(field.fields)
-            infos.append(info)
-        return infos
-
     def _build_resource(self):
         """Generate a resource for ``create`` or ``update``."""
         resource = {
@@ -408,7 +387,7 @@ class Table(object):
                 'projectId': self._dataset.project,
                 'datasetId': self._dataset.name,
                 'tableId': self.name},
-            'schema': {'fields': self._build_schema_resource()},
+            'schema': {'fields': _build_schema_resource(self._schema)},
         }
         if self.description is not None:
             resource['description'] = self.description
@@ -433,7 +412,7 @@ class Table(object):
         """API call:  create the dataset via a PUT request
 
         See:
-        https://cloud.google.com/bigquery/reference/rest/v2/tables/insert
+        https://cloud.google.com/bigquery/docs/reference/v2/tables/insert
 
         :type client: :class:`gcloud.bigquery.client.Client` or ``NoneType``
         :param client: the client to use.  If not passed, falls back to the
@@ -549,7 +528,7 @@ class Table(object):
                 partial['schema'] = None
             else:
                 partial['schema'] = {
-                    'fields': self._build_schema_resource(schema)}
+                    'fields': _build_schema_resource(schema)}
 
         api_response = client.connection.api_request(
             method='PATCH', path=self.path, data=partial)
@@ -574,7 +553,7 @@ class Table(object):
         """API call:  delete the table via a DELETE request
 
         See:
-        https://cloud.google.com/bigquery/reference/rest/v2/tables/delete
+        https://cloud.google.com/bigquery/docs/reference/v2/tables/delete
 
         :type client: :class:`gcloud.bigquery.client.Client` or ``NoneType``
         :param client: the client to use.  If not passed, falls back to the
@@ -587,7 +566,7 @@ class Table(object):
         """API call:  fetch the table data via a GET request
 
         See:
-        https://cloud.google.com/bigquery/reference/rest/v2/tabledata/list
+        https://cloud.google.com/bigquery/docs/reference/v2/tabledata/list
 
         .. note::
 
@@ -629,18 +608,7 @@ class Table(object):
                                                  query_params=params)
         total_rows = response.get('totalRows')
         page_token = response.get('pageToken')
-        rows_data = []
-
-        for row in response.get('rows', ()):
-            row_data = []
-            for field, cell in zip(self._schema, row['f']):
-                converter = _CELLDATA_FROM_JSON[field.field_type]
-                if field.mode == 'REPEATED':
-                    row_data.append([converter(item, field)
-                                     for item in cell['v']])
-                else:
-                    row_data.append(converter(cell['v'], field))
-            rows_data.append(tuple(row_data))
+        rows_data = _rows_from_json(response.get('rows', ()), self._schema)
 
         return rows_data, total_rows, page_token
 
@@ -653,7 +621,7 @@ class Table(object):
         """API call:  insert table data via a POST request
 
         See:
-        https://cloud.google.com/bigquery/reference/rest/v2/tabledata/insertAll
+        https://cloud.google.com/bigquery/docs/reference/v2/tabledata/insertAll
 
         :type rows: list of tuples
         :param rows: row data to be inserted
@@ -715,53 +683,48 @@ class Table(object):
         return errors
 
 
-def _not_null(value, field):
-    return value is not None or field.mode != 'NULLABLE'
+def _parse_schema_resource(info):
+    """Parse a resource fragment into a schema field.
+
+    :type info: mapping
+    :param info: should contain a "fields" key to be parsed
+
+    :rtype: list of :class:`SchemaField`, or ``NoneType``
+    :returns: a list of parsed fields, or ``None`` if no "fields" key is
+                present in ``info``.
+    """
+    if 'fields' not in info:
+        return None
+
+    schema = []
+    for r_field in info['fields']:
+        name = r_field['name']
+        field_type = r_field['type']
+        mode = r_field['mode']
+        description = r_field.get('description')
+        sub_fields = _parse_schema_resource(r_field)
+        schema.append(
+            SchemaField(name, field_type, mode, description, sub_fields))
+    return schema
 
 
-def _int_from_json(value, field):
-    if _not_null(value, field):
-        return int(value)
+def _build_schema_resource(fields):
+    """Generate a resource fragment for a schema.
 
+    :type fields: sequence of :class:`SchemaField`
+    :param fields: schema to be dumped
 
-def _float_from_json(value, field):
-    if _not_null(value, field):
-        return float(value)
-
-
-def _bool_from_json(value, field):
-    if _not_null(value, field):
-        return value.lower() in ['t', 'true', '1']
-
-
-def _datetime_from_json(value, field):
-    if _not_null(value, field):
-        # Field value will be in milliseconds.
-        return _datetime_from_microseconds(1000.0 * float(value))
-
-
-def _record_from_json(value, field):
-    if _not_null(value, field):
-        record = {}
-        for subfield, cell in zip(field.fields, value['f']):
-            converter = _CELLDATA_FROM_JSON[subfield.field_type]
-            if field.mode == 'REPEATED':
-                value = [converter(item, field) for item in cell['v']]
-            else:
-                value = converter(cell['v'], field)
-            record[subfield.name] = value
-        return record
-
-
-def _string_from_json(value, _):
-    return value
-
-
-_CELLDATA_FROM_JSON = {
-    'INTEGER': _int_from_json,
-    'FLOAT': _float_from_json,
-    'BOOLEAN': _bool_from_json,
-    'TIMESTAMP': _datetime_from_json,
-    'RECORD': _record_from_json,
-    'STRING': _string_from_json,
-}
+    :rtype: mapping
+    :returns; a mapping describing the schema of the supplied fields.
+    """
+    infos = []
+    for field in fields:
+        info = {'name': field.name,
+                'type': field.field_type,
+                'mode': field.mode}
+        if field.description is not None:
+            info['description'] = field.description
+        if field.fields is not None:
+            info['fields'] = _build_schema_resource(field.fields)
+        infos.append(info)
+    return infos
