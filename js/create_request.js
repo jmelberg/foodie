@@ -74,7 +74,8 @@ $(document).ready(function(){
         var m_price = $('#min_price').val();
         var mx_price = $('#max_price').val();
         var food_type = $('#food_type').val();
-        var interest = $('input[type="radio"]:checked').val();      
+        var interest = $('input[type="radio"]:checked').val();
+      
         $.ajax({
           type: "POST",
           url: '/request',

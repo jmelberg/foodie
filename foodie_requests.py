@@ -14,7 +14,6 @@ from yelp_api import query_api
 from urllib2 import urlopen
 import json
 
-
 api_key = 'AIzaSyBAO3qaYH4LGQky8vAA07gCVex1LBhUdbE'
 
 class RequestsHandler(SessionHandler):
@@ -28,7 +27,7 @@ class RequestsHandler(SessionHandler):
     
     my_requests = []
     empty_requests = []
-    accepted_requests = []
+    pending_requests = []
     for request in available_requests:
       if request.sender == user.key:
         # User generated requests
@@ -36,16 +35,13 @@ class RequestsHandler(SessionHandler):
       else:
         # Accepted requests
         if request.recipient == user.key:
-          accepted_requests.append(request)
-        elif request.recipient is None:
+          pending_requests.append(request)
           empty_requests.append(request)
-          print "Added to empty"
       
     self.response.out.write(template.render('views/requests.html',
                             {'user': user, 'my_requests': my_requests,
-                            'empty_requests': empty_requests, 'accepted_requests':accepted_requests,
+                            'empty_requests': empty_requests, 'pending_requests':pending_requests,
                             'dead_requests':dead_requests}))
-
 
 class CreateRequestHandler(SessionHandler):
   ''' Create request '''
@@ -131,7 +127,7 @@ class EditRequestHandler(SessionHandler):
 
     self.redirect('/')
 
-class ApproveRequestHandler(SessionHandler):
+class JoinRequestHandler(SessionHandler):
   ''' Processes current requests and removes from database '''
   def get(self, request_id):
     request = ndb.Key(urlsafe=request_id).get()
@@ -158,7 +154,6 @@ class ApproveRequestHandler(SessionHandler):
     self.response.out.write(template.render('views/confirm_request.html', {'results':results, 'request': request}))
   
   def post(self, request_id):
-    print "made it to post"
     location = self.request.get('location')
     print request_id
     print location

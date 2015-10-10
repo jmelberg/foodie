@@ -9,9 +9,10 @@
   <div class="col s12">
     <ul class="tabs">
       <li class="tab col s3" id="all_nav"><a class="active" href="#all">All</a></li>
+      <li class="tab col s3"><a href="#pending">Pending</a></li>
       <li class="tab col s3"><a href="#accepted">Accepted</a></li>
       <li class="tab col s3" id="mine_nav"><a href="#mine">My Requests</a></li>
-      <li class="tab col s3"><a href="#dead">Dead Requests</a></li>
+      <!-- <li class="tab col s3"><a href="#dead">Dead Requests</a></li> -->
     </ul>
   </div>
 
@@ -27,7 +28,7 @@
           <span class="title">
             <b>Requestor:</b><a href="/foodie/{{request.sender_name}}"> {{request.sender_name}}</a></span>
           <p>
-            <b>Food Type:</b> {{request.food_type}}</p>
+            <b>Type:</b> {{request.food_type}}</p>
             <b>Location:</b> {{request.location}} <br />
             <b>For:</b> {{request.start_time.date}} <b> @ </b> {{request.start_time.time}}</p>
             <b>Price Range:</b> ${{request.min_price}} to ${{request.max_price}}</p>
@@ -46,6 +47,41 @@
         <li class="collection-header">
          <center>
           <h5>No Requests Yet</h5>
+         </center>
+        </li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+
+  <!-- Requests that have at least one attending -->
+  <div id="pending" class="col s12">
+   <div class="row">
+      <ul class="collection with-header col s12 m12">
+        <br />
+        {% for request in pending_requests %}
+        {% if request.sender != user.key %}
+        <li class="collection-item avatar">
+          <img src ="http://cdn.wegotthiscovered.com/wp-content/uploads/hardwell-united-we-are-album-cover.jpg" class="circle">
+          <span class="title"><b>Requestor:</b><a href="/foodie/{{request.sender_name}}"> {{request.sender_name}}</a></span>
+          <p>
+            <b>Type:</b> {{request.food_type}}</p>
+            <b>Location:</b> {{request.location}} <br />
+            <b>For:</b> {{request.start_time.date}} <b> @ </b> {{request.start_time.time}}</p>
+            <p> <b>Attendees:</b> 
+            {% for person in request.recipient_name %}
+            <a href="/foodie/{{person}}">{{person}}</a>  
+            {% endfor %}</p>
+            <b>Interest:</b> {{request.interest}}</p>
+          <div class="secondary-content">
+            <button id="cancel_request{{forloop.counter}}" style="border:none; background:none;" value={{request.key.urlsafe}}><i class="material-icons">cancel</i></button>
+          </div>
+        </li>
+        {% endif %}
+        {% empty %}
+        <li class="collection-header">
+         <center>
+          <h5>No Pending Requests</h5>
          </center>
         </li>
         {% endfor %}
@@ -127,7 +163,7 @@
   </div>
 
   <!-- Dead Requests -->
-  <div id="dead" class="col s12">
+  <!-- <div id="dead" class="col s12">
     <div class="row">
       <ul class="collection with-header col s12 m12">
         <br />
@@ -157,7 +193,7 @@
         {% endfor %}
       </ul>
     </div>
-  </div>
+  </div> -->
 </div>
 </div>
 {% endblock %}
