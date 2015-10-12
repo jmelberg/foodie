@@ -31,27 +31,46 @@
 
       </div>
      </div>
+
      <div id="comments" class="col s12">
-      <div class="row">
+      <div class="row">        
         <h5>Comments!</h5>
+        {% if owner.username != user.username %}
+          <!-- Modal Trigger -->
+          <a class="modal-trigger waves-effect waves-light btn" href="#comment">Add Comment</a>
+
+          <!-- Modal Structure -->
+          <form action="/comment" method="POST">
+          <div id="comment" class="modal modal-fixed-footer">
+            <div class="modal-content">
+              <input id="recipient" name="recipient" value={{owner.username}} style="display:none;">
+              <h4>Leave an Endorsement for {{owner.username}}</h4>
+              <textarea id="comment" name="comment" class="materialize-textarea"></textarea>
+            </div>
+            <div class="modal-footer">
+              <button type="submit" class="modal-action modal-close waves-effect waves-green btn-flat ">Send</button>
+              <button type="cancel" class="modal-action modal-close waves-effect waves-red btn-flat">Cancel</button>
+            </div>
+          </div>
+        {% endif %}
         {% for endorsement in endorsements %}
-        <div class="row">
-          <div class="col s4">
-            <img class="responsive-img" src="http://www.independent.ie/incoming/article29208414.ece/ALTERNATES/h342/Lionel%20Messi%20-%20PA.jpg">
+          <div class="row">
+            <div class="col s4">
+              <img class="responsive-img" src="http://www.independent.ie/incoming/article29208414.ece/ALTERNATES/h342/Lionel%20Messi%20-%20PA.jpg">
+            </div>
+            <div class="col s8">
+              <p>{{endorsement.text}}</p>
+              <i class="tiny material-icons">verified user</i>
+              <p class="right">{{endorsement.sender}}</p>
+            </div>
           </div>
-          <div class="col s8">
-            <p>{{endorsement.text}}</p>
-            <i class="tiny material-icons">verified user</i>
-            <p class="right">{{endorsement.sender.username}}</p>
+          {% empty %}
+          <div class="row">
+            <div class="col s12">
+              <p> No endorsements...</p>
+            </div>
           </div>
-        </div>
-        {% empty %}
-        <div class="row">
-          <div class="col s12">
-            <p> No endorsements...</p>
-          </div>
-        </div>
-        {% endfor %}
+          {% endfor %}
        </div>
      </div>
 

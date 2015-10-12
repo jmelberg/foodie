@@ -68,9 +68,31 @@ class ProfileHandler(SessionHandler):
         if request.sender != viewer.key:
           new_requests.append(request)
 
+    # Get comments
+    comments = Endorsement.query(Endorsement.recipient == profile_owner.key).fetch()
+
     self.response.out.write(template.render('views/profile.html',
-                             {'owner':profile_owner, 'profile':profile, 'endorsements':endorsements, 'user': viewer}))
+                             {'owner':profile_owner, 'profile':profile, 'comments': comments,
+                             'endorsements':endorsements, 'user': viewer}))
     
+class CommentHandler(SessionHandler):
+  ''' Leave a comment for another user '''
+  def post(self):
+    user = self.user_model
+    comment = cgi.escape(self.request.get('comment'))
+    # Person getting endorsement
+    recipient = cgi.escape(self.request.get('recipient'))
+    recipient_user = User.query(User.username == recipient).get()
+    recipient_key = recipient_user.key
+    if comment != None:
+      endorsement = Endorsement()
+      endorsement.recipient = recipient_key
+      endorsement.sender = user.first_name + " " + user.last_name
+      endorsement.text = comment
+      endorsement.put()
+    self.redirect('/foodie/{}'.format(recipient))
+
+
 class LogoutHandler(SessionHandler):
   """ Terminate current session """
   @login_required
@@ -96,6 +118,7 @@ app = webapp2.WSGIApplication([
                              ('/editrequest/(.+)', EditRequestHandler),
                              ('/checktime', CheckTimeConflict),
                              ('/confirm/(.+)', JoinRequestHandler),
+                             ('/comment', CommentHandler),
                              ('/delete', DeleteRequestHandler),
                              ('/request', CreateRequestHandler),
                              ('/getlocation', GetLocationHandler),

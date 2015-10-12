@@ -45,7 +45,7 @@ class Request(ndb.Model):
 
 class Endorsement(ndb.Model):
   recipient = ndb.KeyProperty(kind="User")
-  sender = ndb.KeyProperty(kind="User")
+  sender = ndb.StringProperty()
   text = ndb.StringProperty()
 
 ''' Handles transations between users '''
