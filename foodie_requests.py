@@ -22,21 +22,35 @@ class RequestsHandler(SessionHandler):
   def get(self):
     user = self.user_model
     current_date = datetime.datetime.now() - datetime.timedelta(hours=7)
-    available_requests = Request.query(Request.start_time > current_date).order(Request.start_time)
-    dead_requests = Request.query(Request.start_time <= current_date, Request.sender == user.key).order(Request.start_time)
+    # Return only those two hours or more in future
+    alloted_time = current_date - datetime.timedelta(hours=2)
+    available_requests = Request.query(Request.start_time >= alloted_time).order(Request.start_time)
+    dead_requests = Request.query(Request.start_time <= alloted_time, Request.sender == user.key).order(Request.start_time)
     
     my_requests = []
     empty_requests = []
     pending_requests = []
+    approved_request = []
+
     for request in available_requests:
       if request.sender == user.key:
         # User generated requests
         my_requests.append(request)
+        # Accepted Personal Request
+        if request.recipient != None:
+          approved_request.append(request)
       else:
         # Accepted requests
         if request.recipient == user.key:
           pending_requests.append(request)
+        else:
           empty_requests.append(request)
+
+    user.available_requests = len(empty_requests)
+    user.my_requests = len(my_requests)
+    user.pending_requests = len(pending_requests)
+    user.approved_request = len(approved_request)
+    user.put()
       
     self.response.out.write(template.render('views/requests.html',
                             {'user': user, 'my_requests': my_requests,

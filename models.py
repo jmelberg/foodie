@@ -13,9 +13,12 @@ class User(auth_models.User):
   expiration_date = ndb.DateProperty()
   # Foodie/Expert
   account_type = ndb.StringProperty()
+  
   # Notifications
-  new_requests = ndb.IntegerProperty(default = 0)
+  my_requests = ndb.IntegerProperty(default = 0)
   accepted_requests = ndb.IntegerProperty(default = 0)
+  pending_requests = ndb.IntegerProperty(default = 0)
+  approved_requests = ndb.IntegerProperty(default = 0)
 
 
 ''' Profile entity hold information specific to user on profile '''

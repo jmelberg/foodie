@@ -39,11 +39,15 @@
       <ul class="right hide-on-med-and-down">
        <li><a href="/"><i class="material-icons left">home</i>Home</a></li>
         <li>
-         <a href="/requests?q=mine"><i class="material-icons left">person_pin</i>My Requests</a>
+         <a href="/requests?q=mine"><i class="material-icons left">person_pin</i>My Requests
+          {% if user.approved_requests > 0 %}
+          <small class="black-text">{{user.approved_requests}} new</small>
+          {% endif %}
+        </a>
         </li>
         <li><a href="/requests?q=all"><i class="material-icons left">chat</i>Provide a Service
-          {% if user.new_requests > 0 %}
-          <small class="black-text">{{user.new_requests}} new</small>
+          {% if user.available_requests > 0 %}
+          <small class="black-text">{{user.available_requests}} new</small>
           {% endif %}
           </a></li>
         <li><a href="/request"><i class="material-icons left">today</i>Request a Service</a></li>
@@ -54,14 +58,14 @@
         <li>
           <a href="/requests?q=mine"><i class="material-icons left">person_pin</i>
           My Requests
-          {% if user.accepted_requests > 0 %} 
-          <span class="new badge">{{user.accepted_requests}}</span>
+          {% if user.pending_requests > 0 %} 
+          <span class="new badge">{{user.pending_requests}}</span>
           {% endif %}
           </a>
         </li>
         <li><a href="/requests?q=all"><i class="material-icons left">chat</i>Provide a Service
-          {% if user.new_requests > 0 %}
-          <span class="new badge">{{user.new_requests}}</span>
+          {% if user.available_requests > 0 %}
+          <span class="new badge">{{user.available_requests}}</span>
           {% endif %}
           </a>
         </li>

@@ -60,8 +60,6 @@ class ProfileHandler(SessionHandler):
       for request in available_requests:
         if request.start_time > current_date and request.recipient != None:
           accepted_requests.append(request)
-
-      viewer.accepted_requests = len(accepted_requests)
     
     # Get new requests
     active_requests = Request.query(Request.start_time > current_date, Request.recipient == None).fetch()
@@ -69,8 +67,6 @@ class ProfileHandler(SessionHandler):
       for request in active_requests:
         if request.sender != viewer.key:
           new_requests.append(request)
-      viewer.new_requests = len(new_requests)
-    viewer.put()
 
     self.response.out.write(template.render('views/profile.html',
                              {'owner':profile_owner, 'profile':profile, 'endorsements':endorsements, 'user': viewer}))
