@@ -86,7 +86,7 @@
     </div>
   </div>
 
-  <!-- Requests that have at least one attending -->
+  <!-- Requests that have at least one attending (pending)-->
   <div id="pending" class="col s12">
    <div class="row">
       <ul class="collection with-header col s12 m12">
@@ -106,7 +106,8 @@
             {% endfor %}</p>
             <b>Interest:</b> {{request.interest}}</p>
           <div class="secondary-content">
-            <button id="cancel_request{{forloop.counter}}" style="border:none; background:none;" value={{request.key.urlsafe}}><i class="material-icons">cancel</i></button>
+              <button id="pending_hide{{forloop.counter}}" style="border:none; background:none;" value={{request.key.urlsafe}}><i class="material-icons" style="color:red;">thumb_down</i></button>
+              <button id="pending_confirm_modal{{forloop.counter}}" style="border:none; background:none;"value={{request.key.urlsafe}}><i class="material-icons">thumb_up</i></button>
           </div>
         </li>
         {% endif %}
@@ -226,6 +227,21 @@
       </ul>
     </div>
   </div> -->
+
+  <!-- Respond Modal -->
+<div id="respond" class="modal modal-fixed-footer">
+  <div class="modal-content">
+    <h4>Confirm Food Expert</h4>
+    <p> I agree to meet this person blah blah blah</p>
+    <p> If I fail to appear, I accept the penalty of 50% of the agreed upon price. </p>
+    <p> blah blah blah </b>
+    <br />
+  </div>
+  <div class="modal-footer">
+    <button id="accept_button" class="modal-action modal-close btn-flat">Accept</button>
+    <button type="cancel" id="close_modal" class="modal-action modal-close btn-flat">Cancel</button>
+  </div>
+</div>
 
   <div class="fixed-action-btn" style="bottom: 45px; right: 100px;">
     <a class="btn-floating btn-large red">
