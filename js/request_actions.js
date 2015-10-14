@@ -58,7 +58,7 @@ $("[id^='pending_hide']").click(function(){
     $('ul.tabs').tabs('select_tab', 'mine');
   }
   else if(tab=='all'){
-    $('ul.tabs'.tabs('select_tab', 'all'));
+    $('ul.tabs').tabs('select_tab', 'all');
   }
   else if(tab == 'location' || tab == 'price'){
     updateRequests(tab);
