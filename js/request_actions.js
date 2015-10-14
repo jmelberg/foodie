@@ -1,42 +1,30 @@
 // Call functions from other js
 $.getScript("../js/create_request.js");
 
-var tab = getUrlParameter('q')
-$('ul.tabs').tabs()
+$(document).ready(function() {
+  var user = document.getElementById('user').getAttribute('value');
+    var tab = getUrlParameter('q');
+  $('ul.tabs').tabs();
+  // pending Confirm application modal
+  $("[id^='pending_confirm_modal']").click(function() {
+    $('#respond').openModal();
+  });
 
-var current_request;
-
-// Hide requests
-$("[id^='hide']").click(function(){
-    $(this).parents().eq(1).hide();
-});
+  var current_request;
+  if(tab == 'mine'){
+  alert("here");
+  $('ul.tabs').tabs('select_tab', 'mine');
+  }
+  // Hide requests
+  $("[id^='hide']").click(function(){
+      $(this).parents().eq(1).hide();
+  });
 
 // Hide pending requests
 $("[id^='pending_hide']").click(function(){
     $(this).parents().eq(1).hide();
 });
 
-// Set active tab
-if(tab == 'mine'){
-  $('ul.tabs').tabs('select_tab', 'mine');
-}
-else if(tab=='all'){
-  $('ul.tabs').tabs('select_tab', 'all');
-}
-else if(tab == 'location' || tab == 'price'){
-  updateRequests(tab);
-  
-}
-else {
-  $('ul.tabs').tabs('select_tab', 'all');
-}
-
-$(document).ready(function() {
-  var user = document.getElementById('user').getAttribute('value');
-  // pending Confirm application modal
-  $("[id^='pending_confirm_modal']").click(function() {
-    $('#respond').openModal();
-  });
 
  /* Accept confirm application
   $("#accept_button").click(function() {
@@ -65,7 +53,37 @@ $(document).ready(function() {
     });
     top.location.href = '/requests';
   });
+
+  if(tab == 'mine'){
+    $('ul.tabs').tabs('select_tab', 'mine');
+  }
+  else if(tab=='all'){
+    $('ul.tabs'.tabs('select_tab', 'all'));
+  }
+  else if(tab == 'location' || tab == 'price'){
+    updateRequests(tab);
+    
+  }
+  else {
+    $('ul.tabs').tabs('select_tab', 'all');
+  }
+
+  function updateRequests(requests){
+  $.ajax({
+    url:"/requests",
+    cache:false,
+    data: {'requests': tab},
+    async: true,
+    success: function(response){
+      $('body').html(response);
+      $('#mine').hide();
+      $('#pending').hide();
+      $('#accepted').hide();
+    }
+  });
+}
 });
+
 
 // Returns string from appended url
 function getUrlParameter(sParam)
@@ -80,20 +98,4 @@ function getUrlParameter(sParam)
             return sParameterName[1];
         }
     }
-}
-
-function updateRequests(requests){
-  $.ajax({
-    url:"/requests",
-    cache:false,
-    data: {'requests': tab},
-    success: function(frag){
-      $('body').html(frag);
-      $('#mine').hide();
-      $('#pending').hide();
-      $('#accepted').hide();
-      $('ul.tabs').tabs('select_tab', 'all');
-
-    }
-  });
 }

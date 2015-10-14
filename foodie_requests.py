@@ -126,6 +126,7 @@ class EditRequestHandler(SessionHandler):
     max_price = request.max_price
     food_type = request.food_type
     interest = request.interest
+
     self.response.out.write(template.render('views/edit_request.html', {'request': request, 'edit_time': edit_time, 'edit_date': edit_date}))
 
   def post(self, request_id):
