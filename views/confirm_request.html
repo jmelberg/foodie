@@ -2,6 +2,7 @@
 {% block content %}
 <script type="text/javascript" src="../js/confirm_request.js"></script>
 <input id="confirm_request" name="confirm_request" style="display:none;" value={{request.key.urlsafe}}>
+<div class="col s12">
 <ul class="collection">
   <li class="collection-header"><h4>Please Choose A Location</h4></li>
 
@@ -25,6 +26,7 @@
   {% endfor %}
     
 </ul>
+</div>
 <!-- Respond Modal -->
 <div id="respond" class="modal modal-fixed-footer">
   <div class="modal-content">

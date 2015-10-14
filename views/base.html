@@ -28,16 +28,29 @@
     $(".button-collapse").sideNav();
    });
 </script>
+<style>
+  #search {
+    width:125px;
+  }
+</style>
 </head>
 
 <body>
-  <div id="navigation-foodie">
+  <div id="content">
   <nav>
     <div class="nav-wrapper">
       <a href="/" class="brand-logo">Foodie</a>
       <a href="#" data-activates="mobile-demo" class="button-collapse"><i class="material-icons">menu</i></a>
       <ul class="right hide-on-med-and-down">
-       <li><a href="/"><i class="material-icons left">home</i>Home</a></li>
+       <li><a href="/"><i class="material-icons left">home</i></a></li>
+       <li>
+        <form action="/query" method="GET">
+        <div class="input-field">
+          <input id="search" name="search" type="search" required>
+          <label for="search"><i class="material-icons">search</i></label>
+        </div>
+      </form>
+       </li>
         <li>
          <a href="/requests?q=mine"><i class="material-icons left">person_pin</i>My Requests
           {% if user.approved_requests > 0 %}
@@ -70,7 +83,7 @@
           </a>
         </li>
         <li><a href="/request"><i class="material-icons left">today</i>Request a Service</a></li>
-        <li><a href="/logout">Log Out</a></li>
+        <li><a href="/logout" name="logout" style="size:10px;"></a></li>
       </ul>
     </div>
   </nav>

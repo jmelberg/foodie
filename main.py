@@ -92,6 +92,13 @@ class CommentHandler(SessionHandler):
       endorsement.put()
     self.redirect('/foodie/{}'.format(recipient))
 
+class SearchHandler(SessionHandler):
+  def get(self):
+    user = self.user_model
+    search = self.request.get('search')
+    print search
+    #self.response.out.write(template.render('views/search.html', {'user':user}))
+
 
 class LogoutHandler(SessionHandler):
   """ Terminate current session """
@@ -120,6 +127,7 @@ app = webapp2.WSGIApplication([
                              ('/confirm/(.+)', JoinRequestHandler),
                              ('/comment', CommentHandler),
                              ('/delete', DeleteRequestHandler),
+                             ('/query', SearchHandler),
                              ('/request', CreateRequestHandler),
                              ('/getlocation', GetLocationHandler),
                              ('/logout', LogoutHandler),

@@ -2,14 +2,32 @@
 $.getScript("../js/create_request.js");
 
 var tab = getUrlParameter('q')
+$('ul.tabs').tabs()
+
 var current_request;
+
+// Hide requests
+$("[id^='hide']").click(function(){
+    $(this).parents().eq(1).hide();
+});
+
+// Set active tab
+if(tab == 'mine'){
+  $('ul.tabs').tabs('select_tab', 'mine');
+}
+else if(tab=='all'){
+  $('ul.tabs'.tabs('select_tab', 'all'));
+}
+else if(tab == 'location' || tab == 'price'){
+  updateRequests(tab);
+  
+}
+else {
+  $('ul.tabs').tabs('select_tab', 'all');
+}
+
 $(document).ready(function() {
   var user = document.getElementById('user').getAttribute('value');
-
-  // Hide requests
-  $("[id^='hide']").click(function(){
-    $(this).parents().eq(1).hide();
-  });
 
   //Delete Selected
   $("[id^='delete']").click(function(){
@@ -22,14 +40,6 @@ $(document).ready(function() {
     });
     top.location.href = '/requests';
   });
-
-  // Set active tab
-  if(tab == 'mine'){
-    $('ul.tabs').tabs('select_tab', 'mine');
-  }
-  else {
-    $('ul.tabs').tabs('select_tab', 'all');
-  }                
 });
 
 // Returns string from appended url
@@ -45,4 +55,20 @@ function getUrlParameter(sParam)
             return sParameterName[1];
         }
     }
+}
+
+function updateRequests(requests){
+  $.ajax({
+    url:"/requests",
+    cache:false,
+    data: {'requests': tab},
+    success: function(frag){
+      $('body').html(frag);
+      $('#mine').hide();
+      $('#pending').hide();
+      $('#accepted').hide();
+      $('ul.tabs').tabs('select_tab', 'all');
+
+    }
+  });
 }

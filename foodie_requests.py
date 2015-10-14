@@ -21,12 +21,16 @@ class RequestsHandler(SessionHandler):
   @login_required
   def get(self):
     user = self.user_model
+    request_sort = cgi.escape(self.request.get('requests'))
     current_date = datetime.datetime.now() - datetime.timedelta(hours=7)
     # Return only those two hours or more in future
-    alloted_time = current_date - datetime.timedelta(hours=2)
+    alloted_time = current_date + datetime.timedelta(hours=2)
+    sorted_requests = []
     available_requests = Request.query(Request.start_time >= alloted_time).order(Request.start_time)
+    if request_sort == 'price' or request_sort == 'location':
+      sorted_requests = sortRequests(request_sort, alloted_time)
+
     dead_requests = Request.query(Request.start_time <= alloted_time, Request.sender == user.key).order(Request.start_time)
-    
     my_requests = []
     empty_requests = []
     pending_requests = []
@@ -45,17 +49,34 @@ class RequestsHandler(SessionHandler):
           pending_requests.append(request)
         else:
           empty_requests.append(request)
+          print "Time: ", request.start_time, ' Alloted: ', alloted_time
 
     user.available_requests = len(empty_requests)
     user.my_requests = len(my_requests)
     user.pending_requests = len(pending_requests)
     user.approved_request = len(approved_request)
     user.put()
-      
+
     self.response.out.write(template.render('views/requests.html',
-                            {'user': user, 'my_requests': my_requests,
+                            {'user': user, 'sorted_requests': sorted_requests, 'my_requests': my_requests,
                             'empty_requests': empty_requests, 'pending_requests':pending_requests,
-                            'dead_requests':dead_requests}))
+                            'dead_requests':dead_requests, }))
+
+def sortRequests(request_sort, alloted_time):
+  ''' Sort requests by location or price '''
+  if request_sort == "location":
+    print "Sort by location"
+    sorted_requests = Request.query().order(Request.location).fetch()
+    for request in sorted_requests:
+      if request.start_time < alloted_time:
+        sorted_requests.remove(request)
+  if request_sort == "price":
+    print "Sort by price"
+    sorted_requests = Request.query().order(Request.min_price).fetch()
+    for request in sorted_requests:
+      if request.start_time < alloted_time:
+        sorted_requests.remove(request)
+  return sorted_requests
 
 class CreateRequestHandler(SessionHandler):
   ''' Create request '''
