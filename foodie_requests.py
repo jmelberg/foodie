@@ -9,47 +9,74 @@ from google.appengine.api import images
 from webapp2_extras import sessions, auth
 from basehandler import SessionHandler, login_required
 from models import User, Profile, Request, Endorsement
+from yelp_api import query_api
 
 from urllib2 import urlopen
 import json
 
 api_key = 'AIzaSyBAO3qaYH4LGQky8vAA07gCVex1LBhUdbE'
 
-
 class RequestsHandler(SessionHandler):
   ''' Views current requests from other users '''
   @login_required
   def get(self):
     user = self.user_model
+    request_sort = cgi.escape(self.request.get('requests'))
     current_date = datetime.datetime.now() - datetime.timedelta(hours=7)
-    available_requests = Request.query(Request.start_time > current_date).order(Request.start_time)
-    dead_requests = Request.query(Request.start_time <= current_date, Request.sender == user.key).order(Request.start_time)
-    
+    # Return only those two hours or more in future
+    alloted_time = current_date + datetime.timedelta(hours=2)
+    sorted_requests = []
+    available_requests = Request.query(Request.start_time >= alloted_time).order(Request.start_time)
+    if request_sort == 'price' or request_sort == 'location':
+      sorted_requests = sortRequests(request_sort, alloted_time)
+
+    dead_requests = Request.query(Request.start_time <= alloted_time, Request.sender == user.key).order(Request.start_time)
     my_requests = []
     empty_requests = []
-    accepted_requests = []
+    pending_requests = []
+    approved_request = []
+
     for request in available_requests:
       if request.sender == user.key:
         # User generated requests
         my_requests.append(request)
+        # Accepted Personal Request
+        if request.recipient != None:
+          approved_request.append(request)
       else:
         # Accepted requests
         if request.recipient == user.key:
-          accepted_requests.append(request)
-        elif request.recipient is None:
+          pending_requests.append(request)
+        else:
           empty_requests.append(request)
-          print "Added to empty"
-        
-  
-    self.response.out.write(template.render('views/requests.html',
-                            {'user': user, 'my_requests': my_requests,
-                            'empty_requests': empty_requests, 'accepted_requests':accepted_requests,
-                            'dead_requests':dead_requests}))
+          print "Time: ", request.start_time, ' Alloted: ', alloted_time
 
+    # Get sorted requests
+    l_requests = Request.query().order(Request.location).fetch()
+    location_requests = [r for r in l_requests if r.start_time >= alloted_time ]
+
+    p_requests = Request.query().order(Request.min_price).fetch()
+    price_requests = [r for r in p_requests if r.start_time >= alloted_time]
+
+
+    user.available_requests = len(empty_requests)
+    user.my_requests = len(my_requests)
+    user.pending_requests = len(pending_requests)
+    user.approved_request = len(approved_request)
+    user.put()
+
+    self.response.out.write(template.render('views/requests.html',
+                            {'user': user, 'sorted_requests': sorted_requests, 'my_requests': my_requests,
+                            'empty_requests': empty_requests, 'pending_requests':pending_requests,
+                            'dead_requests':dead_requests, 'price_requests': price_requests, 'location_requests': location_requests}))
 
 class CreateRequestHandler(SessionHandler):
-  ''' Create request from html modal '''
+  ''' Create request '''
   @login_required
+  def get(self):
+    user = self.user_model
+    self.response.out.write(template.render('views/create_request.html', {'user': user}))
+
   def post(self):
     user = self.user_model
     location = cgi.escape(self.request.get("location"))
@@ -77,64 +104,96 @@ class CreateRequestHandler(SessionHandler):
     request.interest = interest
     request.put()
     print "Added request to queue"
-    #Increment open requests
-    user.open_requests += 1
-    user.put()
 
     self.redirect('/')
 
 class EditRequestHandler(SessionHandler):
   ''' Edit current request '''
-  def post(self):
+  def get(self, request_id):
     user = self.user_model
-    location = cgi.escape(self.request.get("edit_location"))
-    date = cgi.escape(self.request.get("edit_date"))
-    time = cgi.escape(self.request.get("edit_time"))
-    min_price = int(cgi.escape(self.request.get("edit_min_price")))
-    max_price = int(cgi.escape(self.request.get("edit_max_price")))
-    food_type = cgi.escape(self.request.get("edit_food_type"))
-    interest = cgi.escape(self.request.get("edit_interest"))
+    request = ndb.Key(urlsafe=request_id).get()
+    edit_date = request.start_time.strftime("%Y-%m-%d")
+    edit_time = request.start_time.strftime("%H:%M:%S")
+    min_price = request.min_price
+    max_price = request.max_price
+    food_type = request.food_type
+    interest = request.interest
 
-    previous_request_key = cgi.escape(self.request.get("request"))
-    previous_request = ndb.Key(urlsafe=previous_request_key).get()
+    self.response.out.write(template.render('views/edit_request.html', {'request': request, 'edit_time': edit_time, 'edit_date': edit_date}))
 
+  def post(self, request_id):
+    print "in post"
+    user = self.user_model
+    location = cgi.escape(self.request.get("location"))
+    date = cgi.escape(self.request.get("date"))
+    time = cgi.escape(self.request.get("time"))
+    min_price = int(cgi.escape(self.request.get("min_price")))
+    max_price = int(cgi.escape(self.request.get("max_price")))
+    food_type = cgi.escape(self.request.get("food_type"))
+    interest = cgi.escape(self.request.get("interest"))
+
+    previous_request = ndb.Key(urlsafe=request_id).get()
+    print location, "date: ", date, "time: ", time, min_price, max_price, food_type, interest
     # Convert date and time to datetime
-    format_date = str(date+ " " +time+":00.0")
+    if previous_request.start_time.strftime("%H:%M:%S") == time:
+      format_date = str(date+ " " + time+ ".0")
+    else:
+      format_date = str(date+ " " +time+":00.0")
     start_time = datetime.datetime.strptime(format_date, "%Y-%m-%d %H:%M:%S.%f")
     
     if previous_request:
-      previous_request.sender = user.key
-      previous_request.sender = user.key
-      previous_request.sender_name = user.username
       previous_request.location = location
       previous_request.start_time = start_time
-      previous_request.creation_time = datetime.datetime.now() - datetime.timedelta(hours=7) #PST
-      request.put()
+      previous_request.food_type = food_type
+      previous_request.interest = interest
+      previous_request.min_price = min_price
+      previous_request.max_price = max_price
+      previous_request.put()
       print "Added request to queue"
     else:
       print "Could not add"
 
     self.redirect('/')
 
-class ApproveRequestHandler(SessionHandler):
+class JoinRequestHandler(SessionHandler):
   ''' Processes current requests and removes from database '''
-  def post(self):
-    approver = User.query(User.username == cgi.escape(self.request.get('approver'))).get()
-    request_key = self.request.get('request')
-    
+  def get(self, request_id):
+    request = ndb.Key(urlsafe=request_id).get()
+    response = query_api(request.food_type, request.location)
+    results = []
+    for business in response:
+      print business
+      location = {}
+      if business['name']:
+        location['name'] = business['name']
+      if business['rating']:
+        location['rating'] = business['rating']
+      if business['url']:
+        location['url'] = business['url']
+      if business['image_url']:
+        location['image_url'] = business['image_url']
+      food_type = []
+      for a in business['categories']:
+        food_type.append(a[0])
+      location['categories'] = food_type
+      location['location'] = business['location']['display_address'][0]
+      results.append(location)
+    print results
+    self.response.out.write(template.render('views/confirm_request.html', {'results':results, 'request': request}))
+  
+  def post(self, request_id):
+    location = self.request.get('location')
+    print request_id
+    print location
     # Get request
-    request = ndb.Key(urlsafe=request_key).get()
+    request = ndb.Key(urlsafe=request_id).get()
     if request != None:
-        # TODO Remove request
-
         # Check if already appended
-        if approver.username not in request.recipient_name:
-          request.recipient = approver.key
-          request.recipient_name.append(approver.username)
+        if self.user_model.username not in request.recipient_name:
+          request.recipient = self.user_model.key
+          request.recipient_name.append(self.user_model.username)
+          request.description = location
           request.put()
-          # Decrement open requests
-          approver.open_requests -= 1
-          approver.put()
         else:
           print "Already connected"
     self.redirect('/requests')
@@ -199,41 +258,23 @@ def timeCheck(ongoing_request, alloted_date, start_time):
   print "MAX: ", alloted_date
   current_time = datetime.datetime.now() - datetime.timedelta(hours=7)
   min_time = start_time - datetime.timedelta(hours=2) #Min limit
-  if len(ongoing_request) > 0:
-    for request in ongoing_request:
-      print "Reserved: " , request.start_time
-      if request.start_time > alloted_date or request.start_time < min_time:
-        if start_time > current_time:
+  # Check to see if time has already passed
+  if start_time > current_time:
+    # Check for current requests
+    if len(ongoing_request) > 0:
+      for request in ongoing_request:
+        print "Reserved: " , request.start_time
+        # Create if time is outside of alloted period
+        if request.start_time > alloted_date or request.start_time < min_time:
           create = True
         else:
-          print "Request time already passed"
+          create = False
           break
-      else:
-        create = False
-        break
-  else:
-    create = True
-  return create
-
-class ReturnRequestHandler(SessionHandler):
-  ''' Returns request object specifics '''
-  def get(self):
-    user = self.user_model
-    print "In Return"
-    key = cgi.escape(self.request.get("key"))
-    request = ndb.Key(urlsafe=key).get()
-    date = request.start_time.strftime("%B %d, %Y")
-    time = request.start_time.strftime("%H:%M:%S")
-    min_price = request.min_price
-    max_price = request.max_price
-    food_type = request.food_type
-    interest = request.interest
-    if request:
-      results = {"location": request.location, "date": date, "time_slot": time,
-      'min_price':min_price, 'max_price':max_price, 'food_type':food_type, 'interest': interest}
-      self.response.out.write(json.dumps(results), )
     else:
-      self.response.out.write("None")
+      create = True
+  else:
+    print "Request time already passed"
+  return create
 
 class GetLocationHandler(SessionHandler):
   def get(self):
@@ -243,13 +284,11 @@ class GetLocationHandler(SessionHandler):
     v = urlopen(url).read()
     j = json.loads(v)
     if j:
+      print j['results'][0]['address_components']
       city = j['results'][0]['address_components'][3]['long_name']
       state = j['results'][0]['address_components'][5]['long_name']
-      zip_code = j['results'][0]['address_components'][7]['long_name']
+      zip_code = j['results'][0]['address_components'][6]['long_name']
       current_location= city+ ", "+ state + " " + zip_code
       self.response.out.write(current_location)
     else:
       self.response.out.write("Couldn't find location")
-
-
-

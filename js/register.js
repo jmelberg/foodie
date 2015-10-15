@@ -29,7 +29,26 @@ $(document).ready(function(){
         $('#signup_button').show();
       }
     });
+    $('#email').keyup(function() {
+      var email = $('#email').val();
+      if(email){
+        if(validateEmail(email)){
+          $('#signup_button').show();
+          $('#email_available').hide();
+        }
+        else{
+          $('#signup_button').hide();
+          $('#email_available').text('Email not available');
+          $('#email_available').show();
+        }
+      }
+      else{
+        $('#signup_button').hide();
+      }
+    });
   });
+
+
   function checkUsername(username) {
     $.ajax({
       url: "/checkusername",
@@ -47,4 +66,10 @@ $(document).ready(function(){
         }
     }});
   }
+
+  function validateEmail(email) {
+    var re = /^([\w-]+(?:\.[\w-]+)*)@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$/i;
+    return re.test(email);
+  }
 });
+

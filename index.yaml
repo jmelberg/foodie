@@ -12,9 +12,19 @@ indexes:
 
 - kind: Request
   properties:
+  - name: recipient
+  - name: start_time
+
+- kind: Request
+  properties:
   - name: sender
   - name: creation_time
     direction: desc
+
+- kind: Request
+  properties:
+  - name: sender
+  - name: recipient
 
 - kind: Request
   properties:

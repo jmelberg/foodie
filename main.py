@@ -48,10 +48,58 @@ class ProfileHandler(SessionHandler):
       new_profile.about_me = "I love to eat food"
       new_profile.put()
     endorsements = Endorsement.query(Endorsement.recipient == profile_owner.key).fetch()
+    
+    #Get Requests for Notifications
+    accepted_requests = []
+    new_requests = []
+
+    current_date = datetime.datetime.now() - datetime.timedelta(hours=7)
+    
+    available_requests = Request.query(Request.sender == profile_owner.key).fetch()
+    if available_requests:
+      for request in available_requests:
+        if request.start_time > current_date and request.recipient != None:
+          accepted_requests.append(request)
+    
+    # Get new requests
+    active_requests = Request.query(Request.start_time > current_date, Request.recipient == None).fetch()
+    if active_requests:
+      for request in active_requests:
+        if request.sender != viewer.key:
+          new_requests.append(request)
+
+    # Get comments
+    comments = Endorsement.query(Endorsement.recipient == profile_owner.key).fetch()
 
     self.response.out.write(template.render('views/profile.html',
-                             {'owner':profile_owner, 'profile':profile, 'endorsements':endorsements, 'user': viewer}))
+                             {'owner':profile_owner, 'profile':profile, 'comments': comments,
+                             'endorsements':endorsements, 'user': viewer}))
     
+class CommentHandler(SessionHandler):
+  ''' Leave a comment for another user '''
+  def post(self):
+    user = self.user_model
+    comment = cgi.escape(self.request.get('comment'))
+    # Person getting endorsement
+    recipient = cgi.escape(self.request.get('recipient'))
+    recipient_user = User.query(User.username == recipient).get()
+    recipient_key = recipient_user.key
+    if comment != None:
+      endorsement = Endorsement()
+      endorsement.recipient = recipient_key
+      endorsement.sender = user.first_name + " " + user.last_name
+      endorsement.text = comment
+      endorsement.put()
+    self.redirect('/foodie/{}'.format(recipient))
+
+class SearchHandler(SessionHandler):
+  def get(self):
+    user = self.user_model
+    search = self.request.get('search')
+    print search
+    #self.response.out.write(template.render('views/search.html', {'user':user}))
+
+
 class LogoutHandler(SessionHandler):
   """ Terminate current session """
   @login_required
@@ -74,12 +122,13 @@ app = webapp2.WSGIApplication([
                              ('/checkusername', UsernameHandler),
                              ('/foodie/(\w+)', ProfileHandler),
                              ('/requests', RequestsHandler),
-                             ('/editrequest', EditRequestHandler),
+                             ('/editrequest/(.+)', EditRequestHandler),
                              ('/checktime', CheckTimeConflict),
-                             ('/confirm', ApproveRequestHandler),
+                             ('/confirm/(.+)', JoinRequestHandler),
+                             ('/comment', CommentHandler),
                              ('/delete', DeleteRequestHandler),
+                             ('/query', SearchHandler),
                              ('/request', CreateRequestHandler),
                              ('/getlocation', GetLocationHandler),
-                             ('/returnrequest', ReturnRequestHandler),
                              ('/logout', LogoutHandler),
                               ], debug=False, config=config)

@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% block content %}
+<script type="text/javascript" src="../js/edit_request.js"></script>
+
+<h4>Edit Request</h4>
+<div class="row">
+  <div class="input-field col s3">
+    <label>Food Type</label><br />
+    <input id="edit_food_type" name="edit_food_type" type="text" class="validate" value={{request.food_type}}>
+  </div>
+  <div class="input-field col s3">
+    <label>Location</label><br/>
+    <input id="edit_location" name="edit_location" type="text" class="validate" value="{{request.location}}" >
+  </div>
+</div>
+<div class="row">
+  <div class="input-field col s3">
+    <label>Date</label><br/>
+    <input type="date" class="datepicker" id="edit_date" name="edit_date" value={{edit_date}} required>
+  </div>
+  <div class="input-field col s3">
+    <label>Time</label><br />
+    <input type="time" class="timepicker" id="edit_time" name="edit_time" value={{edit_time}} required>
+    <small id="edit_slot_available" style="display:none;"></small>
+  </div>
+</div>
+<div class="row">
+  <div class="input-field col s5">
+    <label>Price Range</label> <br /><br />
+    <div id="edit_slider">
+      <input type="number" id="edit_min_price" name="edit_min_price" style="display:none;" value={{request.min_price}} >
+      <input type="number" id="edit_max_price" name="edit_max_price" style="display:none;" value={{request.max_price}} >
+    </div>
+  </div>
+</div>
+
+<div class="row">
+  <div class="input-field col s5">
+    <label>Interest</label><br />    
+    <p>
+      <input name="edit_interest_food_lesson" type="radio" id="edit_interest_food_lesson" value="food lesson">
+      <label for="edit_interest_food_lesson">Food Lesson</label>
+    </p>
+    <p>
+      <input name="edit_interest_fun" type="radio" id="edit_interest_fun" value="fun">
+      <label for="edit_interest_fun">Fun</label>
+    </p>        
+  </div>
+</div>  
+<!-- TODO: Field checking -->
+<a id="submit_edit" class="btn-flat">Edit Request</a>
+<a href="/requests" class="btn-flat">Cancel </a>
+<input name="edit_request" id="edit_request" value={{request.key.urlsafe}} hidden>
+<input name="edit_interest" id="edit_interest" value={{request.interest}} hidden>
+
+{% endblock %}

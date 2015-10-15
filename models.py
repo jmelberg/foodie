@@ -13,14 +13,19 @@ class User(auth_models.User):
   expiration_date = ndb.DateProperty()
   # Foodie/Expert
   account_type = ndb.StringProperty()
+  
   # Notifications
-  open_requests = ndb.IntegerProperty(default=0)
+  my_requests = ndb.IntegerProperty(default = 0)
+  accepted_requests = ndb.IntegerProperty(default = 0)
+  pending_requests = ndb.IntegerProperty(default = 0)
+  approved_requests = ndb.IntegerProperty(default = 0)
 
 
 ''' Profile entity hold information specific to user on profile '''
 class Profile(ndb.Model):
   owner = ndb.KeyProperty(kind= "User")
   about_me = ndb.StringProperty()
+
 
 ''' Handles the basic connection between foodie and expert'''
 class Request(ndb.Model):
@@ -40,7 +45,7 @@ class Request(ndb.Model):
 
 class Endorsement(ndb.Model):
   recipient = ndb.KeyProperty(kind="User")
-  sender = ndb.KeyProperty(kind="User")
+  sender = ndb.StringProperty()
   text = ndb.StringProperty()
 
 ''' Handles transations between users '''
