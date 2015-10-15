@@ -9,9 +9,9 @@
   <div class="col s12">
     <ul class="tabs">
       <li class="tab col s3" id="all_nav"><a class="active" href="#all">All</a></li>
-      <li class="tab col s3"><a href="#pending">Pending</a></li>
-      <li class="tab col s3"><a href="#accepted">Accepted</a></li>
-      <li class="tab col s3" id="mine_nav"><a href="#mine">My Requests</a></li>
+      <li class="tab col s3"><a href="#pending" onclick="changeElements()">Pending</a></li>
+      <li class="tab col s3"><a href="#accepted" onclick="changeElements()">Accepted</a></li>
+      <li class="tab col s3" id="mine_nav"><a href="#mine" onclick="changeElements()">My Requests</a></li>
       <!-- <li class="tab col s3"><a href="#dead">Dead Requests</a></li> -->
     </ul>
   </div>
@@ -21,8 +21,7 @@
     <div class="row">
       <ul class="collection with-header col s12 m12">
         <br />
-        {% if sorted_requests %}
-          {% for request in sorted_requests %}
+        {% for request in empty_requests %}
           {% if request.sender != user.key %}
           <li class="collection-item avatar">
             <img src ="http://cdn.wegotthiscovered.com/wp-content/uploads/hardwell-united-we-are-album-cover.jpg" class="circle">
@@ -51,37 +50,6 @@
            </center>
           </li>
           {% endfor %}
-        {% else %}
-          {% for request in empty_requests %}
-          {% if request.sender != user.key %}
-          <li class="collection-item avatar">
-            <img src ="http://cdn.wegotthiscovered.com/wp-content/uploads/hardwell-united-we-are-album-cover.jpg" class="circle">
-            <span class="title">
-              <b>Requestor:</b><a href="/foodie/{{request.sender_name}}"> {{request.sender_name}}</a></span>
-            <p>
-              <b>Type:</b> {{request.food_type}}</p>
-              <b>Location:</b> {{request.location}} <br />
-              <b>For:</b> {{request.start_time.date}} <b> @ </b> {{request.start_time.time}}</p>
-              <b>Price Range:</b> ${{request.min_price}} to ${{request.max_price}}</p>
-              <b>Interest:</b> {{request.interest}}</p><br />
-
-
-            <div class="secondary-content">
-              <!-- Uncomment and use JS to hide -->
-              <button id="hide{{forloop.counter}}" style="border:none; background:none;" value={{request.key.urlsafe}}><i class="material-icons" style="color:red;">thumb_down</i></button>
-              <a href="/confirm/{{request.key.urlsafe}}" style="border:none; background:none;"><i class="material-icons">thumb_up</i></a>
-            </div>
-          </li>
-
-          {% endif %}
-          {% empty %}
-          <li class="collection-header">
-           <center>
-            <h5>No Requests Yet</h5>
-           </center>
-          </li>
-          {% endfor %}
-        {% endif %}
       </ul>
     </div>
   </div>
@@ -228,6 +196,82 @@
     </div>
   </div> -->
 
+  <!-- Location Requests -->
+  <div id="location_requests" class="col s12" style="display:none;">
+    <div class="row">
+      <ul class="collection with-header col s12 m12">
+        <br />
+        {% for request in location_requests %}
+          {% if request.sender != user.key %}
+          <li class="collection-item avatar">
+            <img src ="http://cdn.wegotthiscovered.com/wp-content/uploads/hardwell-united-we-are-album-cover.jpg" class="circle">
+            <span class="title">
+              <b>Requestor:</b><a href="/foodie/{{request.sender_name}}"> {{request.sender_name}}</a></span>
+            <p>
+              <b>Type:</b> {{request.food_type}}</p>
+              <b>Location:</b> {{request.location}} <br />
+              <b>For:</b> {{request.start_time.date}} <b> @ </b> {{request.start_time.time}}</p>
+              <b>Price Range:</b> ${{request.min_price}} to ${{request.max_price}}</p>
+              <b>Interest:</b> {{request.interest}}</p><br />
+
+
+            <div class="secondary-content">
+              <!-- Uncomment and use JS to hide -->
+              <button id="hide{{forloop.counter}}" style="border:none; background:none;" value={{request.key.urlsafe}}><i class="material-icons" style="color:red;">thumb_down</i></button>
+              <a href="/confirm/{{request.key.urlsafe}}" style="border:none; background:none;"><i class="material-icons">thumb_up</i></a>
+            </div>
+          </li>
+
+          {% endif %}
+          {% empty %}
+          <li class="collection-header">
+           <center>
+            <h5>No Requests Yet</h5>
+           </center>
+          </li>
+          {% endfor %}
+      </ul>
+    </div>
+  </div>
+
+  <!-- Price Requests -->
+  <div id="price_requests" class="col s12" style="display:none;">
+    <div class="row">
+      <ul class="collection with-header col s12 m12">
+        <br />
+        {% for request in price_requests %}
+          {% if request.sender != user.key %}
+          <li class="collection-item avatar">
+            <img src ="http://cdn.wegotthiscovered.com/wp-content/uploads/hardwell-united-we-are-album-cover.jpg" class="circle">
+            <span class="title">
+              <b>Requestor:</b><a href="/foodie/{{request.sender_name}}"> {{request.sender_name}}</a></span>
+            <p>
+              <b>Type:</b> {{request.food_type}}</p>
+              <b>Location:</b> {{request.location}} <br />
+              <b>For:</b> {{request.start_time.date}} <b> @ </b> {{request.start_time.time}}</p>
+              <b>Price Range:</b> ${{request.min_price}} to ${{request.max_price}}</p>
+              <b>Interest:</b> {{request.interest}}</p><br />
+
+
+            <div class="secondary-content">
+              <!-- Uncomment and use JS to hide -->
+              <button id="hide{{forloop.counter}}" style="border:none; background:none;" value={{request.key.urlsafe}}><i class="material-icons" style="color:red;">thumb_down</i></button>
+              <a href="/confirm/{{request.key.urlsafe}}" style="border:none; background:none;"><i class="material-icons">thumb_up</i></a>
+            </div>
+          </li>
+
+          {% endif %}
+          {% empty %}
+          <li class="collection-header">
+           <center>
+            <h5>No Requests Yet</h5>
+           </center>
+          </li>
+          {% endfor %}
+      </ul>
+    </div>
+  </div>
+
   <!-- Respond Modal -->
 <div id="respond" class="modal modal-fixed-footer">
   <div class="modal-content">
@@ -248,10 +292,10 @@
       <i class="large material-icons">search</i>
     </a>
     <ul>
-      <li><a class="btn-floating red" href='/requests?q=all'><i class="material-icons">autorenew</i></a></li>
+      <li><a class="btn-floating red" href='/requests?q=all' ><i class="material-icons">autorenew</i></a></li>
       <li><a class="btn-floating yellow darken-1" href='/requests?q=price'><i class="material-icons">attach_money</i></a></li>
       <li><a class="btn-floating green" href='/requests?q=time'><i class="material-icons">access_time</i></a></li>
-      <li><a class="btn-floating blue" href='/requests?q=location'><i class="material-icons">place</i></a></li>
+      <li><a class="btn-floating blue" href='/requests?q=location' ><i class="material-icons">place</i></a></li>
     </ul>
   </div>
 </div>
