@@ -8,7 +8,7 @@ from google.appengine.api import users
 from google.appengine.api import images
 from webapp2_extras import sessions, auth
 from basehandler import SessionHandler, login_required
-from models import User, Profile, Request, Endorsement
+from models import User, Profile, Request, Endorsement, Location, Bidder
 from yelp_api import query_api
 
 from urllib2 import urlopen
@@ -31,25 +31,27 @@ class RequestsHandler(SessionHandler):
       sorted_requests = sortRequests(request_sort, alloted_time)
 
     dead_requests = Request.query(Request.start_time <= alloted_time, Request.sender == user.key).order(Request.start_time)
-    my_requests = []
     empty_requests = []
     pending_requests = []
     approved_request = []
 
+    # Get User requests
+    my_requests = Request.query(Request.start_time >= alloted_time - datetime.timedelta(hours=2),
+                                Request.sender == user.key).order(Request.start_time).fetch()
+
     for request in available_requests:
       if request.sender == user.key:
-        # User generated requests
-        my_requests.append(request)
         # Accepted Personal Request
         if request.recipient != None:
           approved_request.append(request)
       else:
         # Accepted requests
-        if request.recipient == user.key:
-          pending_requests.append(request)
-        else:
-          empty_requests.append(request)
-          print "Time: ", request.start_time, ' Alloted: ', alloted_time
+        for bid in request.bidders:
+          bid = bid.get()
+          if bid.name == user.username:
+            pending_requests.append(request)
+        empty_requests.append(request)
+        print "Time: ", request.start_time, ' Alloted: ', alloted_time
 
     # Get sorted requests
     l_requests = Request.query().order(Request.location).fetch()
@@ -103,6 +105,7 @@ class CreateRequestHandler(SessionHandler):
     request.food_type = food_type
     request.interest = interest
     request.put()
+
     print "Added request to queue"
 
     self.redirect('/')
@@ -159,6 +162,8 @@ class JoinRequestHandler(SessionHandler):
   ''' Processes current requests and removes from database '''
   def get(self, request_id):
     request = ndb.Key(urlsafe=request_id).get()
+    if request.location is None or request.food_type is None:
+      self.redirect('/requests')
     response = query_api(request.food_type, request.location)
     results = []
     for business in response:
@@ -176,26 +181,53 @@ class JoinRequestHandler(SessionHandler):
       for a in business['categories']:
         food_type.append(a[0])
       location['categories'] = food_type
-      location['location'] = business['location']['display_address'][0]
+      if business['location']['display_address']:
+        location_string =""
+        for a in business['location']['display_address']:
+          location_string +=a + " " 
+        location['location'] = location_string
       results.append(location)
-    print results
     self.response.out.write(template.render('views/confirm_request.html', {'results':results, 'request': request}))
   
   def post(self, request_id):
     location = self.request.get('location')
-    print request_id
-    print location
     # Get request
     request = ndb.Key(urlsafe=request_id).get()
+    location = location.split('^')
+
+    # Check if location has been previously used
+    existing_location = Location.query(Location.name == location[0], Location.address == location[1]).get()
+    if existing_location is None:
+      # Add new location
+      categories = location[3].split(',')
+      new_location = Location()
+      new_location.name = location[0]
+      new_location.address = location[1]
+      new_location.image_url = location[2]
+      for c in categories:
+        new_location.categories.append(c)
+      new_location.put()
+    else:
+      new_location = existing_location
+
     if request != None:
-        # Check if already appended
-        if self.user_model.username not in request.recipient_name:
-          request.recipient = self.user_model.key
-          request.recipient_name.append(self.user_model.username)
-          request.description = location
-          request.put()
+      # Check if already appended
+      for bid in request.bidders:
+        bid = bid.get()
+        if bid.name == self.user_model.username:
+          print "Already bid"
         else:
-          print "Already connected"
+          print "Haven't bid"
+          bidder = Bidder()
+          bidder.sender = self.user_model.key
+          bidder.location = new_location.key
+          bidder.name = self.user_model.username
+          bidder.put()
+          request.bidders.append(bidder.key)
+          request.put()
+    else:
+      print "Already connected"
+
     self.redirect('/requests')
 
 class DeleteRequestHandler(SessionHandler):

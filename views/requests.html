@@ -32,9 +32,8 @@
               <b>Location:</b> {{request.location}} <br />
               <b>For:</b> {{request.start_time.date}} <b> @ </b> {{request.start_time.time}}</p>
               <b>Price Range:</b> ${{request.min_price}} to ${{request.max_price}}</p>
-              <b>Interest:</b> {{request.interest}}</p><br />
-
-
+              <b>Interest:</b> {{request.interest}}</p>
+              <b>Bidders:</b> {{request.bidders|length}}
             <div class="secondary-content">
               <!-- Uncomment and use JS to hide -->
               <button id="hide{{forloop.counter}}" style="border:none; background:none;" value={{request.key.urlsafe}}><i class="material-icons" style="color:red;">thumb_down</i></button>
@@ -68,10 +67,6 @@
             <b>Type:</b> {{request.food_type}}</p>
             <b>Location:</b> {{request.location}} <br />
             <b>For:</b> {{request.start_time.date}} <b> @ </b> {{request.start_time.time}}</p>
-            <p> <b>Attendees:</b> 
-            {% for person in request.recipient_name %}
-            <a href="/foodie/{{person}}">{{person}}</a>  
-            {% endfor %}</p>
             <b>Interest:</b> {{request.interest}}</p>
           <div class="secondary-content">
               <button id="pending_hide{{forloop.counter}}" style="border:none; background:none;" value={{request.key.urlsafe}}><i class="material-icons" style="color:red;">thumb_down</i></button>
@@ -146,9 +141,25 @@
             {% endif %}
             <b>Price Range:</b> ${{request.min_price}} to ${{request.max_price}}</p>
             <b>Interest:</b> {{request.interest}}</p>
+            <b>Bidders:</b> {{request.bidders|length}}
+
           <div class="secondary-content">
-            <button id="delete{{forloop.counter}}" style="border:none; background:none;" value={{request.key.urlsafe}}><i class="material-icons">clear</i></button>
-            <a href="/editrequest/{{request.key.urlsafe}}" style="border:none; background:none;"><i class="material-icons">mode_edit</i></a>
+            <table>
+              <tr>
+                <button id="delete{{forloop.counter}}" style="border:none; background:none; color:red" value={{request.key.urlsafe}}><i class="material-icons">clear</i>Delete</button>
+              </tr>
+              <tr>
+                <td>
+                  <a href="/editrequest/{{request.key.urlsafe}}" style="border:none; background:none;" ><i class="material-icons" =>mode_edit</i> Edit</a>
+               </td>
+              </tr>
+            <tr>
+              <td>
+                <a href="/choose/{{request.key.urlsafe}}" style="border:none; background:none; color:green "><i class="material-icons">chat_bubble</i> Select</a>
+              </td>
+            </tr>
+            <tr></tr>
+          </table>
         </div>
         </li>
       {% empty %}
@@ -259,7 +270,6 @@
               <a href="/confirm/{{request.key.urlsafe}}" style="border:none; background:none;"><i class="material-icons">thumb_up</i></a>
             </div>
           </li>
-
           {% endif %}
           {% empty %}
           <li class="collection-header">

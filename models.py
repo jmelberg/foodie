@@ -34,7 +34,6 @@ class Request(ndb.Model):
   sender_name = ndb.StringProperty()
   recipient_name = ndb.StringProperty(repeated=True)
   location = ndb.StringProperty()
-  description = ndb.StringProperty()
   creation_time = ndb.DateTimeProperty(auto_now_add=True)
   start_time = ndb.DateTimeProperty()
   priority = ndb.IntegerProperty(default = 0)
@@ -42,6 +41,20 @@ class Request(ndb.Model):
   max_price = ndb.IntegerProperty(default = 0)
   food_type = ndb.StringProperty()
   interest = ndb.StringProperty()
+  bidders = ndb.KeyProperty(kind="Bidder", repeated=True)
+
+class Bidder(ndb.Model):
+  sender = ndb.KeyProperty(kind="User")
+  location = ndb.KeyProperty(kind="Location")
+  name = ndb.StringProperty()
+
+
+class Location(ndb.Model):
+  name = ndb.StringProperty()
+  address = ndb.StringProperty()
+  image_url = ndb.StringProperty()
+  rating = ndb.StringProperty()
+  categories = ndb.StringProperty(repeated = True)
 
 class Endorsement(ndb.Model):
   recipient = ndb.KeyProperty(kind="User")
@@ -54,3 +67,8 @@ class Transaction(ndb.Model):
   receiver = ndb.KeyProperty(kind = "User")
   amount = ndb.FloatProperty(default = 0)
   description = ndb.StringProperty()
+
+class Notification(ndb.Model):
+  sender = ndb.KeyProperty(kind="User")
+  recipient = ndb.KeyProperty(kind="User")
+  status = ndb.StringProperty()

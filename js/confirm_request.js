@@ -1,10 +1,18 @@
 $(document).ready(function(){
     var current_request = $('#confirm_request').val();
     var location;
+
     // Confirm requests modal
   $("[id^='confirm_modal']").click(function() {
     $('#respond').openModal();
-    location = $(this).val();   
+    location = $(this).val();
+    var attributes = location.split(',');
+    $('.modal-content #location').val(attributes[0]);
+    $('.modal-content #address').val(attributes[1]);
+    $('.modal-content #city').val(attributes[2]);
+
+
+
   });
 
   // Accept confirm request

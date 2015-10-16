@@ -13,9 +13,9 @@
       <span class="title">{{location.name}}</span>
     </a>
       <p>Type: {% for cat in location.categories %}   {{cat}}   {% empty %} Unknown {% endfor %}<br>
-         {{location.location}}
+         {{location.location}}<br/>
       </p>
-      <button id="confirm_modal{{forloop.counter}}" value={{location.name}} style="background:none; border:none;" class="secondary-content" data-name={{location.name}} data-location={{location.location}}><i class="material-icons">done</i></button>
+      <button id="confirm_modal{{forloop.counter}}" value="{{location.name}}^{{location.location}}^{{location.image_url}}^{{location.categories}}" style="background:none; border:none;" class="secondary-content" ><i class="material-icons">done</i></button>
     </li>
   {% empty %}
   <li class="collection-header">

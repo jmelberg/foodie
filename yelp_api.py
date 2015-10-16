@@ -69,7 +69,7 @@ def request(host, path, url_params=None):
     token = oauth2.Token(TOKEN, TOKEN_SECRET)
     oauth_request.sign_request(oauth2.SignatureMethod_HMAC_SHA1(), consumer, token)
     signed_url = oauth_request.to_url()
-    print u'Querying {0} ...'.format(url)
+    # print u'Querying {0} ...'.format(url)
 
     conn = urllib2.urlopen(signed_url, None)
 
@@ -90,7 +90,6 @@ def search(term, location):
     Returns:
         dict: The JSON response from the request.
     """
-    
     url_params = {
         'term': term.replace(' ', '+'),
         'location': location.replace(' ', '+'),
@@ -127,10 +126,10 @@ def query_api(term, location):
 
     business_id = businesses[0]['id']
 
-    #print u'{0} businesses found, querying business info for the top result "{1}" ...'.format(
-        #len(businesses),
-        #business_id
-    #)
+    # print u'{0} businesses found, querying business info for the top result "{1}" ...'.format(
+    #     len(businesses),
+    #     business_id
+    # )
 
     response = get_business(business_id)
 
