@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% block content %}
+<script type="text/javascript" src="../js/request_actions.js"></script>
+<input id="request" name="request" style="display:none;" value={{request.key.urlsafe}}>
+  <div id="bid" class="col s12">
+    <div class="row">
+      <ul class="collection with-header col s12 m12">
+        <br />
+        {% for bid in bids %}
+          <li class="collection-item avatar">
+            <img src ="http://cdn.wegotthiscovered.com/wp-content/uploads/hardwell-united-we-are-album-cover.jpg" class="circle">
+            <span class="title">
+              <b>Requestor:</b><a href="/foodie/{{bid.0.name}}"> {{bid.0.name}}</a></span>
+            <p>
+              <b>Location:</b> {{bid.1.name}} <br /> {{bid.1.address}} <br/>
+              <b>Price:</b> ${{bid.0.price}} </p>
+            <div class="secondary-content">
+              <button id="pending_confirm_modal{{forloop.counter}}" style="border:none; background:none;" value="{{bid.0.key.urlsafe}}"><i class="material-icons">done</i></button>            
+            </div>
+          </li>
+          {% empty %}
+          <li class="collection-header">
+           <center>
+            <h5>No Requests Yet</h5>
+           </center>
+          </li>
+          {% endfor %}
+      </ul>
+    </div>
+  </div>
+
+  <!-- Respond Modal -->
+<div id="respond" class="modal modal-fixed-footer">
+  <div class="modal-content">
+    <h4>Confirm Food Expert</h4>
+    <p> I agree to meet this person blah blah blah</p>
+    <p> If I fail to appear, I accept the penalty of 50% of the agreed upon price. </p>
+    <p> blah blah blah </b>
+    <br />
+  </div>
+  <div class="modal-footer">
+    <button id="select_bid_button" class="modal-action modal-close btn-flat">Accept</button>
+    <button type="cancel" id="close_modal" class="modal-action modal-close btn-flat">Cancel</button>
+  </div>
+</div>
+{% endblock %}

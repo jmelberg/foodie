@@ -10,9 +10,6 @@ $(document).ready(function(){
     $('.modal-content #location').val(attributes[0]);
     $('.modal-content #address').val(attributes[1]);
     $('.modal-content #city').val(attributes[2]);
-
-
-
   });
 
   // Accept confirm request

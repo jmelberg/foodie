@@ -125,6 +125,7 @@ app = webapp2.WSGIApplication([
                              ('/editrequest/(.+)', EditRequestHandler),
                              ('/checktime', CheckTimeConflict),
                              ('/confirm/(.+)', JoinRequestHandler),
+                             ('/choose/(.+)', ChooseRequestHandler),
                              ('/comment', CommentHandler),
                              ('/delete', DeleteRequestHandler),
                              ('/query', SearchHandler),

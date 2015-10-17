@@ -42,12 +42,13 @@ class Request(ndb.Model):
   food_type = ndb.StringProperty()
   interest = ndb.StringProperty()
   bidders = ndb.KeyProperty(kind="Bidder", repeated=True)
+  status= ndb.StringProperty()
 
 class Bidder(ndb.Model):
   sender = ndb.KeyProperty(kind="User")
   location = ndb.KeyProperty(kind="Location")
   name = ndb.StringProperty()
-
+  price = ndb.IntegerProperty(default = 0)
 
 class Location(ndb.Model):
   name = ndb.StringProperty()

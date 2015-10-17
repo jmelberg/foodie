@@ -33,25 +33,30 @@ class RequestsHandler(SessionHandler):
     dead_requests = Request.query(Request.start_time <= alloted_time, Request.sender == user.key).order(Request.start_time)
     empty_requests = []
     pending_requests = []
-    approved_request = []
+    approved_requests = []
 
     # Get User requests
     my_requests = Request.query(Request.start_time >= alloted_time - datetime.timedelta(hours=2),
                                 Request.sender == user.key).order(Request.start_time).fetch()
 
     for request in available_requests:
-      if request.sender == user.key:
-        # Accepted Personal Request
-        if request.recipient != None:
-          approved_request.append(request)
-      else:
-        # Accepted requests
-        for bid in request.bidders:
-          bid = bid.get()
-          if bid.name == user.username:
-            pending_requests.append(request)
-        empty_requests.append(request)
-        print "Time: ", request.start_time, ' Alloted: ', alloted_time
+      # Get all requests you didn't send
+      if request.sender != user.key:
+        # Request not accepted yet
+        if request.recipient == None:
+          # Check for bidders
+          for bid in request.bidders:
+            bid = bid.get()
+            if bid.name == user.username:
+              # Bid by user
+              pending_requests.append(request)
+          empty_requests.append(request)
+        else:
+          # Request has recipient
+          if request.recipient == user.key:
+            # You are recipient
+            approved_requests.append(request)
+
 
     # Get sorted requests
     l_requests = Request.query().order(Request.location).fetch()
@@ -64,13 +69,13 @@ class RequestsHandler(SessionHandler):
     user.available_requests = len(empty_requests)
     user.my_requests = len(my_requests)
     user.pending_requests = len(pending_requests)
-    user.approved_request = len(approved_request)
+    user.approved_request = len(approved_requests)
     user.put()
 
     self.response.out.write(template.render('views/requests.html',
                             {'user': user, 'sorted_requests': sorted_requests, 'my_requests': my_requests,
-                            'empty_requests': empty_requests, 'pending_requests':pending_requests,
-                            'dead_requests':dead_requests, 'price_requests': price_requests, 'location_requests': location_requests}))
+                            'price_requests': price_requests, 'location_requests': location_requests, 'empty_requests': empty_requests,
+                            'accepted_requests':approved_requests, 'pending_requests': pending_requests}))
 
 class CreateRequestHandler(SessionHandler):
   ''' Create request '''
@@ -105,7 +110,6 @@ class CreateRequestHandler(SessionHandler):
     request.food_type = food_type
     request.interest = interest
     request.put()
-
     print "Added request to queue"
 
     self.redirect('/')
@@ -158,6 +162,24 @@ class EditRequestHandler(SessionHandler):
 
     self.redirect('/')
 
+class ChooseRequestHandler(SessionHandler):
+  def get(self, request_id):
+    request = ndb.Key(urlsafe = request_id).get()
+    bidders = []
+    locations = []
+    for bid in request.bidders:
+      bid = bid.get()
+      bidders.append(bid)
+      locations.append(bid.location.get())
+    choices = zip(bidders, locations)
+    self.response.out.write(template.render('views/choose_request.html', {'request':request,'bids': choices}))
+
+  def post(self, request_id):
+    request = ndb.Key(urlsafe = request_id).get()
+    bidder = ndb.Key(urlsafe = cgi.escape(self.request.get('bidder'))).get()
+    request.recipient = bidder.sender
+    request.put()
+
 class JoinRequestHandler(SessionHandler):
   ''' Processes current requests and removes from database '''
   def get(self, request_id):
@@ -167,7 +189,6 @@ class JoinRequestHandler(SessionHandler):
     response = query_api(request.food_type, request.location)
     results = []
     for business in response:
-      print business
       location = {}
       if business['name']:
         location['name'] = business['name']
@@ -212,11 +233,14 @@ class JoinRequestHandler(SessionHandler):
 
     if request != None:
       # Check if already appended
-      for bid in request.bidders:
-        bid = bid.get()
-        if bid.name == self.user_model.username:
-          print "Already bid"
-        else:
+      add = True
+      if len(request.bidders) > 0:
+        for bid in request.bidders:
+          bid = bid.get()
+          if bid.name == self.user_model.username:
+            print "Already bid"
+            add = False
+      if add is True:
           print "Haven't bid"
           bidder = Bidder()
           bidder.sender = self.user_model.key

@@ -2,34 +2,35 @@
 $.getScript("../js/create_request.js");
 
 $(document).ready(function() {
-  var user = document.getElementById('user').getAttribute('value');
   var tab = getUrlParameter('q');
-
+  var bidder;
+  var request = $('#request').val();
   $('ul.tabs').tabs();
+
   // pending Confirm application modal
   $("[id^='pending_confirm_modal']").click(function() {
     $('#respond').openModal();
+    bidder = $(this).val();
+    console.log(request);
   });
-
-  var current_request;
  
   // Hide requests
   $("[id^='hide']").click(function(){
       $(this).parents().eq(1).hide();
   });
 
-// Hide pending requests
-$("[id^='pending_hide']").click(function(){
-    $(this).parents().eq(1).hide();
-});
+  // Hide pending requests
+  $("[id^='pending_hide']").click(function(){
+      $(this).parents().eq(1).hide();
+  });
 
 
- /* Accept confirm application
-  $("#accept_button").click(function() {
+  // Accept confirm application
+  $("#select_bid_button").click(function() {
     $.ajax({
       type: "POST",
-      url: "/confirm/"+confirm_request.value,
-      data: {'location': location},
+      url: "/choose/"+request,
+      data: {'bidder': bidder},
     });
     setTimeout(function(){ // Refresh after 1 second
       window.location.href = '/requests';
@@ -39,7 +40,7 @@ $("[id^='pending_hide']").click(function(){
   $('#close_modal').click(function(){
     $('#respond').closeModal();
   });
-*/
+
   //Delete Selected
   $("[id^='delete']").click(function(){
     // Delete function
