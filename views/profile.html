@@ -75,6 +75,7 @@
              <a class="modal-trigger waves-effect waves-light btn" href="#comment">Add Comment</a>
             </div>
           </row>
+          <br><br>
           <!-- Modal Structure -->
           <form action="/comment" method="POST">
             <div id="comment" class="modal modal-fixed-footer">
@@ -113,8 +114,8 @@
             </div>
           </form>
         {% endif %}
-        <br><br><br>
         {% for endorsement in endorsements %}
+        <br>
           <div class="row">
             <div class="col s1">
             {% if endorsement.rating == "positive" %}
