@@ -79,17 +79,30 @@ class CommentHandler(SessionHandler):
   ''' Leave a comment for another user '''
   def post(self):
     user = self.user_model
+    rating = cgi.escape(self.request.get('rating'))
     comment = cgi.escape(self.request.get('comment'))
     # Person getting endorsement
     recipient = cgi.escape(self.request.get('recipient'))
     recipient_user = User.query(User.username == recipient).get()
     recipient_key = recipient_user.key
+
     if comment != None:
       endorsement = Endorsement()
       endorsement.recipient = recipient_key
       endorsement.sender = user.first_name + " " + user.last_name
+      endorsement.rating = rating
       endorsement.text = comment
       endorsement.put()
+      # modify rating 
+      if rating == "positive":
+        recipient_user.positive = recipient_user.positive + 1
+      elif rating == "neutral":
+        recipient_user.neutral = recipient_user.neutral + 1
+      else:
+        recipient_user.negative = recipient_user.negative + 1
+      recipient_user.percent_positive = (recipient_user.positive / (recipient_user.positive + recipient_user.negative)) * 100
+      recipient_user.put()
+
     self.redirect('/foodie/{}'.format(recipient))
 
 class SearchHandler(SessionHandler):

@@ -16,7 +16,7 @@
      <div class="col s12" style="margin-bottom: 32px;">
       <ul class="tabs">
        <li class="tab col s3"><a href="#about">About Me</a></li>
-       <li class="tab col s3"><a href="#comments">Comments</a></li>
+       <li class="tab col s3"><a href="#comments">Feedback</a></li>
        <li class="tab col s3"><a href="#history">History</a></li>
       </ul>
      </div>
@@ -33,32 +33,104 @@
      </div>
 
      <div id="comments" class="col s12">
+      <div class = "row">
+        <h5>Ratings</h5>
+        <h6>{{owner.percent_positive|floatformat:"0"}}% positive feedback</h6><br>
+        <div id="feedback_ratings" style = "padding-left: 15%;">
+          <a title="Positive">
+            <div class="score" style = "width: 30%; margin-right: 3%; height: 40px; float: left; position: relative;">
+            <i class = "mdi-content-add-circle" style = "position: absolute;display: block; width: 22px; height: 22px; color: #1b5e20"></i>
+              <span style = "position: absolute; top: 0;left: 22px; color: #333; 
+              font-weight: bold;font-size: 14px;">{{owner.positive|floatformat:"0"}}</span>
+              <span style = "position: absolute;top: 25px;left: 0;color: #777;">Positive</span>
+            </div>
+          </a>
+          <a title="Neutral">
+            <div class="score" style = "width: 30%; margin-right: 3%; height: 40px; float: left; position: relative;">
+             <i class = "mdi-av-stop" style = "position: absolute;display: block; width: 22px; height: 22px; color: black"></i>
+              <span style = "position: absolute; top: 0;left: 22px; color: #333; 
+              font-weight: bold;font-size: 14px;">{{owner.neutral|floatformat:"0"}}</span>
+              <span class="txt" style = "position: absolute;top: 25px;left: 0;color: #777;">Neutral</span>
+            </div>
+          </a>
+          <a title="Negative">
+            <div class="score" style = "width: 30%; margin-right: 3%; height: 40px; float: left; position: relative;">
+            <i class = "mdi-content-remove-circle" style = "position: absolute;display: block; width: 22px; height: 22px; color: #b71c1c"></i>
+              <span style = "position: absolute;  top: 0;left: 22px; color: #333; 
+              font-weight: bold;font-size: 14px;">{{owner.negative|floatformat:"0"}}</span>
+              <span class="txt" style = "position: absolute;top: 25px;left: 0;color: #777;">Negative</span>
+            </div>
+          </a>
+        </div>
+      </div>
+      <br>
+      <hr>
       <div class="row">        
-        <h5>Comments!</h5>
+        <h5>Comments</h5>
         {% if owner.username != user.username %}
           <!-- Modal Trigger -->
-          <a class="modal-trigger waves-effect waves-light btn" href="#comment">Add Comment</a>
-
+          <row>
+            <div class= "col s8">&nbsp</div>
+            <div class= "col s4">
+             <a class="modal-trigger waves-effect waves-light btn" href="#comment">Add Comment</a>
+            </div>
+          </row>
           <!-- Modal Structure -->
           <form action="/comment" method="POST">
-          <div id="comment" class="modal modal-fixed-footer">
-            <div class="modal-content">
-              <input id="recipient" name="recipient" value={{owner.username}} style="display:none;">
-              <h4>Leave an Endorsement for {{owner.username}}</h4>
-              <textarea id="comment" name="comment" class="materialize-textarea"></textarea>
+            <div id="comment" class="modal modal-fixed-footer">
+              <div class="modal-content">
+                <input id="recipient" name="recipient" value={{owner.username}} style="display:none;">
+                <h4>Leave an Endorsement for {{owner.username}}</h4>
+                <div class="row">
+                  <div class="input-field">
+                    <label>Rate This Transaction</label><br>    
+                      <p>
+                        <input name="rating" type="radio" id="rate_pos" value= "positive" checked>
+                        <label for="rate_pos">Positive</label>
+                      </p>
+                      <p>
+                        <input name="rating" type="radio" id="rate_neutral" value = "neutral">
+                        <label for="rate_neutral">Neutral</label>
+                      </p> 
+                      <p>
+                        <input name="rating" type="radio" id="rate_neg" value = "negative">
+                        <label for="rate_neg">Negative</label>
+                      </p>        
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="input-field col s12">
+                    <textarea id="comment" name="comment" class="materialize-textarea"></textarea>
+                    <label for="textarea1">Tell Us More</label>
+                  </div>
+                </div>    
+
+              </div>
+              <div class="modal-footer">
+                <button type="submit" class="modal-action modal-close waves-effect waves-green btn-flat ">Send</button>
+                <button type="cancel" class="modal-action modal-close waves-effect waves-red btn-flat">Cancel</button>
+              </div>
             </div>
-            <div class="modal-footer">
-              <button type="submit" class="modal-action modal-close waves-effect waves-green btn-flat ">Send</button>
-              <button type="cancel" class="modal-action modal-close waves-effect waves-red btn-flat">Cancel</button>
-            </div>
-          </div>
+          </form>
         {% endif %}
+        <br><br><br>
         {% for endorsement in endorsements %}
           <div class="row">
-            <div class="col s4">
+            <div class="col s1">
+            {% if endorsement.rating == "positive" %}
+             <i class = "mdi-content-add-circle" style = "display: block; width: 22px; height: 22px; color: #1b5e20; font-size: 20px" ></i>
+            {% endif %}
+            {% if endorsement.rating == "neutral" %}
+             <i class = "mdi-av-stop" style = "display: block; width: 22px; height: 22px; color: black; font-size: 20px"></i>
+            {% endif %}
+            {% if endorsement.rating == "negative" %}
+             <i class = "mdi-content-remove-circle" style = "display: block; width: 22px; height: 22px; color: #b71c1c; font-size: 20px"></i>
+            {% endif %}
+            </div>
+            <div class="col s2">
               <img class="responsive-img" src="http://www.independent.ie/incoming/article29208414.ece/ALTERNATES/h342/Lionel%20Messi%20-%20PA.jpg">
             </div>
-            <div class="col s8">
+            <div class="col s9">
               <p>{{endorsement.text}}</p>
               <i class="tiny material-icons">verified user</i>
               <p class="right">{{endorsement.sender}}</p>

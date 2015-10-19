@@ -20,6 +20,12 @@ class User(auth_models.User):
   pending_requests = ndb.IntegerProperty(default = 0)
   approved_requests = ndb.IntegerProperty(default = 0)
 
+  #ratings
+  positive = ndb.FloatProperty(default = 0)
+  neutral = ndb.FloatProperty(default = 0)
+  negative = ndb.FloatProperty(default = 0)
+  percent_positive = ndb.FloatProperty(default = 0)
+
 
 ''' Profile entity hold information specific to user on profile '''
 class Profile(ndb.Model):
@@ -60,6 +66,7 @@ class Location(ndb.Model):
 class Endorsement(ndb.Model):
   recipient = ndb.KeyProperty(kind="User")
   sender = ndb.StringProperty()
+  rating = ndb.StringProperty()
   text = ndb.StringProperty()
 
 ''' Handles transations between users '''
