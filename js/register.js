@@ -38,26 +38,20 @@ $(document).ready(function(){
       valid_password = matchingPasswords($('#password').val(), $(this).val());
     });
     $('#email').keyup(function() {
-      var email = $('#email').val();
-      if(email){
-        if(validateEmail(email)){
+      if($('#email').val()){
+        if(validateEmail($('#email').val())){
           valid_email = 'true';
           $('#email_available').hide();
         }
         else{
           valid_email = 'false';
-          $('#signup_button').hide();
           $('#email_available').text('Email not available');
           $('#email_available').show();
         }
       }
-      else{
-        $('#signup_button').hide();
-      }
     });
     $('#first_name').keyup(function() {
-      var firstname = $('#first_name').val();
-      if(firstname.length != 0) {
+      if($('#first_name').val().length != 0) {
         valid_first_name = 'true';
       }
       else {
@@ -65,8 +59,7 @@ $(document).ready(function(){
       }
     });
     $('#last_name').keyup(function() {
-      var lastname = $('#last_name').val();
-      if(lastname.length != 0) {
+      if($('#last_name').val().length != 0) {
         valid_last_name = 'true';
       }
       else {
@@ -85,27 +78,25 @@ $(document).ready(function(){
       data:{'username' : username},
       success: function(result){
         $("#available").text(result);
-        if(result == 'Username is available'){
-          $("#available").show();
-        }
-        else {
-          $("#available").show();
-          $("#signup_button").hide();
-        }
+        $("#available").show();
     }});
   }
 
   function matchingPasswords(password, confirm_password) {
-    if(password != confirm_password){
-      $('#passwords_match').show();
-      $('#signup_button').hide();
-      return 'false';
-    }
-    else{
-      if(password.length > 5) { 
+    if(password.length > 5 && confirm_password.length > 5) {
+      if(password != confirm_password){
+        $('#passwords_match').show();
+        $('#passwords_match').text('The passwords do not match');
+        return 'false';
+      }
+      else{
         $('#passwords_match').hide();
         return 'true';
-      }
+      } 
+    }
+    else {
+      $('#passwords_match').show();
+      $('#passwords_match').text('The password needs to be 6 characters or higher');
     }
   }
 
@@ -127,4 +118,3 @@ $(document).ready(function(){
     }
   }
 });
-
