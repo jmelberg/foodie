@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+{% block content %}
+
+<!-- History Nav -->
+<div id="user" name="user" value={{user.username}}></div>
+
+<div class="row">
+  <div class="col s12">
+    <ul class="tabs" >
+      <li class="tab col s3" id="all_nav"><a class="active" href="#requested">Jobs Requested</a></li>
+      <li class="tab col s3"><a href="#provided">Jobs Provided</a></li>
+      <!-- <li class="tab col s3" id="mine_nav"><a href="#mine">Jobs Transactions</a></li> -->
+    </ul>
+  </div>
+
+    <!-- Requested -->
+    <div id="requested" class="col s12">
+      <div class="row">
+        {% for requesthistory in requested %}
+        {% if request.sender != user.key %}
+        <ul class="collection with-header col s12 m12">
+          <li>
+            <p>
+              <span class="title"><b>Date:</b> {{requesthistory.start_time.date}}
+              <b> @ </b> {{requesthistory.start_time.time}} </span><br />
+              <b>Location:</b> {{requesthistory.location}} <br />
+              <!-- Optional to Grab. Start -->
+              <b>Restaurant:</b> La Victoria Taqueria <br />
+              <!-- Optional to Grab. End -->
+              <b>Price Range:</b> ${{requesthistory.min_price}} to ${{requesthistory.max_price}}
+            </p>
+          </li>
+          <!-- Only if request is done. Start -->
+          {% for person in requesthistory.recipient_name %}
+          <li class="collection-header">
+            <li class="collection-item avatar">
+              <img src ="http://cdn.wegotthiscovered.com/wp-content/uploads/hardwell-united-we-are-album-cover.jpg" class="circle">
+              <span class="title"><b>Provider:</b>
+              <a href="/foodie/{{requesthistory.sender_name}}"> {{person}} </a>
+              </span><br />
+              <b>Amount Paid: </b> $35
+            </li>
+          </li>
+          {% endfor %}
+        </ul>
+        {% endif %}
+        {% endfor %}
+        <!-- Remove Later. Start -->
+        <ul class="collection with-header col s12 m12">
+          <li>
+          <p>
+          <span class="title"><b>Date:</b> October 10, 2015
+              <b> @ </b> 10:15 AM </span><br />
+          <b>Location:</b> San Jose, Ca, 95122 <br />
+          <b>Price Range:</b> $10 to $40
+          </p>
+          </li>
+          <li class="collection-header">
+            <!-- Only if the request is dead. Start -->
+            <li>
+              <p>No Providers Found.</p>
+            </li>
+            <!-- Only if the request is dead. End -->
+          </li>
+        </ul>
+        <!-- Remove Later. End -->
+      </div>
+    </div>
+
+    <!-- Provided -->
+    <div id="provided" class="col s12">
+      <div class="row">
+        <ul class="collection with-header col s12 m12">
+          <br />
+          <span class="title"><b>Date:</b> October 10, 2015 </span><br />
+          <b>Location:</b> San Jose, Ca, 95122 <br />
+          <b>Restuarant:</b> La Victoria Taqueria <br />
+          <b>Amount Paid:</b> $50 </p>
+          <li class="collection-header">
+            <li class="collection-item avatar">
+            <img src ="http://cdn.wegotthiscovered.com/wp-content/uploads/hardwell-united-we-are-album-cover.jpg" class="circle">
+            <span class="title"><b>Requester:</b><a href="/foodie/{{request.sender_name}}"> John Smith </a></span>
+          </li></li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Transactions -->
+    <div id="transactions" class="col s12"> 
+      <div class="row">
+      </div>
+    </div>
+{% endblock %} 

@@ -41,7 +41,12 @@ class UsernameHandler(SessionHandler):
     username = cgi.escape(self.request.get('username'))
     user_query = User.query(User.username == username)
     taken = user_query.get()
-    if taken == None:
-      self.response.out.write('Username is available')
+    if len(username) < 4:
+    	self.response.out.write('Username must be between 4 to 16 characters')
+    elif len(username) > 16:
+    	self.response.out.write('Username must be between 4 to 16 characters')
     else:
-      self.response.out.write('Username is taken')
+    	if taken == None:
+    		self.response.out.write('Username is available')
+    	else:
+    		self.response.out.write('Username is taken')
