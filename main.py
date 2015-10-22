@@ -9,8 +9,14 @@ from webapp2_extras import sessions, auth, json
 from basehandler import SessionHandler, login_required
 from account_creation import RegisterHandler, UsernameHandler
 from foodie_requests import *
-from payments import *
+from wepay import *
 from models import User, Profile, Request, Endorsement
+
+client_id = 175855
+client_secret = 'dfb950e7ea'
+redirect_url = 'http://localhost:8080/'
+wepay = WePay(False, None)
+
 
 class LoginHandler(SessionHandler):
   def get(self):
@@ -122,6 +128,21 @@ class LogoutHandler(SessionHandler):
     self.auth.unset_session()
     self.redirect('/')
 
+class GetWePayUserTokenHandler(SessionHandler):
+  def get(self):
+    self.response.out.write(template.render('views/payments.html', {}))
+
+  def post(self):
+    user = self.user_model
+    code = cgi.escape(self.request.get("acct_json"))
+    r = wepay.get_token(redirect_url, client_id, client_secret, code[1:-1])
+    acct_token = r["access_token"]
+    acct_id = r["user_id"]
+    user.wepay_id = str(acct_id)
+    user.put()
+    
+        
+
 config = {}
 config['webapp2_extras.sessions'] = {
     'secret_key': 'zomg-this-key-is-so-secret',
@@ -147,11 +168,11 @@ app = webapp2.WSGIApplication([
                              ('/getlocation', GetLocationHandler),
                              ('/logout', LogoutHandler),
                              #payment stuff here!
-                             ('/createpayment', CreatePaymentHandler),
-                             ('/getpayments', GetPaymentHandler),
-                             ('/approvepayment', PaymentApprovedHandler),
-                             ('/completepayment', CompletePaymentHandler),
-                             ('/chargepayment', ChargePaymentHandler),
-                             ('/getwepaytoken/', GetWePayUserTokenHandler),
-                             ('/setwepaytoken/', SetWePayUserTokenHandler),
+                             #('/createpayment', CreatePaymentHandler),
+                             #('/getpayments', GetPaymentHandler),
+                             #('/approvepayment', PaymentApprovedHandler),
+                             #('/completepayment', CompletePaymentHandler),
+                             #('/chargepayment', ChargePaymentHandler),
+                             ('/getwepaytoken', GetWePayUserTokenHandler),
+                             #('/setwepaytoken/', SetWePayUserTokenHandler),
                               ], debug=False, config=config)

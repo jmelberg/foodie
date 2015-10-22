@@ -1,4 +1,5 @@
 import urllib
+import urllib2
 import json
 from wepay.exceptions import WePayError
 
@@ -54,17 +55,17 @@ class WePay(object):
         if self.api_version:
             headers['Api-Version'] = self.api_version
 
+
+        data = urllib.urlencode(params)
+
         if params:
             params = json.dumps(params)
 
-        try:
-            response = self.requests.post(
-                url, data=params, headers=headers,
-                timeout=self.request_timeout)
-            return response.json()
-        except:
-            if 400 <= response.status_code <= 599:
-                raise Exception('Unknown error. Please contact support@wepay.com')
+        req = urllib2.Request(url, data)
+        response = urllib2.urlopen(req)
+        response = response.read()
+
+        return json.loads(response)
 
     def get_authorization_url(self, redirect_uri, client_id, options=None,
                               scope=None):
@@ -117,7 +118,7 @@ class WePay(object):
             'redirect_uri': redirect_uri,
             'client_id': client_id,
             'client_secret': client_secret,
-            'code': code,
+            'code': str(code),
         }
         if callback_uri:
             params.update({'callback_uri': callback_uri})

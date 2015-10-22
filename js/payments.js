@@ -10,7 +10,7 @@ $("#createpayment").click(function(){
 
   $.ajax({
     type: "POST",
-    url: '/createpayment/',
+    url: '/createpayment',
       data: {'foodie':foodie, 'expert':expert, 'amount':amount}
   });
 

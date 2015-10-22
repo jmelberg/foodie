@@ -8,11 +8,9 @@ class User(auth_models.User):
   first_name = ndb.StringProperty()
   last_name = ndb.StringProperty()
   zip_code = ndb.IntegerProperty(default = 0)
-  credit_card = ndb.IntegerProperty(default = 0)
-  security_code = ndb.IntegerProperty(default = 0)
-  expiration_date = ndb.DateProperty()
-  # Foodie/Expert
-  account_type = ndb.StringProperty()
+  wepay_id = ndb.StringProperty()
+  
+  
   
   # Notifications
   my_requests = ndb.IntegerProperty(default = 0)

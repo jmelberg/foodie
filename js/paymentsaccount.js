@@ -9,17 +9,18 @@ $(document).ready(function(){
        "scope":["manage_accounts","collect_payments","view_user","send_money","preapprove_payments"],
       "user_name":"",
       "user_email":"",
-      "redirect_uri":"http://food-enthusiast.appspot.com/",
+      "redirect_uri":"http://localhost:8080/",
       "top":100, // control the positioning of the popup with the top and left params
       "left":100,
       "state":"robot", // this is an optional parameter that lets you persist some state value through the flow
       "callback":function(data) {
       /** This callback gets fired after the user clicks "grant access" in the popup and the popup closes. The data object will include the code which you can pass to your server to make the /oauth2/token call **/
       if (data.code.length !== 0) {
+        console.log(JSON.stringify(data));
         $.ajax({
           type: "POST",
-          url: '/getwepaytoken/',
-            data: data
+          url: '/getwepaytoken',
+            data: {'acct_json': JSON.stringify(data.code)}
         });
       } else {
         // an error has occurred and will be in data.error
