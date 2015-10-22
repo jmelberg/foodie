@@ -1,49 +1,33 @@
-import cgi
-import requests, json
-import paypalrestsdk
-from requests_oauth2 import OAuth2
+import webapp2
+from wepay import WePay
+import payments-future
+import payments-users
+import payments-refunds
 
-config = paypalrestsdk.configure({
-    'mode': 'sandbox',
-    'client_id': 'AQkquBDf1zctJOWGKWUEtKXm6qVhueUEMvXO_-MCI4DQQ4-LWvkDLIN2fGsd',
-    'client_secret': 'EL1tVxAjhT7cJimnz5-Nsx9k2reTKSVfErNQF-CmrwJgxRtylkGTKlU4RvrX'
-})
+import json
+
+account_id = 175855
+access_token = "STAGE_d246e3e5715b394db67166d495c8e138ced4cc7da29c21980200b3b26d61dbd2"
+production = False
+
+wepay = WePay(production, None)
+
+class CompletePaymentHandler(webapp2.RequestHandler):
+  def post(self):
+      print:"Payment has been completed!"
+
+class ChargePaymentHandler():
+  def charge(self):
+      print:"Payment has been Charged!"
+
+class GetPaymentsHandler():
+  def get(self):
+
+      print:"Here are your pending payments!"
+
+class CancelPaymentHandler():
+  def post(self):
 
 
-client_secret = "EL1tVxAjhT7cJimnz5-Nsx9k2reTKSVfErNQF-CmrwJgxRtylkGTKlU4RvrX"
-
-paypal_url = 'https://api.sandbox.paypal.com'
-
-
-''' CREATE PAYPAL TOKEN WITHOUT USING SDK '''
-
-api = paypalrestsdk.set_config(
-  mode="sandbox", # sandbox or live
-  client_id = "AQkquBDf1zctJOWGKWUEtKXm6qVhueUEMvXO_-MCI4DQQ4-LWvkDLIN2fGsd",
-  client_secret='EL1tVxAjhT7cJimnz5-Nsx9k2reTKSVfErNQF-CmrwJgxRtylkGTKlU4RvrX')
-print api.get_access_token()
-
-price = input('Enter the price transaction in $')
-
-payment = paypalrestsdk.Payment({
-  "intent": "sale",
-  "payer": {
-    "payment_method": "paypal" },
-  "redirect_urls": {
-    "return_url": "https://devtools-paypal.com/guide/pay_paypal/python?success=true",
-    "cancel_url": "https://devtools-paypal.com/guide/pay_paypal/python?cancel=true" },
-
-  "transactions": [ {
-    "amount": {
-      "total": price,
-      "currency": "USD" },
-    "description": "creating a payment" } ] } )
-
-if payment.create():
-  print("Payment[%s] created successfully" % (payment.id))
-  for link in payment.links:
-        if link.method == "REDIRECT":
-            redirect_url = str(link.href)
-            print("Redirect for approval: %s" % (redirect_url))
-else:
-  print(payment.error)
+class WePayUsers:
+    def create():
