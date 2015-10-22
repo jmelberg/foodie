@@ -3,7 +3,11 @@ $(document).ready(function(){
   var slider = document.getElementById('range-input');
   var min_price = document.getElementById('min_price');
   var max_price = document.getElementById('max_price');
-  var submit_button = document.getElementById('send_request');
+  var submit_button = $('#send_request');
+  var filled_food_type = false;
+  var filled_location = false;
+  var filled_time = false;
+  var confirmed_aggreement = false;
 
   $(function () {
     $('#time').focus();
@@ -12,6 +16,14 @@ $(document).ready(function(){
         var date = $('#date').val();
         var time = $(this).val();
         checkTime(time, date);
+        setTimeout(function() {
+          if($("#slot_available").text() == 'Available') {
+            filled_time = true;
+          }
+          else {
+            filled_time = false;
+          }
+        }, 100);
       }
       else{
         $('#slot_available').hide();
@@ -23,20 +35,53 @@ $(document).ready(function(){
     $('#location').keyup(function() {
       var location = $(this).val();
       if(location.length > 0){
-      submit_button.style.visibility = "visible";
+        filled_location = true;
+        if(confirmed_aggreement === true) {
+          submit_button.removeClass('disabled');
+        }
+        /*submit_button.style.visibility = "visible";*/
       }
       else{
-        submit_button.style.visibility = "hidden";
+        filled_location = false;
+        if(submit_button.attr('class') === 'btn-flat disabled' && location.length != 0) {
+          submit_button.removeClass('disabled');
+        }
+        else {
+          console.log('hello');
+          submit_button.addClass('disabled');
+        }
+        /*submit_button.style.visibility = "hidden";*/
       }
     });
 
     $('#food_type').keyup(function() {
       var food_type = $(this).val();
       if(food_type.length > 0){
-      submit_button.style.visibility = "visible";
+        filled_food_type = true;        
+        if(confirmed_aggreement === true) {
+          submit_button.removeClass('disabled');
+        }
+        /*submit_button.style.visibility = "visible";*/
       }
       else{
-        submit_button.style.visibility = "hidden";
+        filled_food_type = false;
+        if(submit_button.attr('class') === 'btn-flat disabled' && food_type.length != 0) {
+          submit_button.removeClass('disabled');
+        }
+        else {
+          submit_button.addClass('disabled');
+        }
+        /*submit_button.style.visibility = "hidden";*/
+      }
+    });
+
+    $('#agreement').click(function(){
+      confirmed_aggreement = !confirmed_aggreement;
+      if(filled_time === true && filled_location === true && filled_food_type === true && confirmed_aggreement === true) {
+        submit_button.removeClass('disabled');   
+      }
+      else {
+        submit_button.addClass('disabled');
       }
     });
 
@@ -60,10 +105,6 @@ $(document).ready(function(){
       } else {
         min_price.value = value;
       }
-    });
-
-    $('#agreement').click(function(){
-      $('#send_request').removeClass('disabled');
     });
 
     $('#send_request').click(function() {
@@ -103,12 +144,28 @@ function checkTime(time, date) {
       $('#edit_slot_available').text(result);
       if(result == 'Available'){
         $("#edit_slot_available").show();
-        $("#submit_edit").show();
+        /*$("#submit_edit").show();*/
+        $('#submit_edit').removeClass('disabled');
       }
       else {
         $("#edit_slot_available").show();
-        $("#submit_edit").hide();
+        if($("#submit_edit").attr('class') === 'btn-flat') {
+          $("#submit_edit").addClass('disabled');
+        }
       }
+      $("#slot_available").text(result);
+      if(result == 'Available'){
+        $("#slot_available").show();
+        /*$("#send_request").show();*/
+        $('#send_request').removeClass('disabled');
+      }
+      else {
+        $("#slot_available").show();
+        if($("#send_request").attr('class') === 'btn-flat') {
+          $("#send_request").addClass('disabled');
+        }
+      }
+/*
       $("#slot_available").text(result);
       if(result == 'Available'){
         $("#slot_available").show();
@@ -117,17 +174,7 @@ function checkTime(time, date) {
       else {
         $("#slot_available").show();
         $("#send_request").hide();
-      }
-
-      $("#slot_available").text(result);
-      if(result == 'Available'){
-        $("#slot_available").show();
-        $("#send_request").show();
-      }
-      else {
-        $("#slot_available").show();
-        $("#send_request").hide();
-      } 
+      } */
     }
   });
 }

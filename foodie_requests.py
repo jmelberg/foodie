@@ -2,6 +2,7 @@ import cgi
 import webapp2
 import time, datetime
 import json
+import logging
 from google.appengine.ext import ndb
 from google.appengine.ext.webapp import template
 from google.appengine.api import users
@@ -160,7 +161,7 @@ class EditRequestHandler(SessionHandler):
     else:
       print "Could not add"
 
-    self.redirect('/')
+    self.redirect('/requests')
 
 class ChooseRequestHandler(SessionHandler):
   def get(self, request_id):
