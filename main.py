@@ -9,6 +9,7 @@ from webapp2_extras import sessions, auth, json
 from basehandler import SessionHandler, login_required
 from account_creation import RegisterHandler, UsernameHandler
 from foodie_requests import *
+from payments import *
 from models import User, Profile, Request, Endorsement
 
 class LoginHandler(SessionHandler):
@@ -48,19 +49,19 @@ class ProfileHandler(SessionHandler):
       new_profile.about_me = "I love to eat food"
       new_profile.put()
     endorsements = Endorsement.query(Endorsement.recipient == profile_owner.key).fetch()
-    
+
     #Get Requests for Notifications
     accepted_requests = []
     new_requests = []
 
     current_date = datetime.datetime.now() - datetime.timedelta(hours=7)
-    
+
     available_requests = Request.query(Request.sender == profile_owner.key).fetch()
     if available_requests:
       for request in available_requests:
         if request.start_time > current_date and request.recipient != None:
           accepted_requests.append(request)
-    
+
     # Get new requests
     active_requests = Request.query(Request.start_time > current_date, Request.recipient == None).fetch()
     if active_requests:
@@ -74,7 +75,7 @@ class ProfileHandler(SessionHandler):
     self.response.out.write(template.render('views/profile.html',
                              {'owner':profile_owner, 'profile':profile, 'comments': comments,
                              'endorsements':endorsements, 'user': viewer}))
-    
+
 class CommentHandler(SessionHandler):
   ''' Leave a comment for another user '''
   def post(self):
@@ -131,4 +132,12 @@ app = webapp2.WSGIApplication([
                              ('/request', CreateRequestHandler),
                              ('/getlocation', GetLocationHandler),
                              ('/logout', LogoutHandler),
+                             #payment stuff here!
+                             ('/createpayment', CreatePaymentHandler),
+                             ('/getpayments', GetPaymentHandler),
+                             ('/approvepayment', PaymentApprovedHandler),
+                             ('/completepayment', CompletePaymentHandler),
+                             ('/chargepayment', ChargePaymentHandler),
+                             ('/getwepaytoken/', GetWePayUserTokenHandler),
+                             ('/setwepaytoken/', SetWePayUserTokenHandler),
                               ], debug=False, config=config)
