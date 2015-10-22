@@ -24,7 +24,7 @@
         {% for request in empty_requests %}
           {% if request.sender != user.key %}
           <li class="collection-item avatar">
-            <img src ="http://cdn.wegotthiscovered.com/wp-content/uploads/hardwell-united-we-are-album-cover.jpg" class="circle">
+<a href="/foodie/{{request.sender_name}}"><img src ="http://cdn.wegotthiscovered.com/wp-content/uploads/hardwell-united-we-are-album-cover.jpg" class="circle"></a>
             <span class="title">
               <b>Requestor:</b><a href="/foodie/{{request.sender_name}}"> {{request.sender_name}}</a></span>
             <p>
@@ -53,6 +53,22 @@
     </div>
   </div>
 
+<<<<<<< HEAD
+    <!-- Requests that have at least one attending -->
+    <div id="accepted" class="col s12">
+     <div class="row">
+        <ul class="collection with-header col s12 m12">
+          <br />
+          {% for request in accepted_requests %}
+          {% if request.sender != user.key %}
+          <li class="collection-item avatar">
+            <img src ="http://cdn.wegotthiscovered.com/wp-content/uploads/hardwell-united-we-are-album-cover.jpg" class="circle">
+            <span class="title"><b>Requestor:</b><a href="/foodie/{{request.sender_name}}"> {{request.sender_name}}</a></span>
+            <p><b>Location:</b> {{request.location}} <br />
+              <b>For:</b> {{request.start_time.date}} <br />
+              <b> @ </b> {{request.start_time.time}}</p>
+              <p> <b>Attendees:</b>
+=======
   <!-- Requests that have at least one attending (pending)-->
   <div id="pending" class="col s12">
    <div class="row">
@@ -67,6 +83,13 @@
             <b>Type:</b> {{request.food_type}}</p>
             <b>Location:</b> {{request.location}} <br />
             <b>For:</b> {{request.start_time.date}} <b> @ </b> {{request.start_time.time}}</p>
+<<<<<<< HEAD
+=======
+            <p> <b>Attendees:</b>
+            {% for person in request.recipient_name %}
+            <a href="/foodie/{{person}}">{{person}}</a>
+            {% endfor %}</p>
+>>>>>>> 3f83fb543a47c8f31d0898e53d7970b4fe4d67c8
             <b>Interest:</b> {{request.interest}}</p>
           <div class="secondary-content">
               <button id="pending_hide{{forloop.counter}}" style="border:none; background:none;" value={{request.key.urlsafe}}><i class="material-icons" style="color:red;">cancel</i></button>
@@ -99,9 +122,9 @@
             <b>Type:</b> {{request.food_type}}</p>
             <b>Location:</b> {{request.location}} <br />
             <b>For:</b> {{request.start_time.date}} <b> @ </b> {{request.start_time.time}}</p>
-            <p> <b>Attendees:</b> 
+            <p> <b>Attendees:</b>
             {% for person in request.recipient_name %}
-            <a href="/foodie/{{person}}">{{person}}</a>  
+            <a href="/foodie/{{person}}">{{person}}</a>
             {% endfor %}</p>
             <b>Interest:</b> {{request.interest}}</p>
           <div class="secondary-content">
@@ -121,7 +144,7 @@
   </div>
 
   <!-- My Requests -->
-  <div id="mine" class="col s12"> 
+  <div id="mine" class="col s12">
     <div class="row">
       <ul class="collection with-header col s12 m12">
       <br />
@@ -134,9 +157,10 @@
             <b>Location:</b> {{request.location}} <br />
             <b>For:</b> {{request.start_time.date}} <b> @ </b> {{request.start_time.time}}</p>
             {% if request.recipient_name|length > 0 %}
-              <p> <b>Attendees:</b> 
+              <p> <b>Attendees:</b>
+>>>>>>> 4a4693531944e18eb81bf70859f88340b731dcd4
               {% for person in request.recipient_name %}
-              <a href="/foodie/{{person}}">{{person}}</a>  
+              <a href="/foodie/{{person}}">{{person}}</a>
               {% endfor %}</p>
             {% endif %}
             <b>Price Range:</b> ${{request.min_price}} to ${{request.max_price}}</p>
@@ -188,9 +212,9 @@
             <b>Location:</b> {{request.location}} <br />
             <b>For:</b> {{request.start_time.date}} <b> @ </b> {{request.start_time.time}}</p>
             {% if request.recipient_name|length > 0 %}
-              <p> <b>Attendees:</b> 
+              <p> <b>Attendees:</b>
               {% for person in request.recipient_name %}
-              <a href="/foodie/{{person}}">{{person}}</a>  
+              <a href="/foodie/{{person}}">{{person}}</a>
               {% endfor %}</p>
             {% endif %}
             <b>Price Range:</b> ${{request.min_price}} to ${{request.max_price}}</p>
@@ -245,25 +269,70 @@
     </div>
   </div>
 
+<<<<<<< HEAD
+    <!-- My Requests -->
+    <div id="mine" class="col s12">
+      <div class="row">
+        <ul class="collection with-header col s12 m12">
+=======
   <!-- Price Requests -->
   <div id="price_requests" class="col s12" style="display:none;">
     <div class="row">
       <ul class="collection with-header col s12 m12">
+>>>>>>> 4a4693531944e18eb81bf70859f88340b731dcd4
         <br />
         {% for request in price_requests %}
           {% if request.sender != user.key %}
           <li class="collection-item avatar">
             <img src ="http://cdn.wegotthiscovered.com/wp-content/uploads/hardwell-united-we-are-album-cover.jpg" class="circle">
+<<<<<<< HEAD
+            <span class="title"><b>Requestor:</b><a href="/foodie/{{request.sender_name}}"> {{request.sender_name}}</a></span>
+            <p><b>Location:</b> {{request.location}} <br />
+              <b>For:</b> {{request.start_time.date}} <br />
+              <b> @ </b> {{request.start_time.time}}</p>
+              {% if request.recipient_name|length > 0 %}
+                <p> <b>Attendees:</b>
+                {% for person in request.recipient_name %}
+                <a href="/foodie/{{person}}">{{person}}</a>
+                {% endfor %}</p>
+              {% endif %}
+              <b>Food Type:</b> {{request.food_type}}</p>
+=======
             <span class="title">
               <b>Requestor:</b><a href="/foodie/{{request.sender_name}}"> {{request.sender_name}}</a></span>
             <p>
               <b>Type:</b> {{request.food_type}}</p>
               <b>Location:</b> {{request.location}} <br />
               <b>For:</b> {{request.start_time.date}} <b> @ </b> {{request.start_time.time}}</p>
+>>>>>>> 4a4693531944e18eb81bf70859f88340b731dcd4
               <b>Price Range:</b> ${{request.min_price}} to ${{request.max_price}}</p>
               <b>Interest:</b> {{request.interest}}</p><br />
 
 
+<<<<<<< HEAD
+    <!-- Dead Requests -->
+    <div id="dead" class="col s12">
+      <div class="row">
+        <ul class="collection with-header col s12 m12">
+          <br />
+          {% for request in dead_requests %}
+          <li class="collection-item avatar">
+            <img src ="http://cdn.wegotthiscovered.com/wp-content/uploads/hardwell-united-we-are-album-cover.jpg" class="circle">
+            <span class="title"><b>Requestor:</b><a href="/foodie/{{request.sender_name}}"> {{request.sender_name}}</a></span>
+            <p><b>Location:</b> {{request.location}} <br />
+              <b>For:</b> {{request.start_time.date}} <br />
+              <b> @ </b> {{request.start_time.time}}</p>
+              {% if request.recipient_name|length > 0 %}
+                <p> <b>Attendees:</b>
+                {% for person in request.recipient_name %}
+                <a href="/foodie/{{person}}">{{person}}</a>
+                {% endfor %}</p>
+              {% endif %}
+              <b>Food Type:</b> {{request.food_type}}</p>
+              <b>Price Range:</b> ${{request.min_price}} to ${{request.max_price}}</p>
+              <b>Interest:</b> {{request.interest}}</p>
+=======
+>>>>>>> 4a4693531944e18eb81bf70859f88340b731dcd4
             <div class="secondary-content">
               <!-- Uncomment and use JS to hide -->
               <button id="hide{{forloop.counter}}" style="border:none; background:none;" value={{request.key.urlsafe}}><i class="material-icons" style="color:red;">thumb_down</i></button>
@@ -282,6 +351,106 @@
     </div>
   </div>
 
+<<<<<<< HEAD
+=======
+  <!-- Respond Modal -->
+<div id="respond" class="modal modal-fixed-footer">
+<<<<<<< HEAD
+    <div class="modal-content">
+      <h4>Confirm Request</h4>
+      <p> I agree to meet this person blah blah blah</p>
+      <p> If I fail to appear, I accept the penalty of 50% of the agreed upon price. </p>
+      <p> blah blah blah </b>
+
+      <br />
+    </div>
+    <div class="modal-footer">
+      <button id="accept_button" class="modal-action modal-close btn-flat" value={{request.key.urlsafe}} >Accept</button>
+      <button type="cancel" id="close_modal" class="modal-action modal-close btn-flat">Cancel</button>
+    </div>
+</div>
+
+<!-- Edit Modal -->
+<div id="edit_modal" class="modal modal-fixed-footer">
+  <div class="modal-content col s6">
+    <h4>Edit Request</h4>
+        <div class="row">
+          <div class="input-field col s6">
+            <label>Location</label><br/>
+            <input id="edit_location" name="edit_location" type="text" class="validate">
+          </div>
+        </div>
+        <div class="row">
+          <div class="input-field col s6">
+            <label>Date</label><br/>
+            <input type="date" class="datepicker" id="edit_date" name="edit_date" required>
+          </div>
+        </div>
+        <div class="row">
+          <div class="input-field col s6">
+            <label>Previous Time</label><br />
+            <input type="text" name="prev_time" id="prev_time" disabled>
+          </div>
+        </div>
+        <div class="row">
+          <div class="input-field col s6">
+            <label>New Time</label><br />
+            <input type="time" class="timepicker" id="edit_time" name="edit_time" required>
+            <small id="edit_slot_available" style="display:none;"></small>
+          </div>
+        </div>
+        <div class="row">
+         <div class="input-field col s6">
+          <select  id="edit_food_type" name="edit_food_type">
+            <option value="">Choose your option</option>
+            <option value="Afghan">Afghan</option>
+            <option value="African">African</option>
+            <option value="American">American</option>
+            <option value="Arabian">Arabian</option>
+            <option value="Argentine">Argentine</option>
+            <option value="Armenian">Armenian</option>
+          </select>
+          <label>Food Type</label>
+          </div>
+        </div>
+        <div class="row">
+          <div class="input-field col s6">
+            <label>Price Range</label> <br /><br />
+            <div id="edit_slider">
+              <input type="number" id="edit_min_price" name="edit_min_price" hidden>
+              <input type="number" id="edit_max_price" name="edit_max_price" hidden>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="input-field col s6">
+            <label>Interest</label><br>
+              <p>
+                <input name="edit_interest" type="radio" id="edit_interest_food_lesson" value= "food lesson">
+                <label for="edit_interest_food_lesson">Food Lesson</label>
+              </p>
+              <p>
+                <input name="edit_interest" type="radio" id="edit_interest_fun" value = "fun">
+                <label for="edit_interest_fun">Fun</label>
+              </p>
+          </div>
+        </div>
+=======
+  <div class="modal-content">
+    <h4>Confirm Food Expert</h4>
+    <p> I agree to meet this person blah blah blah</p>
+    <p> If I fail to appear, I accept the penalty of 50% of the agreed upon price. </p>
+    <p> blah blah blah </b>
+    <br />
+>>>>>>> 4a4693531944e18eb81bf70859f88340b731dcd4
+  </div>
+  <div class="modal-footer">
+    <button id="accept_button" class="modal-action modal-close btn-flat">Accept</button>
+    <button type="cancel" id="close_modal" class="modal-action modal-close btn-flat">Cancel</button>
+  </div>
+</div>
+
+>>>>>>> 3f83fb543a47c8f31d0898e53d7970b4fe4d67c8
   <div class="fixed-action-btn" style="bottom: 45px; right: 100px;">
     <a class="btn-floating btn-large red">
       <i class="large material-icons">search</i>
