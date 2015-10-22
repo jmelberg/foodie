@@ -17,14 +17,16 @@ $(document).ready(function(){
     var valid_last_name ='false';
     $('#username').focus();
     $('#username').keyup(function () {
+      checkUsername($(this).val().toLowerCase());
       if($(this).val().length != 0){
-        checkUsername($(this).val().toLowerCase());
-        if($('#available').text().length == 21) {
-          valid_username = 'true';
-        }
-        else {
-          valid_username = 'false';
-        }
+        setTimeout(function() {
+          if($('#available').text().length == 21) {
+            valid_username = 'true';
+          }
+          else {
+            valid_username = 'false';
+          }
+        }, 50);
       }
       else{
         valid_username = 'false';
@@ -67,7 +69,9 @@ $(document).ready(function(){
       }
     });
     $(window).keyup(function() {
-      showSignUp(valid_username,valid_password,valid_email,valid_first_name,valid_last_name);
+      setTimeout(function() {
+        showSignUp(valid_username,valid_password,valid_email,valid_first_name,valid_last_name);
+      }, 100);
     });
   });
 
