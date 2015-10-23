@@ -39,6 +39,7 @@ class RequestsHandler(SessionHandler):
     # Get User requests
     my_requests = Request.query(Request.start_time >= alloted_time - datetime.timedelta(hours=2),
                                 Request.sender == user.key).order(Request.start_time).fetch()
+    logging.warn(my_requests)
 
     for request in available_requests:
       # Get all requests you didn't send
@@ -275,7 +276,6 @@ class CheckTimeConflict(SessionHandler):
   def get(self):
     user = self.user_model
     date = cgi.escape(self.request.get("date"))
-    logging.warn(date)
     time = cgi.escape(self.request.get("time"))
     active_request = cgi.escape(self.request.get("edit_request"))
     if active_request:
