@@ -12,7 +12,7 @@
       <label for="location">Location</label>
     </div>
     <div class="input-field col s3">
-      <button onclick="getLocation()" class="btn-flat">Use Current Location</button>
+      <button id="location_button" onclick="getLocation()" class="btn-flat">Use Current Location</button>
       <p id="found_location"></p>
     </div>
   </div>
@@ -50,7 +50,7 @@
     <div class="input-field col s3">
       <label>Time</label><br />
       <input type="time" class="timepicker" id="time" name="time">
-      <small id="slot_available" style="display:none;"></small>
+      <small id="slot_available" style="display:none;">Choose a date before choosing a time</small>
     </div>
   </div>
 

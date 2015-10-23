@@ -8,7 +8,7 @@ $(document).ready(function(){
     if($(this).val().length != 0) {
       var date = $('#edit_date').val();
       var time = $(this).val();
-      checkTime(time, date);
+      checkTime(time, date, false);
     }
     else{
       $('#edit_slot_available').hide();
