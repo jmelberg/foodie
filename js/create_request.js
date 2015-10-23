@@ -8,37 +8,16 @@ $(document).ready(function(){
   var filled_location = false;
   var filled_time = false;
   var confirmed_aggreement = false;
+  var status = false;
 
   $(function () {
-    $('#time').focus();
-    $('#time').keyup(function () {
-      if($(this).val().length != 0) {
-        var date = $('#date').val();
-        var time = $(this).val();
-        checkTime(time, date);
-        setTimeout(function() {
-          if($("#slot_available").text() == 'Available') {
-            filled_time = true;
-          }
-          else {
-            filled_time = false;
-          }
-        }, 100);
-      }
-      else{
-        $('#slot_available').hide();
-      }
-    });
-
     // Check for empty fields
     // Location
     $('#location').keyup(function() {
       var location = $(this).val();
       if(location.length > 0){
         filled_location = true;
-        if(confirmed_aggreement === true) {
-          submit_button.removeClass('disabled');
-        }
+      status = finalAgreement(filled_time, filled_food_type, filled_location, confirmed_aggreement);
         /*submit_button.style.visibility = "visible";*/
       }
       else{
@@ -47,20 +26,26 @@ $(document).ready(function(){
           submit_button.removeClass('disabled');
         }
         else {
-          console.log('hello');
           submit_button.addClass('disabled');
         }
         /*submit_button.style.visibility = "hidden";*/
       }
     });
 
+    $('#location_button').click(function() {
+      setTimeout(function() {
+        var location = $('#location').val();
+        if(location.length > 0) {
+          filled_location = true;
+        }        
+      }, 1000);
+    });
+
     $('#food_type').keyup(function() {
       var food_type = $(this).val();
       if(food_type.length > 0){
-        filled_food_type = true;        
-        if(confirmed_aggreement === true) {
-          submit_button.removeClass('disabled');
-        }
+        filled_food_type = true;
+      status = finalAgreement(filled_time, filled_food_type, filled_location, confirmed_aggreement);
         /*submit_button.style.visibility = "visible";*/
       }
       else{
@@ -75,14 +60,27 @@ $(document).ready(function(){
       }
     });
 
+    $('#time').keyup(function () {
+      var date = $('#date');
+      var time = $('#time');
+      if($(this).val().length != 0) {
+        checkTime(time.val(), date.val(), confirmed_aggreement);
+        setTimeout(function() {
+          if($("#slot_available").text() == 'Available') {
+            filled_time = true;
+          }
+          else {
+            filled_time = false;
+          }
+        }, 100);
+      }
+      else{
+      }
+    });
+
     $('#agreement').click(function(){
       confirmed_aggreement = !confirmed_aggreement;
-      if(filled_time === true && filled_location === true && filled_food_type === true && confirmed_aggreement === true) {
-        submit_button.removeClass('disabled');   
-      }
-      else {
-        submit_button.addClass('disabled');
-      }
+      status = finalAgreement(filled_time, filled_food_type, filled_location, confirmed_aggreement);
     });
 
     noUiSlider.create(slider, {
@@ -131,7 +129,18 @@ $(document).ready(function(){
   });
 });
 
-function checkTime(time, date) {
+function finalAgreement(time, food_type, location, confirmed_aggreement) {
+  if(time === true && location === true && food_type === true && confirmed_aggreement === true) {
+    $('#send_request').removeClass('disabled');
+    return true;
+  }
+  else {
+    $('#send_request').addClass('disabled');
+    return false;
+  }
+}
+
+function checkTime(time, date, confirmed_aggreement) {
   var selected_edit_request;
   if (document.getElementById('edit_request') != null){
     selected_edit_request = document.getElementById('edit_request').value;
@@ -157,7 +166,9 @@ function checkTime(time, date) {
       if(result == 'Available'){
         $("#slot_available").show();
         /*$("#send_request").show();*/
-        $('#send_request').removeClass('disabled');
+        if(confirmed_aggreement === true) {
+          $("#send_request").removeClass('disabled');          
+        }
       }
       else {
         $("#slot_available").show();
