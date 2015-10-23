@@ -148,32 +148,32 @@
      </div>
 
      <div id="history" class="col s12">
-      <div class="row">
-       <h5>History!</h5>
-       <div class="row">
+      <div class="row"><h5>History!</h5>
         <div class="row">
-         <div class="col s9">
-          <p>Champions League 2015</p>
-          <p>with Zlatan, Messi</p>
-         </div>
-         <div class="col s3">
-          9/2/15
-         </div>
+          {% for item in history %}
+            <div class="row">
+              <div class="col s9">
+                {% if item.sender == owner.key %}
+                  <p>{{item.location}}</p>
+                  <p>with {{item.recipient_name}}</p>
+                {% else %}
+                  <p>{{item.location}}</p>
+                  <p>with {{item.sender}}</p>
+                {% endif %}
+              </div>
+              <div class="col s3">
+                {{item.start_time}}
+              </div>
+            </div>
+          {% empty %}
+          {{owner.username}} has no activity yet
+          {% endfor %}
         </div>
-       </div>
       </div>
-
-      <div class="card-action">
-      </div>
+    </div>
      </div>
     </div>
    </div>
-  </div>
-
-  <!-- Expert View -->
-
-  <div class="row">
-
   </div>
 
 {% endblock %}

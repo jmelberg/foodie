@@ -10,8 +10,6 @@ class User(auth_models.User):
   zip_code = ndb.IntegerProperty(default = 0)
   wepay_id = ndb.StringProperty()
   
-  
-  
   # Notifications
   my_requests = ndb.IntegerProperty(default = 0)
   accepted_requests = ndb.IntegerProperty(default = 0)
