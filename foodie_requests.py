@@ -41,6 +41,13 @@ class RequestsHandler(SessionHandler):
                                 Request.sender == user.key).order(Request.start_time).fetch()
     logging.warn(my_requests)
 
+    for request in my_requests:
+      if len(request.bidders) > 0:
+        if request.recipient != None:
+          approved_requests.append(request)
+        else:
+          pending_requests.append(request)
+
     for request in available_requests:
       # Get all requests you didn't send
       if request.sender != user.key:
@@ -58,26 +65,68 @@ class RequestsHandler(SessionHandler):
           if request.recipient == user.key:
             # You are recipient
             approved_requests.append(request)
+        
+
 
 
     # Get sorted requests
     l_requests = Request.query().order(Request.location).fetch()
     location_requests = [r for r in l_requests if r.start_time >= alloted_time ]
+    location_requests = [r for r in location_requests if r.recipient == None]
 
     p_requests = Request.query().order(Request.min_price).fetch()
     price_requests = [r for r in p_requests if r.start_time >= alloted_time]
+    price_requests = [r for r in price_requests if r.recipient == None]
 
-
-    user.available_requests = len(empty_requests)
-    user.my_requests = len(my_requests)
-    user.pending_requests = len(pending_requests)
-    user.approved_request = len(approved_requests)
+    user.last_check = datetime.datetime.now() - datetime.timedelta(hours=7)
+    print "Updated check time to: " , user.last_check
     user.put()
 
     self.response.out.write(template.render('views/requests.html',
                             {'user': user, 'sorted_requests': sorted_requests, 'my_requests': my_requests,
                             'price_requests': price_requests, 'location_requests': location_requests, 'empty_requests': empty_requests,
                             'accepted_requests':approved_requests, 'pending_requests': pending_requests}))
+
+
+def get_notifications(user):
+  #Get Requests for Notifications
+  accepted_requests = []
+  new_requests = []
+  current_time = datetime.datetime.now() - datetime.timedelta(hours=7)
+  # Check for last login/update
+  check_time = user.last_check
+  print "Last Check: " , check_time
+  if check_time is None:
+    # Pull all results from previous week
+    check_time = datetime.datetime.now() - datetime.timedelta(days=7, hours=7)
+    print "Updated time: ", check_time
+
+  # New requests
+  a_requests = Request.query(Request.sender != user.key).fetch()
+  available_requests = [r for r in a_requests if r.creation_time >= check_time]
+  available_requests = [r for r in available_requests if r.start_time >= current_time]
+  available_requests = [r for r in available_requests if r.recipient == None]
+
+  # Approved requests
+  app_requests = Request.query(Request.sender == user.key).fetch()
+  app_requests = [r for r in app_requests if r.creation_time >= check_time]
+  app_requests = [r for r in app_requests if r.start_time >= current_time]
+  app_requests = [r for r in app_requests if len(r.bidders) > 0]
+  print app_requests
+  new_bidders = 0
+  if len(app_requests) > 0:
+    # Check bid time for bidders
+    for r in app_requests:
+      print r
+      for bid in r.bidders:
+        bid = bid.get()
+        if bid.bid_time != None:
+          if bid.bid_time > check_time:
+           new_bidders += 1
+  user.pending_requests = new_bidders
+
+  user.available_requests = len(available_requests)
+  user.put()
 
 class CreateRequestHandler(SessionHandler):
   ''' Create request '''
@@ -180,6 +229,7 @@ class ChooseRequestHandler(SessionHandler):
     request = ndb.Key(urlsafe = request_id).get()
     bidder = ndb.Key(urlsafe = cgi.escape(self.request.get('bidder'))).get()
     request.recipient = bidder.sender
+    request.recipient_name = bidder.name
     request.put()
 
 class JoinRequestHandler(SessionHandler):
@@ -248,6 +298,7 @@ class JoinRequestHandler(SessionHandler):
           bidder.sender = self.user_model.key
           bidder.location = new_location.key
           bidder.name = self.user_model.username
+          bidder.bid_time = datetime.datetime.now() - datetime.timedelta(hours=7)
           bidder.put()
           request.bidders.append(bidder.key)
           request.put()

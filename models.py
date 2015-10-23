@@ -11,10 +11,12 @@ class User(auth_models.User):
   wepay_id = ndb.StringProperty()
   
   # Notifications
+  available_requests = ndb.IntegerProperty(default=0)
   my_requests = ndb.IntegerProperty(default = 0)
   accepted_requests = ndb.IntegerProperty(default = 0)
   pending_requests = ndb.IntegerProperty(default = 0)
   approved_requests = ndb.IntegerProperty(default = 0)
+  last_check = ndb.DateTimeProperty()
 
   #ratings
   positive = ndb.FloatProperty(default = 0)
@@ -34,16 +36,16 @@ class Request(ndb.Model):
   recipient = ndb.KeyProperty(kind="User")
   sender = ndb.KeyProperty(kind="User")
   sender_name = ndb.StringProperty()
-  recipient_name = ndb.StringProperty(repeated=True)
+  recipient_name = ndb.StringProperty()
   location = ndb.StringProperty()
   creation_time = ndb.DateTimeProperty(auto_now_add=True)
   start_time = ndb.DateTimeProperty()
-  priority = ndb.IntegerProperty(default = 0)
   min_price = ndb.IntegerProperty(default = 0)
   max_price = ndb.IntegerProperty(default = 0)
   food_type = ndb.StringProperty()
   interest = ndb.StringProperty()
   bidders = ndb.KeyProperty(kind="Bidder", repeated=True)
+  bidder_names = ndb.StringProperty(repeated=True)
   status= ndb.StringProperty()
 
 class Bidder(ndb.Model):
@@ -51,6 +53,7 @@ class Bidder(ndb.Model):
   location = ndb.KeyProperty(kind="Location")
   name = ndb.StringProperty()
   price = ndb.IntegerProperty(default = 0)
+  bid_time = ndb.DateTimeProperty()
 
 class Location(ndb.Model):
   name = ndb.StringProperty()
