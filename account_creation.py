@@ -19,10 +19,7 @@ class RegisterHandler(SessionHandler):
     password = cgi.escape(self.request.get('password'))
     first_name = cgi.escape(self.request.get('first_name'))
     last_name = cgi.escape(self.request.get('last_name'))
-    avatar= cgi.escape(self.request.get('img'))
-    print avatar
-    avatar = images.resize(avatar, 400,400)
-    print avatar
+    avatar= self.request.get('img')
     
     unique_properties = ['email_address']
 
