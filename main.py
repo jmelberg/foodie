@@ -69,7 +69,7 @@ class ProfileHandler(SessionHandler):
           new_requests.append(request)
 
     # Get comments
-    comments = Endorsement.query(Endorsement.recipient == profile_owner.key).fetch()
+    comments = Endorsement.query(Endorsement.recipient == profile_owner.key).order(Endorsement.creation_time).fetch()
 
     self.response.out.write(template.render('views/profile.html',
                              {'owner':profile_owner, 'profile':profile, 'comments': comments,
@@ -90,6 +90,7 @@ class CommentHandler(SessionHandler):
       endorsement = Endorsement()
       endorsement.recipient = recipient_key
       endorsement.sender = user.first_name + " " + user.last_name
+      endorsement.creation_time = datetime.datetime.now() - datetime.timedelta(hours=7) #PST
       endorsement.rating = rating
       endorsement.text = comment
       endorsement.put()
