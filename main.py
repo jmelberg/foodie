@@ -9,7 +9,14 @@ from webapp2_extras import sessions, auth, json
 from basehandler import SessionHandler, login_required
 from account_creation import RegisterHandler, UsernameHandler
 from foodie_requests import *
+from wepay import *
 from models import User, Profile, Request, Endorsement
+
+client_id = 175855
+client_secret = 'dfb950e7ea'
+redirect_url = 'http://localhost:8080/'
+wepay = WePay(False, None)
+
 
 class LoginHandler(SessionHandler):
   def get(self):
@@ -27,6 +34,7 @@ class LoginHandler(SessionHandler):
           username = user_login.username
       u = self.auth.get_user_by_password(username, password, remember=True,
       save_session=True)
+      get_notifications(self.user_model)
       self.redirect('/foodie/{}'.format(self.user_model.username))
     except( auth.InvalidAuthIdError, auth.InvalidPasswordError):
       error = "Invalid Email/Password"
@@ -47,34 +55,20 @@ class ProfileHandler(SessionHandler):
       new_profile.owner = profile_owner.key
       new_profile.about_me = "I love to eat food"
       new_profile.put()
-    endorsements = Endorsement.query(Endorsement.recipient == profile_owner.key).fetch()
-    
-    #Get Requests for Notifications
-    accepted_requests = []
-    new_requests = []
 
     current_date = datetime.datetime.now() - datetime.timedelta(hours=7)
-    
-    available_requests = Request.query(Request.sender == profile_owner.key).fetch()
-    if available_requests:
-      for request in available_requests:
-        if request.start_time > current_date and request.recipient != None:
-          accepted_requests.append(request)
-    
-    # Get new requests
-    active_requests = Request.query(Request.start_time > current_date, Request.recipient == None).fetch()
-    if active_requests:
-      for request in active_requests:
-        if request.sender != viewer.key:
-          new_requests.append(request)
-
+    get_notifications(self.user_model)
     # Get comments
     comments = Endorsement.query(Endorsement.recipient == profile_owner.key).order(Endorsement.creation_time).fetch()
 
+    # Get profile history
+    history =  Request.query(Request.start_time <= current_date, Request.sender == profile_owner.key).order(Request.start_time)
+
     self.response.out.write(template.render('views/profile.html',
-                             {'owner':profile_owner, 'profile':profile, 'comments': comments,
-                             'endorsements':endorsements, 'user': viewer}))
-    
+                             {'owner':profile_owner, 'profile':profile, 'endorsements': comments,
+                            'history': history, 'user': viewer}))
+
+
 class CommentHandler(SessionHandler):
   ''' Leave a comment for another user '''
   def post(self):
@@ -107,11 +101,35 @@ class CommentHandler(SessionHandler):
     self.redirect('/foodie/{}'.format(recipient))
 
 class SearchHandler(SessionHandler):
+  ''' Search for users by the following criteria:
+        Username
+        First Name 
+        Last Name
+        First & Last Name
+  '''
   def get(self):
     user = self.user_model
-    search = self.request.get('search')
-    print search
-    #self.response.out.write(template.render('views/search.html', {'user':user}))
+    search = self.request.get('search').lower().strip()
+    results = []
+    profiles = []
+    #TODO check for type, location, ect
+    if ' ' in search:
+      # Full name
+      search_list = search.split(' ')
+      full_name = User.query(User.first_name == search_list[0], User.last_name == search_list[1]).fetch()
+      for user in full_name:
+        profile = Profile.query(Profile.owner == user.key).get()
+        results.append(user)
+        profiles.append(profile)
+    else:
+      search_names = User.query(ndb.OR(User.first_name == search, User.last_name == search, User.username == search)).fetch()
+      for user in search_names:
+        profile = Profile.query(Profile.owner == user.key).get()
+        results.append(user)
+        profiles.append(profile)
+
+    results = zip(results, profiles)
+    self.response.out.write(template.render('views/search.html', {'user':user, 'search_results':results}))
 
 
 class LogoutHandler(SessionHandler):
@@ -121,6 +139,21 @@ class LogoutHandler(SessionHandler):
     print "Log out successful..."
     self.auth.unset_session()
     self.redirect('/')
+
+class GetWePayUserTokenHandler(SessionHandler):
+  def get(self):
+    self.response.out.write(template.render('views/payments.html', {'user': self.user_model}))
+
+  def post(self):
+    user = self.user_model
+    code = cgi.escape(self.request.get("acct_json"))
+    r = wepay.get_token(redirect_url, client_id, client_secret, code[1:-1])
+    acct_token = r["access_token"]
+    acct_id = r["user_id"]
+    user.wepay_id = str(acct_id)
+    user.put()
+    
+        
 
 config = {}
 config['webapp2_extras.sessions'] = {
@@ -146,4 +179,12 @@ app = webapp2.WSGIApplication([
                              ('/request', CreateRequestHandler),
                              ('/getlocation', GetLocationHandler),
                              ('/logout', LogoutHandler),
+                             #payment stuff here!
+                             #('/createpayment', CreatePaymentHandler),
+                             #('/getpayments', GetPaymentHandler),
+                             #('/approvepayment', PaymentApprovedHandler),
+                             #('/completepayment', CompletePaymentHandler),
+                             #('/chargepayment', ChargePaymentHandler),
+                             ('/getwepaytoken', GetWePayUserTokenHandler),
+                             #('/setwepaytoken/', SetWePayUserTokenHandler),
                               ], debug=False, config=config)
