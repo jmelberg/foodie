@@ -32,7 +32,7 @@
           <a class="btn-floating btn-large waves-effect waves-light red"><i class="material-icons">G</i></a>
           <a class="btn-floating btn-large waves-effect waves-light blue"><i class="material-icons">T</i></a>
 
-          <form style="margin-bottom:-8px;" action="/register" method="POST">
+          <form style="margin-bottom:-8px;" action="/register" method="POST" enctype="multipart/form-data">
             <div class="input-field col s12">
               <input id="username" name="username" type="text" class="validate">
               <label for="username">Enter Username</label>
@@ -60,6 +60,18 @@
               <input id="last_name" name="last_name" type="text" class="validate">
               <label for="last_name">Enter Last Name</label>
             </div>
+            <div class="input-field col s12">
+              <div class="file-field">
+                <div class="btn">
+                  <span>Profile Picture</span>
+                  <input type="file" name="img" id="img">
+                </div>
+                <div class="file-path-wrapper">
+                  <input class="file-path validate" type="text" >
+                </div>
+              </div>
+            </div>
+
 
             <div class="card-action" style="text-align:right;">
               <a href="/">Cancel</a>

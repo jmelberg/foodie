@@ -68,6 +68,22 @@ class ProfileHandler(SessionHandler):
                              {'owner':profile_owner, 'profile':profile, 'endorsements': comments,
                             'history': history, 'user': viewer}))
 
+class Image(SessionHandler):
+  """Serves the image associated with an avatar"""
+  def get(self):
+    """receives user by urlsafe key"""
+    user_key = ndb.Key(urlsafe=self.request.get('user_id'))
+    height = cgi.escape(self.request.get('height'))
+    width = cgi.escape(self.request.get('width'))
+    user = user_key.get()
+    self.response.headers['content-type'] = 'image/png'
+    if len(height) > 0 and len(width) > 0:
+      height = int(height)
+      width = int(width)
+      self.response.out.write(images.resize(user.avatar,height,width))
+    else:
+      self.response.out.write(user.avatar)
+
 
 class CommentHandler(SessionHandler):
   ''' Leave a comment for another user '''
@@ -178,6 +194,7 @@ app = webapp2.WSGIApplication([
                              ('/query', SearchHandler),
                              ('/request', CreateRequestHandler),
                              ('/getlocation', GetLocationHandler),
+                             ('/img', Image),
                              ('/logout', LogoutHandler),
                              #payment stuff here!
                              #('/createpayment', CreatePaymentHandler),
