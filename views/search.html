@@ -5,7 +5,7 @@
   {% for result in search_results %}
     <li class="collection-item avatar">
       <a href="/foodie/{{result.0.username}}">
-      <img src="https://cdn3.iconfinder.com/data/icons/ballicons-free/128/man.png" alt="" class="circle">
+      <img src="/img?user_id={{result.0.key.urlsafe}}" alt="" class="circle">
       <span class="title">{{result.0.username}}</span>
       </a>
       <p> <b>{{result.0.first_name}} {{result.0.last_name}}</b><br>

@@ -24,7 +24,7 @@
         {% for request in empty_requests %}
           {% if request.sender != user.key %}
           <li class="collection-item avatar">
-            <img src ="http://cdn.wegotthiscovered.com/wp-content/uploads/hardwell-united-we-are-album-cover.jpg" class="circle">
+            <img src ="/img?user_id={{request.sender.urlsafe}}" class="circle">
             <span class="title">
               <b>Requestor:</b><a href="/foodie/{{request.sender_name}}"> {{request.sender_name}}</a></span>
             <p>
@@ -61,7 +61,7 @@
         {% for request in pending_requests %}
         {% if request.sender != user.key %}
         <li class="collection-item avatar">
-          <img src ="http://cdn.wegotthiscovered.com/wp-content/uploads/hardwell-united-we-are-album-cover.jpg" class="circle">
+          <img src ="/img?user_id={{request.sender.urlsafe}}" class="circle">
           <span class="title"><b>Requestor:</b><a href="/foodie/{{request.sender_name}}"> {{request.sender_name}}</a></span>
           <p>
             <b>Type:</b> {{request.food_type}}</p>
@@ -76,7 +76,7 @@
         {% else %}
         <li class="collection-item avatar">
 
-          <img src ="http://cdn.wegotthiscovered.com/wp-content/uploads/hardwell-united-we-are-album-cover.jpg" class="circle">
+          <img src ="/img?user_id={{request.sender.urlsafe}}" class="circle">
             <span class="title"><b>Requestor:</b><a href="/foodie/{{request.sender_name}}"> {{request.sender_name}}</a></span>
             <p>
               <b>Type:</b> {{request.food_type}}</p>
@@ -131,7 +131,7 @@
         {% for request in accepted_requests %}
         {% if request.sender != user.key %}
         <li class="collection-item avatar">
-          <img src ="http://cdn.wegotthiscovered.com/wp-content/uploads/hardwell-united-we-are-album-cover.jpg" class="circle">
+          <img src ="/img?user_id={{request.sender.urlsafe}}" class="circle">
           <span class="title"><b>Requestor:</b><a href="/foodie/{{request.sender_name}}"> {{request.sender_name}}</a></span>
           <p>
             <b>Type:</b> {{request.food_type}}</p>
@@ -147,7 +147,7 @@
         </li>
         {% else %}
         <li class="collection-item avatar">
-          <img src ="http://cdn.wegotthiscovered.com/wp-content/uploads/hardwell-united-we-are-album-cover.jpg" class="circle">
+          <img src ="/img?user_id={{request.sender.urlsafe}}" class="circle">
           <span class="title"><b>Requestor:</b><a href="/foodie/{{request.recipient_name}}"> {{request.recipient_name}}</a></span>
           <p>
             <b>Type:</b> {{request.food_type}}</p>
@@ -180,7 +180,7 @@
       <br />
       {% for request in my_requests %}
         <li class="collection-item avatar">
-          <img src ="http://cdn.wegotthiscovered.com/wp-content/uploads/hardwell-united-we-are-album-cover.jpg" class="circle">
+          <img src ="/img?user_id={{request.sender.urlsafe}}" class="circle">
           <span class="title"><b>Requestor:</b><a href="/foodie/{{request.sender_name}}"> {{request.sender_name}}</a></span>
           <p>
             <b>Type:</b> {{request.food_type}}</p>
@@ -234,7 +234,7 @@
         {% for request in location_requests %}
           {% if request.sender != user.key %}
           <li class="collection-item avatar">
-            <img src ="http://cdn.wegotthiscovered.com/wp-content/uploads/hardwell-united-we-are-album-cover.jpg" class="circle">
+            <img src ="/img?user_id={{request.sender.urlsafe}}" class="circle">
             <span class="title">
               <b>Requestor:</b><a href="/foodie/{{request.sender_name}}"> {{request.sender_name}}</a></span>
             <p>
@@ -272,7 +272,7 @@
         {% for request in price_requests %}
           {% if request.sender != user.key %}
           <li class="collection-item avatar">
-            <img src ="http://cdn.wegotthiscovered.com/wp-content/uploads/hardwell-united-we-are-album-cover.jpg" class="circle">
+            <img src ="/img?user_id={{request.sender.urlsafe}}" class="circle">
             <span class="title">
               <b>Requestor:</b><a href="/foodie/{{request.sender_name}}"> {{request.sender_name}}</a></span>
             <p>
