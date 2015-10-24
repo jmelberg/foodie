@@ -19,13 +19,17 @@ class RegisterHandler(SessionHandler):
     password = cgi.escape(self.request.get('password'))
     first_name = cgi.escape(self.request.get('first_name'))
     last_name = cgi.escape(self.request.get('last_name'))
+    avatar= cgi.escape(self.request.get('img'))
+    print avatar
+    avatar = images.resize(avatar, 400,400)
+    print avatar
     
     unique_properties = ['email_address']
 
     # Creation of User
     user_data = User.create_user(username, unique_properties, username=username,
                                 email_address=email, password_raw=password, first_name = first_name,
-                                last_name=last_name, verified=False)
+                                last_name=last_name, avatar = avatar, verified=False)
     time.sleep(1)
     try:
       u = self.auth.get_user_by_password(username, password, remember=True,

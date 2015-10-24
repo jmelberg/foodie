@@ -9,6 +9,7 @@ class User(auth_models.User):
   last_name = ndb.StringProperty()
   zip_code = ndb.IntegerProperty(default = 0)
   wepay_id = ndb.StringProperty()
+  avatar = ndb.BlobProperty()
   
   # Notifications
   available_requests = ndb.IntegerProperty(default=0)
