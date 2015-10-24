@@ -26,7 +26,7 @@ $(document).ready(function(){
           else {
             valid_username = 'false';
           }
-        }, 50);
+        }, 300);
       }
       else{
         valid_username = 'false';
@@ -71,7 +71,7 @@ $(document).ready(function(){
     $(window).keyup(function() {
       setTimeout(function() {
         showSignUp(valid_username,valid_password,valid_email,valid_first_name,valid_last_name);
-      }, 100);
+      }, 200);
     });
   });
 
