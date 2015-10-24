@@ -72,7 +72,7 @@ $(document).ready(function(){
           else {
             filled_time = false;
           }
-        }, 100);
+        }, 300);
       }
       else{
       }
