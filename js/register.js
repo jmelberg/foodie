@@ -26,7 +26,7 @@ $(document).ready(function(){
           else {
             valid_username = 'false';
           }
-        }, 300);
+        }, 550);
       }
       else{
         valid_username = 'false';

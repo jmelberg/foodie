@@ -10,13 +10,15 @@ $(document).ready(function(){
       var date = $('#edit_date').val();
       var time = $(this).val();
       checkTime(time, date, false);
-      if($('#edit_slot_available').val() === 'Available') {
-        valid_time = true;
-      }
-      else
-      {
-        valid_time = false;
-      }
+      setTimeout(function() {
+        if($('#edit_slot_available').val() === 'Available') {
+          valid_time = true;
+        }
+        else
+        {
+          valid_time = false;
+        }
+      }, 350);
     }
     else{
       $('#edit_slot_available').hide();

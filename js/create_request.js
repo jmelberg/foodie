@@ -38,7 +38,7 @@ $(document).ready(function(){
         if(location.length > 0) {
           filled_location = true;
         }        
-      }, 1000);
+      }, 1150);
     });
 
     $('#food_type').keyup(function() {
@@ -72,7 +72,7 @@ $(document).ready(function(){
           else {
             filled_time = false;
           }
-        }, 300);
+        }, 350);
       }
       else{
       }
