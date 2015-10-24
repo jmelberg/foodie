@@ -106,7 +106,7 @@ $(document).ready(function(){
     });
 
     $('#send_request').click(function() {
-      if ($('#agreement:checked').length>0){
+      if ($('#agreement:checked').length>0 && status === true){
         var date = $('#date').val();
         var time = $('#time').val();
         var location = $('#location').val();
