@@ -188,9 +188,8 @@
             <b>For:</b> {{request.start_time.date}} <b> @ </b> {{request.start_time.time}}</p>
             {% if request.recipient_name|length > 0 %}
               <p> <b>Attendees:</b> 
-              {{request.recipient_name}}
-              <a href="/foodie/{{person}}">{{person}}</a>  
-              {% endfor %}</p>
+              <a href="/foodie/{{request.recipient_name}}">{{request.recipient_name}}</a>  
+              </p>
             {% endif %}
             <b>Price Range:</b> ${{request.min_price}} to ${{request.max_price}}</p>
             <b>Interest:</b> {{request.interest}}</p>
