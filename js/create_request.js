@@ -1,3 +1,5 @@
+var filled_location = false;
+
 $(document).ready(function(){
   // Variables
   var slider = document.getElementById('range-input');
@@ -5,7 +7,6 @@ $(document).ready(function(){
   var max_price = document.getElementById('max_price');
   var submit_button = $('#send_request');
   var filled_food_type = false;
-  var filled_location = false;
   var filled_time = false;
   var confirmed_aggreement = false;
   var status = false;
@@ -30,15 +31,6 @@ $(document).ready(function(){
         }
         /*submit_button.style.visibility = "hidden";*/
       }
-    });
-
-    $('#location_button').click(function() {
-      setTimeout(function() {
-        var location = $('#location').val();
-        if(location.length > 0) {
-          filled_location = true;
-        }        
-      }, 1250);
     });
 
     $('#food_type').keyup(function() {
@@ -128,6 +120,12 @@ $(document).ready(function(){
     });
   });
 });
+
+function checkLocation(location) {
+  if(location.length > 0) {
+    filled_location = true;
+  }
+}
 
 function finalAgreement(time, food_type, location, confirmed_aggreement) {
   if(time === true && location === true && food_type === true && confirmed_aggreement === true) {

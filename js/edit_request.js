@@ -9,8 +9,8 @@ $(document).ready(function(){
     if($(this).val().length != 0) {
       var date = $('#edit_date').val();
       var time = $(this).val();
-      checkTime(time, date, false);
-      setTimeout(function() {
+      valid_time = checkTime(time, date, false);
+      /*setTimeout(function() {
         if($('#edit_slot_available').text() === 'Available') {
           valid_time = true;
         }
@@ -18,7 +18,7 @@ $(document).ready(function(){
         {
           valid_time = false;
         }
-      }, 350);
+      }, 350);*/
     }
     else{
       $('#edit_slot_available').hide();
