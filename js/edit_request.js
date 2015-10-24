@@ -11,7 +11,7 @@ $(document).ready(function(){
       var time = $(this).val();
       checkTime(time, date, false);
       setTimeout(function() {
-        if($('#edit_slot_available').val() === 'Available') {
+        if($('#edit_slot_available').text() === 'Available') {
           valid_time = true;
         }
         else
