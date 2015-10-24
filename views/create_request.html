@@ -17,6 +17,7 @@
     </div>
   </div>
   <script>
+  $.getScript("../js/create_request.js");
   var x = document.getElementById("found_location");
   var latitude;
   var longitude;
@@ -36,6 +37,7 @@
           data: {'longitude' : longitude, 'latitude': latitude},
           success: function(result){
             $("#location").val(result);
+            checkLocation($("#location").val());
           }
         });
   }
