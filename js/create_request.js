@@ -1,4 +1,5 @@
 var filled_location = false;
+var filled_time = false;
 
 $(document).ready(function(){
   // Variables
@@ -7,7 +8,6 @@ $(document).ready(function(){
   var max_price = document.getElementById('max_price');
   var submit_button = $('#send_request');
   var filled_food_type = false;
-  var filled_time = false;
   var confirmed_aggreement = false;
   var status = false;
 
@@ -57,14 +57,6 @@ $(document).ready(function(){
       var time = $('#time');
       if($(this).val().length != 0) {
         checkTime(time.val(), date.val(), confirmed_aggreement);
-        setTimeout(function() {
-          if($("#slot_available").text() == 'Available') {
-            filled_time = true;
-          }
-          else {
-            filled_time = false;
-          }
-        }, 350);
       }
       else{
       }
@@ -72,7 +64,6 @@ $(document).ready(function(){
 
     $('#agreement').click(function(){
       confirmed_aggreement = !confirmed_aggreement;
-      console.log(filled_time);
       status = finalAgreement(filled_time, filled_food_type, filled_location, confirmed_aggreement);
     });
 
@@ -168,12 +159,14 @@ function checkTime(time, date, confirmed_aggreement) {
         if(confirmed_aggreement === true) {
           $("#send_request").removeClass('disabled');          
         }
+        filled_time = true;
       }
       else {
         $("#slot_available").show();
         if($("#send_request").attr('class') === 'btn-flat') {
           $("#send_request").addClass('disabled');
         }
+        filled_time = false;
       }
 /*
       $("#slot_available").text(result);
