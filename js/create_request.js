@@ -72,6 +72,7 @@ $(document).ready(function(){
 
     $('#agreement').click(function(){
       confirmed_aggreement = !confirmed_aggreement;
+      console.log(filled_time);
       status = finalAgreement(filled_time, filled_food_type, filled_location, confirmed_aggreement);
     });
 

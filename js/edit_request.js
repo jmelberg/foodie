@@ -3,22 +3,30 @@ $(document).ready(function(){
   $.getScript("../js/create_request.js");
 
   // Edit Functions //
-  var valid_time = false;
+  $('#edit_food_type').keyup(function() {
+    if($('#edit_food_type').val().length === 0) {
+      $('#submit_edit').addClass('disabled');
+    }
+    else {
+      $('#submit_edit').removeClass('disabled');
+    }
+  })
+
+  $('#edit_location').keyup(function() {
+    if($('#edit_location').val().length === 0) {
+      $('#submit_edit').addClass('disabled');
+    }
+    else {
+      $('#submit_edit').removeClass('disabled');
+    }
+  })
+  
   $('#edit_time').focus();
   $('#edit_time').keyup(function () {
     if($(this).val().length != 0) {
       var date = $('#edit_date').val();
       var time = $(this).val();
-      valid_time = checkTime(time, date, false);
-      /*setTimeout(function() {
-        if($('#edit_slot_available').text() === 'Available') {
-          valid_time = true;
-        }
-        else
-        {
-          valid_time = false;
-        }
-      }, 350);*/
+      checkTime(time, date, false);
     }
     else{
       $('#edit_slot_available').hide();
@@ -55,7 +63,7 @@ $(document).ready(function(){
   });
 
   $('#submit_edit').click(function() {
-    if(valid_time === true) {
+    if($('#edit_food_type').val().length > 0 && $('#edit_location').val().length > 0 && $('#edit_slot_available').text() === 'Available') {
       var date = $('#edit_date').val();
       var time = $('#edit_time').val();
       var location = $('#edit_location').val();
@@ -72,7 +80,7 @@ $(document).ready(function(){
       });
       setTimeout(function(){ // Refresh after 1 second
         window.location.href = '/requests';
-      }, 100);      
+      }, 100);
     }
   });
 });
