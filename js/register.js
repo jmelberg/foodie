@@ -1,3 +1,9 @@
+var valid_username = 'false';
+var valid_password = 'false';
+var valid_email = 'false';
+var valid_first_name = 'false';
+var valid_last_name ='false';
+
 $(document).ready(function(){
   $('#register_tab').click(function() {
     window.location.href = '/register';
@@ -10,23 +16,10 @@ $(document).ready(function(){
   });
 
   $(function () {
-    var valid_username = 'false';
-    var valid_password = 'false';
-    var valid_email = 'false';
-    var valid_first_name = 'false';
-    var valid_last_name ='false';
     $('#username').focus();
     $('#username').keyup(function () {
-      checkUsername($(this).val().toLowerCase());
       if($(this).val().length != 0){
-        setTimeout(function() {
-          if($('#available').text().length == 21) {
-            valid_username = 'true';
-          }
-          else {
-            valid_username = 'false';
-          }
-        }, 550);
+        checkUsername($(this).val().toLowerCase());
       }
       else{
         valid_username = 'false';
@@ -83,6 +76,12 @@ $(document).ready(function(){
       success: function(result){
         $("#available").text(result);
         $("#available").show();
+          if($('#available').text().length == 21) {
+            valid_username = 'true';
+          }
+          else {
+            valid_username = 'false';
+          }
     }});
   }
 

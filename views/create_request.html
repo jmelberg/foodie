@@ -17,27 +17,29 @@
     </div>
   </div>
   <script>
+  $.getScript("../js/create_request.js");
   var x = document.getElementById("found_location");
   var latitude;
   var longitude;
   function getLocation() {
-      if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(setPosition);
-      } else { 
-          x.innerHTML = "Geolocation is not supported by this browser.";
-      }
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(setPosition);
+    } else { 
+      x.innerHTML = "Geolocation is not supported by this browser.";
+    }
   }
 
   function setPosition(position) {
-      latitude = position.coords.latitude;
-      longitude = position.coords.longitude; 
-      $.ajax({
-          url: "/getlocation",
-          data: {'longitude' : longitude, 'latitude': latitude},
-          success: function(result){
-            $("#location").val(result);
-          }
-        });
+    latitude = position.coords.latitude;
+    longitude = position.coords.longitude; 
+    $.ajax({
+      url: "/getlocation",
+      data: {'longitude' : longitude, 'latitude': latitude},
+      success: function(result){
+      $("#location").val(result);
+        checkLocation($("#location").val());
+      }
+    });
   }
   </script>
   </div>
