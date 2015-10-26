@@ -8,7 +8,7 @@
         <br />
         {% for bid in bids %}
           <li class="collection-item avatar">
-            <img src ="http://cdn.wegotthiscovered.com/wp-content/uploads/hardwell-united-we-are-album-cover.jpg" class="circle">
+            <img src ="/img?user_id={{bid.0.sender.urlsafe}}&height=350&width=350" class="circle">
             <span class="title">
               <b>Requestor:</b><a href="/foodie/{{bid.0.name}}"> {{bid.0.name}}</a></span>
             <p>
