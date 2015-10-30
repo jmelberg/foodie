@@ -122,23 +122,46 @@ class SearchHandler(SessionHandler):
         First Name 
         Last Name
         First & Last Name
+        Food Type
+        Location given City, State
   '''
   def get(self):
     user = self.user_model
     search = self.request.get('search').lower().strip()
+    print "Search Term: ", search
     results = []
     profiles = []
-    #TODO check for type, location, ect
+    current_time = datetime.datetime.now() - datetime.timedelta(hours=7)
+    #TODO check for location, ect
+    
+    # Check for type
+    food_type_requests = Request.query(Request.food_type == search).fetch()
+    food_type = [x for x in food_type_requests if x.start_time > current_time]
+    if food_type:
+      print "Type Match: "
+      for match in food_type:
+        print match.sender_name, "requested:", match.food_type, "for:", match.start_time, "in:", match.location
+
+    # Location Search
+    location_requests = Request.query(Request.location == search).fetch()
+    locations = [x for x in location_requests if x.start_time > current_time]
+    if locations:
+      print "Location Match: "
+      for match in locations:
+        print match.sender_name, "requested:", match.food_type,"for:", match.start_time, "in:", match.location
+
     if ' ' in search:
-      # Full name
       search_list = search.split(' ')
-      full_name = User.query(User.first_name == search_list[0], User.last_name == search_list[1]).fetch()
+      # Full name
+      print "Full name search..."
+      full_name = User.query(User.l_first_name == search_list[0], User.l_last_name == search_list[1]).fetch()
       for user in full_name:
         profile = Profile.query(Profile.owner == user.key).get()
         results.append(user)
         profiles.append(profile)
     else:
-      search_names = User.query(ndb.OR(User.first_name == search, User.last_name == search, User.username == search)).fetch()
+      print "First, last, or username search..."
+      search_names = User.query(ndb.OR(User.l_first_name == search, User.l_last_name == search, User.username == search)).fetch()
       for user in search_names:
         profile = Profile.query(Profile.owner == user.key).get()
         results.append(user)

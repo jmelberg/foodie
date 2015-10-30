@@ -7,6 +7,8 @@ class User(auth_models.User):
   email_address = ndb.StringProperty()
   first_name = ndb.StringProperty()
   last_name = ndb.StringProperty()
+  l_first_name = ndb.StringProperty()
+  l_last_name = ndb.StringProperty()
   zip_code = ndb.IntegerProperty(default = 0)
   wepay_id = ndb.StringProperty()
   avatar = ndb.BlobProperty()

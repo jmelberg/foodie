@@ -140,13 +140,13 @@ class CreateRequestHandler(SessionHandler):
 
   def post(self):
     user = self.user_model
-    location = cgi.escape(self.request.get("location"))
+    location = cgi.escape(self.request.get("location")).strip().lower()
     date = cgi.escape(self.request.get("date"))
     time = cgi.escape(self.request.get("time"))
     min_price = int(cgi.escape(self.request.get("min_price")))
     max_price = int(cgi.escape(self.request.get("max_price")))
-    food_type = cgi.escape(self.request.get("food_type"))
-    interest = cgi.escape(self.request.get("interest"))
+    food_type = cgi.escape(self.request.get("food_type")).strip().lower()
+    interest = cgi.escape(self.request.get("interest")).strip().lower()
 
     # Convert date and time to datetime
     format_date = str(date+ " " +time+":00.0")

@@ -17,8 +17,10 @@ class RegisterHandler(SessionHandler):
     username = cgi.escape(self.request.get('username')).strip().lower()
     email = cgi.escape(self.request.get('email')).strip().lower()
     password = cgi.escape(self.request.get('password'))
-    first_name = cgi.escape(self.request.get('first_name'))
-    last_name = cgi.escape(self.request.get('last_name'))
+    first_name = cgi.escape(self.request.get('first_name')).strip()
+    last_name = cgi.escape(self.request.get('last_name')).strip()
+    l_first_name = first_name.lower()
+    l_last_name = last_name.lower()
     avatar= self.request.get('img')
     
     unique_properties = ['email_address']
@@ -26,7 +28,8 @@ class RegisterHandler(SessionHandler):
     # Creation of User
     user_data = User.create_user(username, unique_properties, username=username,
                                 email_address=email, password_raw=password, first_name = first_name,
-                                last_name=last_name, avatar = avatar, verified=False)
+                                last_name=last_name, l_first_name = l_first_name, l_last_name = l_last_name,
+                                avatar = avatar, verified=False)
     time.sleep(1)
     try:
       u = self.auth.get_user_by_password(username, password, remember=True,
