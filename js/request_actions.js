@@ -68,6 +68,16 @@ $(document).ready(function() {
     $('#price_requests').show();
     $('#all').hide();  
   }
+  else if(tab == 'hangouts'){
+    $('#hangouts_requests').show();
+    $('#all').hide();
+    $('#hangouts_sort').hide();
+  }
+  else if(tab == 'lessons'){
+    $('#lessons_requests').show();
+    $('#all').hide();
+    $('#lessons_sort').hide();
+  }
   else {
     $('ul.tabs').tabs('select_tab', 'all');
   }

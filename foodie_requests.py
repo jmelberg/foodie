@@ -28,7 +28,7 @@ class RequestsHandler(SessionHandler):
     alloted_time = current_date + datetime.timedelta(hours=2)
     sorted_requests = []
     available_requests = Request.query(Request.start_time >= alloted_time).order(Request.start_time)
-    if request_sort == 'price' or request_sort == 'location':
+    if request_sort == 'price' or request_sort == 'location' or request_sort == 'hangouts' or request_sort == 'lessons':
       sorted_requests = sortRequests(request_sort, alloted_time)
 
     dead_requests = Request.query(Request.start_time <= alloted_time, Request.sender == user.key).order(Request.start_time)
@@ -78,13 +78,21 @@ class RequestsHandler(SessionHandler):
     price_requests = [r for r in p_requests if r.start_time >= alloted_time]
     price_requests = [r for r in price_requests if r.recipient == None]
 
+    h_requests = Request.query(Request.interest=='fun').order(Request.start_time).fetch()
+    hangouts_requests = [r for r in h_requests if r.start_time >= alloted_time]
+    hangouts_requests = [r for r in h_requests if r.recipient == None]
+
+    fl_requests = Request.query(Request.interest=='food lesson').order(Request.start_time).fetch()
+    foodlesson_requests = [r for r in fl_requests if r.start_time >= alloted_time]
+    foodlesson_requests = [r for r in fl_requests if r.recipient == None]
+
     user.last_check = datetime.datetime.now() - datetime.timedelta(hours=7)
     print "Updated check time to: " , user.last_check
     user.put()
 
     self.response.out.write(template.render('views/requests.html',
                             {'user': user, 'sorted_requests': sorted_requests, 'my_requests': my_requests,
-                            'price_requests': price_requests, 'location_requests': location_requests, 'empty_requests': empty_requests,
+                            'price_requests': price_requests, 'location_requests': location_requests, 'hangouts_requests': hangouts_requests, 'foodlesson_requests': foodlesson_requests, 'empty_requests': empty_requests,
                             'accepted_requests':approved_requests, 'pending_requests': pending_requests}))
 
 
