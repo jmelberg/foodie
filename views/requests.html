@@ -193,8 +193,9 @@
             {% endif %}
             <b>Price Range:</b> ${{request.min_price}} to ${{request.max_price}}</p>
             <b>Interest:</b> {{request.interest}}</p>
-            <b>Bidders:</b> {{request.bidders|length}}
-
+            <b>Bidders:</b> {{request.bidders|length}}</p>
+            <b>Status:</b> {{request.status}}
+          {% if request.status != "accepted" %}
           <div class="secondary-content">
             <table>
               <tr>
@@ -213,6 +214,7 @@
             <tr></tr>
           </table>
         </div>
+         {% endif %}
         </li>
       {% empty %}
       <li class="collection-header">

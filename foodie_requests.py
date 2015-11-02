@@ -171,6 +171,7 @@ class CreateRequestHandler(SessionHandler):
     request.max_price = max_price
     request.food_type = food_type
     request.interest = interest
+    request.status = "waiting for a bid"
     request.put()
     print "Added request to queue"
 
@@ -241,6 +242,7 @@ class ChooseRequestHandler(SessionHandler):
     bidder = ndb.Key(urlsafe = cgi.escape(self.request.get('bidder'))).get()
     request.recipient = bidder.sender
     request.recipient_name = bidder.name
+    request.status = "accepted"
     request.put()
 
 class JoinRequestHandler(SessionHandler):
@@ -312,6 +314,7 @@ class JoinRequestHandler(SessionHandler):
           bidder.bid_time = datetime.datetime.now() - datetime.timedelta(hours=7)
           bidder.put()
           request.bidders.append(bidder.key)
+          request.status = "pending"
           request.put()
     else:
       print "Already connected"
