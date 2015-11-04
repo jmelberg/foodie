@@ -218,6 +218,8 @@ app = webapp2.WSGIApplication([
                              ('/request', CreateRequestHandler),
                              ('/getlocation', GetLocationHandler),
                              ('/img', Image),
+                             ('/notify', SMSHandler),
+                             ('/verify/(.+)', VerifyHandler),
                              ('/logout', LogoutHandler),
                              #payment stuff here!
                              #('/createpayment', CreatePaymentHandler),

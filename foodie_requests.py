@@ -7,13 +7,17 @@ from google.appengine.ext import ndb
 from google.appengine.ext.webapp import template
 from google.appengine.api import users
 from google.appengine.api import images
+from google.appengine.api import urlfetch
 from webapp2_extras import sessions, auth
 from basehandler import SessionHandler, login_required
 from models import User, Profile, Request, Endorsement, Location, Bidder
 from yelp_api import query_api
-
 from urllib2 import urlopen
+import urllib
 import json
+
+from twilio.rest import TwilioRestClient
+
 
 api_key = 'AIzaSyBAO3qaYH4LGQky8vAA07gCVex1LBhUdbE'
 
@@ -66,9 +70,6 @@ class RequestsHandler(SessionHandler):
             # You are recipient
             approved_requests.append(request)
         
-
-
-
     # Get sorted requests
     l_requests = Request.query().order(Request.location).fetch()
     location_requests = [r for r in l_requests if r.start_time >= alloted_time ]
@@ -78,11 +79,11 @@ class RequestsHandler(SessionHandler):
     price_requests = [r for r in p_requests if r.start_time >= alloted_time]
     price_requests = [r for r in price_requests if r.recipient == None]
 
-    h_requests = Request.query(Request.interest=='fun').order(Request.start_time).fetch()
+    h_requests = Request.query(Request.interest == 'fun').order(Request.start_time).fetch()
     hangouts_requests = [r for r in h_requests if r.start_time >= alloted_time]
     hangouts_requests = [r for r in h_requests if r.recipient == None]
 
-    fl_requests = Request.query(Request.interest=='food lesson').order(Request.start_time).fetch()
+    fl_requests = Request.query(Request.interest == 'food lesson').order(Request.start_time).fetch()
     foodlesson_requests = [r for r in fl_requests if r.start_time >= alloted_time]
     foodlesson_requests = [r for r in fl_requests if r.recipient == None]
 
@@ -415,3 +416,60 @@ class GetLocationHandler(SessionHandler):
       self.response.out.write(current_location)
     else:
       self.response.out.write("Couldn't find location")
+
+class SMSHandler(SessionHandler):
+  def get(self):
+    current_time = datetime.datetime.now() - datetime.timedelta(hours=7)
+    max_time = current_time - datetime.timedelta(minutes=30)
+    # Get all requests in accepted state
+    #completed_requests = Request.query(Request.start_time >= current_time,
+    #  Request.start_time < max_time).fetch()
+    completed_requests = Request.query(Request.start_time >= current_time).fetch()
+    completed_requests = [x for x in completed_requests if x.recipient != None and x.status == "accepted"]
+    for request in completed_requests:
+      send_sms(request)
+
+class VerifyHandler(SessionHandler):
+  def get(self, request_id):
+    request = ndb.Key(urlsafe=request_id).get()
+    sender = User.query(User.username == request.sender_name).get()
+    accepter = User.query(User.username == request.recipient_name).get()
+    print "Sender: ", sender.username
+    print "Accepter:", accepter.username
+    request.status = "Complete"
+    request.put()
+    self.response.out.write(template.render('views/thanks.html', {}))
+
+def shorten_url(url):
+  post_url = 'https://www.googleapis.com/urlshortener/v1/url?key='+api_key
+  postdata = json.dumps({'longUrl':url})
+  result = urlfetch.fetch(url=post_url, payload=postdata,
+    method=urlfetch.POST,
+    headers={'Content-Type':'application/json'})
+  return json.loads(result.content)['id']
+
+def send_sms(request):
+  AUTH_TOKEN = '3d55c9d85ab388eacc42e8cfb1ad06e4'
+  ACCOUNT_SID = 'AC8d1e55b2a96dde764f3b6df1313bc3d1'
+  TWILIO_NUMBER = '+6503992009'
+
+  sender = User.query(User.username == request.sender_name).get()
+  accepter = User.query(User.username == request.recipient_name).get()
+  print "Sender: ", sender.username
+  print "Accepter:", accepter.username
+  key = request.key.urlsafe()
+
+  short_url = shorten_url("http://localhost:8080/verify/" + key)
+  print short_url
+  # client = TwilioRestClient(ACCOUNT_SID, AUTH_TOKEN)
+  # #Send to creator
+  # client.messages.create(
+  #   to = '+' + sender.phone_number,
+  #   from = TWILIO_NUMBER,
+  #   body = "Please confirm", acceptor.name, "showed up.", short_url)
+
+  # #Send to acceptor
+  # client.messages.create(
+  #   to = '+' + acceptor.phone_number,
+  #   from = TWILIO_NUMBER,
+  #   body = "Please confirm", sender.name, "showed up.", short_url)
