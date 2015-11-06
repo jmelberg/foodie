@@ -21,7 +21,7 @@ $(document).ready(function(){
     });
     setTimeout(function(){ // Refresh after 1 second
       window.location.href = '/requests';
-    }, 100);
+    }, 200);
   });
 
   // Close confirm request modal

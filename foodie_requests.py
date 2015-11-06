@@ -111,20 +111,24 @@ def get_notifications(user):
     print "Updated time: ", check_time
 
   # New requests
-  a_requests = Request.query(Request.sender != user.key).fetch()
-  available_requests = [r for r in a_requests if r.creation_time >= check_time]
+  available_requests = Request.query(Request.sender != user.key).fetch()
+  available_requests = [r for r in available_requests if r.creation_time >= check_time]
   available_requests = [r for r in available_requests if r.start_time >= current_time]
   available_requests = [r for r in available_requests if r.recipient == None]
 
   # Approved requests
-  app_requests = Request.query(Request.sender == user.key).fetch()
-  app_requests = [r for r in app_requests if r.start_time >= current_time]
-  app_requests = [r for r in app_requests if len(r.bidders) > 0]
-  #print app_requests
-  new_bidders = 0
-  if len(app_requests) > 0:
+  approved_requests = Request.query(Request.recipient == user.key).fetch()
+  approved_requests = [r for r in approved_requests if r.accept_time >= check_time]
+  approved_requests = [r for r in approved_requests if r.start_time >= current_time]
 
-    for r in app_requests:
+  # Pending requests
+  pend_requests = Request.query(Request.sender == user.key).fetch()
+  pend_requests = [r for r in pend_requests if r.start_time >= current_time]
+  pend_requests = [r for r in pend_requests if len(r.bidders) > 0]
+  new_bidders = 0
+  if len(pend_requests) > 0:
+
+    for r in pend_requests:
       for bid in r.bidders:
         bid = bid.get()
         print "Bid Time: " , bid.bid_time
@@ -133,11 +137,11 @@ def get_notifications(user):
           if bid.bid_time > check_time:
            new_bidders += 1
   else:
-    app_requests = [r for r in app_requests if r.creation_time >= check_time]
-    print "No bidders: ", app_requests
+    pend_requests = [r for r in pend_requests if r.creation_time >= check_time]
+    print "No bidders: ", pend_requests
   user.pending_requests = new_bidders
-
   user.available_requests = len(available_requests)
+  user.approved_requests = len(approved_requests)
   user.put()
 
 class CreateRequestHandler(SessionHandler):
@@ -243,6 +247,7 @@ class ChooseRequestHandler(SessionHandler):
     bidder = ndb.Key(urlsafe = cgi.escape(self.request.get('bidder'))).get()
     request.recipient = bidder.sender
     request.recipient_name = bidder.name
+    request.accept_time = datetime.datetime.now() - datetime.timedelta(hours=7)
     request.status = "accepted"
     request.put()
 
@@ -333,9 +338,38 @@ class DeleteRequestHandler(SessionHandler):
       request.key.delete()
       user.open_requests -= 1
       user.put()
-
     else:
       print "Not permitted to delete"
+
+class CancelRequestHandler(SessionHandler):
+  def post(self):
+    user = self.user_model
+    request_key = self.request.get('request')
+    request = ndb.Key(urlsafe = request_key).get()
+    cancel_bid = ""
+    # See if pending or completed
+    if request.recipient != None:
+      request.recipient = None
+      request.recipient_name = None
+      request.status = "pending"
+
+    for bid in request.bidders:
+      bid = bid.get()
+      if bid.sender == user.key:
+        cancel_bid = bid
+        print "Removing from request"
+
+    if cancel_bid != "":
+      request.bidders.remove(cancel_bid.key)
+
+    # Change state of request
+    if len(request.bidders) > 0:
+      request.status = "pending"
+    else:
+      request.status = "waiting for bid"
+
+    request.put()
+
 
 class CheckTimeConflict(SessionHandler):
   ''' jQuery async function to check time permittance '''
@@ -436,7 +470,7 @@ class VerifyHandler(SessionHandler):
     accepter = User.query(User.username == request.recipient_name).get()
     print "Sender: ", sender.username
     print "Accepter:", accepter.username
-    request.status = "Complete"
+    request.status = "complete"
     request.put()
     self.response.out.write(template.render('views/thanks.html', {}))
 

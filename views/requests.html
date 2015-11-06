@@ -69,7 +69,9 @@
             <b>For:</b> {{request.start_time.date}} <b> @ </b> {{request.start_time.time}}</p>
             <b>Interest:</b> {{request.interest}}</p>
           <div class="secondary-content">
-              <button id="pending_hide{{forloop.counter}}" style="border:none; background:none;" value={{request.key.urlsafe}}><i class="material-icons" style="color:red;">cancel</i></button>
+              <button id="pending_cancel{{forloop.counter}}" style="border:none; background:none;" value={{request.key.urlsafe}}><i class="material-icons" style="color:red;">cancel</i></button>
+
+              {% include "cancel_request_modal.html" %}
 
           </div>
         </li>
@@ -88,8 +90,7 @@
                 <a href="/foodie/{{person}}">{{person}}</a>  
                 {% endfor %}</p>
               {% endif %}
-<!--               <b>Price Range:</b> ${{request.min_price}} to ${{request.max_price}}</p>
- -->              <b>Interest:</b> {{request.interest}}</p>
+              <b>Interest:</b> {{request.interest}}</p>
               <b>Bidders:</b> {{request.bidders|length}}
 
           <div class="secondary-content">
@@ -142,7 +143,9 @@
             </p>
             <b>Interest:</b> {{request.interest}}</p>
           <div class="secondary-content">
-            <button id="cancel_request{{forloop.counter}}" style="border:none; background:none;" value={{request.key.urlsafe}}><i class="material-icons">cancel</i></button>
+            <button id="pending_cancel{{forloop.counter}}" style="border:none; background:none;" value={{request.key.urlsafe}}><i class="material-icons" style="color:red;">cancel</i></button>
+
+              {% include "cancel_request_modal.html" %}
           </div>
         </li>
         {% else %}
@@ -213,6 +216,10 @@
             </tr>
             <tr></tr>
           </table>
+        </div>
+        {% else %}
+        <div class="secondary-content">
+          <button id="delete{{forloop.counter}}" style="border:none; background:none; color:red" value={{request.key.urlsafe}}><i class="material-icons">clear</i>Delete</button>
         </div>
          {% endif %}
         </li>
@@ -382,12 +389,12 @@
       <i class="large material-icons">search</i>
     </a>
     <ul>
-      <li id="hangouts_sort"><a class="btn-floating teal" href="/requests?q=hangouts">H</a></li>
-      <li id="lessons_sort"><a class="btn-floating teal" href="/requests?q=lessons">F</a></li>
-      <li><a class="btn-floating red" href='/requests?q=all' ><i class="material-icons">autorenew</i></a></li>
-      <li><a class="btn-floating yellow darken-1" href='/requests?q=price'><i class="material-icons">attach_money</i></a></li>
-      <li><a class="btn-floating green" href='/requests?q=time'><i class="material-icons">access_time</i></a></li>
-      <li><a class="btn-floating blue" href='/requests?q=location' ><i class="material-icons">place</i></a></li>
+      <li id="hangouts_sort"><a class="btn-floating teal btn tooltipped" data-position="left" data-delay="50" data-tooltip="Hangouts" href="/requests?q=hangouts">H</a></li>
+      <li id="lessons_sort"><a class="btn-floating teal btn tooltipped" data-position="left" data-delay="50" data-tooltip="Food Type" href="/requests?q=lessons">F</a></li>
+      <li><a class="btn-floating red btn tooltipped" data-position="left" data-delay="50" data-tooltip="All" href='/requests?q=all' ><i class="material-icons">autorenew</i></a></li>
+      <li><a class="btn-floating yellow darken-1 btn tooltipped" data-position="left" data-delay="50" data-tooltip="Price" href='/requests?q=price'><i class="material-icons">attach_money</i></a></li>
+      <li><a class="btn-floating green btn tooltipped" data-position="left" data-delay="50" data-tooltip="Time" href='/requests?q=time'><i class="material-icons">access_time</i></a></li>
+      <li><a class="btn-floating blue btn tooltipped" data-position="left" data-delay="50" data-tooltip="Location" href='/requests?q=location' ><i class="material-icons">place</i></a></li>
     </ul>
   </div>
 </div>

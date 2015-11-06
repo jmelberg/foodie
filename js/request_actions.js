@@ -5,6 +5,7 @@ $(document).ready(function() {
   var tab = getUrlParameter('q');
   var bidder;
   var request = $('#request').val();
+  var cancel_request;
   $('ul.tabs').tabs();
 
   // pending Confirm application modal
@@ -24,6 +25,23 @@ $(document).ready(function() {
       $(this).parents().eq(1).hide();
   });
 
+  // Cancel pending request
+  $("[id^='pending_cancel']").click(function(){
+      $('#cancel_request').openModal();
+      cancel_request = $(this).val();
+  });
+
+  // Confirm cancel pending request
+  $("[id^='confirm_cancel_request']").click(function(){
+      $.ajax({
+        type: "POST",
+        url: "/cancel",
+        data: {'request' : cancel_request},
+      });
+    setTimeout(function(){ // Refresh after 1 second
+      window.location.href = '/requests';
+    }, 200); 
+  });
 
   // Accept confirm application
   $("#select_bid_button").click(function() {
@@ -34,7 +52,7 @@ $(document).ready(function() {
     });
     setTimeout(function(){ // Refresh after 1 second
       window.location.href = '/requests';
-    }, 100);
+    }, 200);
   });
   // Close pending confirm application modal
   $('#close_modal').click(function(){
@@ -50,7 +68,9 @@ $(document).ready(function() {
       url: "/delete",
       data: {'request' : request},
     });
-    top.location.href = '/requests';
+    setTimeout(function(){ // Refresh after 1 second
+      window.location.href = '/requests';
+    }, 200);
   });
 
   // For sorted results

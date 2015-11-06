@@ -30,7 +30,7 @@ class User(auth_models.User):
 
 ''' Profile entity hold information specific to user on profile '''
 class Profile(ndb.Model):
-  owner = ndb.KeyProperty(kind= "User")
+  owner = ndb.KeyProperty(kind = "User")
   about_me = ndb.StringProperty()
 
 
@@ -43,6 +43,7 @@ class Request(ndb.Model):
   location = ndb.StringProperty()
   creation_time = ndb.DateTimeProperty(auto_now_add=True)
   start_time = ndb.DateTimeProperty()
+  accept_time = ndb.DateTimeProperty()
   min_price = ndb.IntegerProperty(default = 0)
   max_price = ndb.IntegerProperty(default = 0)
   food_type = ndb.StringProperty()

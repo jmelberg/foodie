@@ -22,6 +22,7 @@ class RegisterHandler(SessionHandler):
     l_first_name = first_name.lower()
     l_last_name = last_name.lower()
     avatar= self.request.get('img')
+    avatar = images.resize(avatar,400,400) 
     
     unique_properties = ['email_address']
 

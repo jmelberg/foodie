@@ -129,10 +129,14 @@ class SearchHandler(SessionHandler):
     user = self.user_model
     search = self.request.get('search').lower().strip()
     print "Search Term: ", search
+    
+    #Seach for people
     results = []
     profiles = []
+    
+    # Search for requests
+    available_requests = []
     current_time = datetime.datetime.now() - datetime.timedelta(hours=7)
-    #TODO check for location, ect
     
     # Check for type
     food_type_requests = Request.query(Request.food_type == search).fetch()
@@ -140,7 +144,13 @@ class SearchHandler(SessionHandler):
     if food_type:
       print "Type Match: "
       for match in food_type:
-        print match.sender_name, "requested:", match.food_type, "for:", match.start_time, "in:", match.location
+        if match.recipient != None:
+          print 'STATUS: COMPLETED REQUESTS'
+          print match.sender_name, "requested:", match.food_type,"for:", match.start_time, "in:", match.location
+        else:
+          print 'STATUS: AVAILABLE REQUESTS'
+          print match.sender_name, "requested:", match.food_type,"for:", match.start_time, "in:", match.location
+          available_requests.append(match)
 
     # Location Search
     location_requests = Request.query(Request.location == search).fetch()
@@ -148,7 +158,13 @@ class SearchHandler(SessionHandler):
     if locations:
       print "Location Match: "
       for match in locations:
-        print match.sender_name, "requested:", match.food_type,"for:", match.start_time, "in:", match.location
+        if match.recipient != None:
+          print 'STATUS: COMPLETED REQUESTS'
+          print match.sender_name, "requested:", match.food_type,"for:", match.start_time, "in:", match.location
+        else:
+          print 'STATUS: AVAILABLE REQUESTS'
+          print match.sender_name, "requested:", match.food_type,"for:", match.start_time, "in:", match.location
+          available_requests.append(match)
 
     if ' ' in search:
       search_list = search.split(' ')
@@ -214,6 +230,7 @@ app = webapp2.WSGIApplication([
                              ('/choose/(.+)', ChooseRequestHandler),
                              ('/comment', CommentHandler),
                              ('/delete', DeleteRequestHandler),
+                             ('/cancel', CancelRequestHandler),
                              ('/query', SearchHandler),
                              ('/request', CreateRequestHandler),
                              ('/getlocation', GetLocationHandler),
