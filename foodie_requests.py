@@ -122,7 +122,8 @@ def get_notifications(user):
   available_requests = [r for r in available_requests if r.recipient == None]
 
   # Approved requests
-  approved_requests = Request.query(Request.recipient == user.key, Request.accept_time != None).fetch()
+  approved_requests = Request.query(Request.recipient == user.key).fetch()
+  approved_requests = [r for r in approved_requests if r.accept_time != None]
   approved_requests = [r for r in approved_requests if r.start_time >= current_time]
   approved_requests = [r for r in approved_requests if r.accept_time >= check_time]
 
