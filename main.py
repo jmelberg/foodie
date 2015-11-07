@@ -56,7 +56,7 @@ class ProfileHandler(SessionHandler):
       new_profile.about_me = "I love to eat food"
       new_profile.put()
 
-    current_date = datetime.datetime.now() - datetime.timedelta(hours=7)
+    current_date = datetime.datetime.now() - datetime.timedelta(hours=8)
     get_notifications(self.user_model)
     # Get comments
     comments = Endorsement.query(Endorsement.recipient == profile_owner.key).order(Endorsement.creation_time).fetch()
@@ -100,7 +100,7 @@ class CommentHandler(SessionHandler):
       endorsement = Endorsement()
       endorsement.recipient = recipient_key
       endorsement.sender = user.first_name + " " + user.last_name
-      endorsement.creation_time = datetime.datetime.now() - datetime.timedelta(hours=7) #PST
+      endorsement.creation_time = datetime.datetime.now() - datetime.timedelta(hours=8) #PST
       endorsement.rating = rating
       endorsement.text = comment
       endorsement.put()
@@ -136,7 +136,7 @@ class SearchHandler(SessionHandler):
     
     # Search for requests
     available_requests = []
-    current_time = datetime.datetime.now() - datetime.timedelta(hours=7)
+    current_time = datetime.datetime.now() - datetime.timedelta(hours=8)
     
     # Check for type
     food_type_requests = Request.query(Request.food_type == search).fetch()

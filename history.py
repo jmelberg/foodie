@@ -16,7 +16,7 @@ class HistoryHandler(SessionHandler):
   @login_required
   def get(self):
     user = self.user_model
-    current_date = datetime.datetime.now() - datetime.timedelta(hours=7)
+    current_date = datetime.datetime.now() - datetime.timedelta(hours=8)
     requested = Request.query(Request.start_time <= current_date, Request.sender == user.key).order(Request.start_time)
 
     provided = []  
