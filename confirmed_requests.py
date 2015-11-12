@@ -80,7 +80,15 @@ class CompletedRequestHandler(SessionHandler):
       if latitude <= (request.latitude - 0.01) or latitude >= (request.latitude + 0.01):
         if longitude <= (request.longitude - 0.01) or longitude >= (request.longitude + 0.01):
           print "Expert approved!"
-          request.status = "complete"
+          if request.status == "foodie":
+            #Foodie checked in already
+            request.status = "complete"
+          elif request.status == "approved":
+            #Expert is first to check in
+            request.status = "expert"
+          else:
+            # Request has expired
+            print "Request is no longer valid"
           request.put()
           #Process payment here
       else:
@@ -89,7 +97,13 @@ class CompletedRequestHandler(SessionHandler):
       if latitude <= (request.latitude - 0.01) or latitude >= (request.latitude + 0.01):
         if longitude <= (request.longitude - 0.01) or longitude >= (request.longitude + 0.01):
           print "Requestor approved"
-          request.status = "foodie"
+          if request.status == "expert":
+            request.status = "complete"
+          elif request.status =="approved":
+            request.status = "foodie"
+          else:
+            # Request has experied / fired
+            print "Request is no longer valid"
           request.put()
       else:
         print "YOU ARE NOT THERE! Nice try!"

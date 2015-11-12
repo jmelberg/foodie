@@ -1,6 +1,7 @@
 {% extends 'base.html' %}
 {% block content %}
 <div class="page-header"><h2>Search Results</h2></div>
+User Search:
  <ul class="collection">
   {% for result in search_results %}
     <li class="collection-item avatar">
@@ -12,10 +13,35 @@
         {{result.1.about_me}}
       </p>
     </li>
-  
-  {% empty %}
-  No results found
   {% endfor %}
+  </ul>
+  Available Requests:
+  <ul class="collection">
+    {% for result in available_requests %}
+      <li class="collection-item avatar">
+        <a href="/foodie/{{result.0.username}}">
+        <img src="/img?user_id={{result.0.key.urlsafe}}" alt="" class="circle">
+        <span class="title">{{result.0.username}}</span>
+        </a>
+        <p> <b>{{result.0.first_name}} {{result.0.last_name}}</b> requested<b> <a href="/confirm/{{result.1.key.urlsafe}}">{{result.1.food_type}}</a></b><br>
+          {{result.1.start_time}} in {{result.1.location|title}}
+        </p>
+      </li>
+    {% endfor %}
+  </ul>
+  Completed Requests:
+  <ul class="collection">
+    {% for result in completed_requests %}
+      <li class="collection-item avatar">
+        <a href="/foodie/{{result.0.username}}">
+        <img src="/img?user_id={{result.0.key.urlsafe}}" alt="" class="circle">
+        <span class="title">{{result.0.username}}</span>
+        </a>
+        <p> <b>{{result.0.first_name}} {{result.0.last_name}}</b> requested<b> {{result.1.food_type}}</b><br>
+          on {{result.1.start_time}} in {{result.1.location|title}}
+        </p>
+      </li>
+    {% endfor %}
   </ul>
 </div>
 {% endblock %}

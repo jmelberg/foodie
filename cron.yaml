@@ -1,11 +1,13 @@
-# cron:
-# -description: SMS Notification Push
-# url: /notify
-# #Run every 30 minutes from 6:00am - 11:00pm
-# schedule: every 30 minutes from 6:00 - 23:00
+cron:
+-description: SMS Notification Push
+url: /notify
+#Run every 10 minutes from 6:00am - 11:00pm
+schedule: every 10 minutes from 6:00 - 23:00
 
-# -description: Option to fire notification Push
-# url: /notify_fire
-# # Run every 10 minutes
-# schedule: every 10 minutes from 6:00 - 23:00
+-description: Option to fire notification Push
+url: /notify_fire
+# Run every 10 minutes
+schedule: every 10 minutes from 6:00 - 23:00
+
+
 

@@ -137,6 +137,10 @@ class SearchHandler(SessionHandler):
     
     # Search for requests
     available_requests = []
+    available_users = []
+
+    completed_requests = []
+    completed_users = []
     current_time = datetime.datetime.now() - datetime.timedelta(hours=8)
     
     # Check for type
@@ -145,13 +149,17 @@ class SearchHandler(SessionHandler):
     if food_type:
       print "Type Match: "
       for match in food_type:
+        sender = User.query(User.username == match.sender_name).get()
         if match.recipient != None:
           print 'STATUS: COMPLETED REQUESTS'
           print match.sender_name, "requested:", match.food_type,"for:", match.start_time, "in:", match.location
+          completed_requests.append(match)
+          completed_users.append(sender)
         else:
           print 'STATUS: AVAILABLE REQUESTS'
           print match.sender_name, "requested:", match.food_type,"for:", match.start_time, "in:", match.location
           available_requests.append(match)
+          available_users.append(sender)
 
     # Location Search
     location_requests = Request.query(Request.location == search).fetch()
@@ -159,13 +167,17 @@ class SearchHandler(SessionHandler):
     if locations:
       print "Location Match: "
       for match in locations:
+        sender = User.query(User.username == match.sender_name).get()
         if match.recipient != None:
           print 'STATUS: COMPLETED REQUESTS'
           print match.sender_name, "requested:", match.food_type,"for:", match.start_time, "in:", match.location
+          completed_requests.append(match)
+          completed_users.append(sender)
         else:
           print 'STATUS: AVAILABLE REQUESTS'
           print match.sender_name, "requested:", match.food_type,"for:", match.start_time, "in:", match.location
           available_requests.append(match)
+          available_users.append(sender)
 
     if ' ' in search:
       search_list = search.split(' ')
@@ -185,7 +197,10 @@ class SearchHandler(SessionHandler):
         profiles.append(profile)
 
     results = zip(results, profiles)
-    self.response.out.write(template.render('views/search.html', {'user':user, 'search_results':results}))
+    available = zip(available_users, available_requests)
+    completed = zip(completed_users, completed_requests)
+    self.response.out.write(template.render('views/search.html',
+      {'user':user, 'search_results':results, 'available_requests':available, 'completed_requests':completed}))
 
 
 class LogoutHandler(SessionHandler):
