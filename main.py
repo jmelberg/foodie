@@ -9,6 +9,7 @@ from webapp2_extras import sessions, auth, json
 from basehandler import SessionHandler, login_required
 from account_creation import RegisterHandler, UsernameHandler
 from foodie_requests import *
+from confirmed_requests import *
 from wepay import *
 from models import User, Profile, Request, Endorsement
 
@@ -236,7 +237,9 @@ app = webapp2.WSGIApplication([
                              ('/getlocation', GetLocationHandler),
                              ('/img', Image),
                              ('/notify', SMSHandler),
-                             ('/verify/(.+)', VerifyHandler),
+                             ('/thanks', ThanksHandler),
+                             ('/verify/(.+)/(.+)', VerifyHandler),
+                             ('/complete', CompletedRequestHandler), 
                              ('/logout', LogoutHandler),
                              #payment stuff here!
                              #('/createpayment', CreatePaymentHandler),
