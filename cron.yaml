@@ -1,4 +1,6 @@
 # cron:
 # -description: Hourly SMS Notification Push
 # url: /notify
-# schedule: every 1 hour
+# #Run every 30 minutes from 6:00am - 11:00pm
+# schedule: every 30 minutes from 6:00 - 23:00
+

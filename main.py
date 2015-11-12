@@ -237,8 +237,10 @@ app = webapp2.WSGIApplication([
                              ('/getlocation', GetLocationHandler),
                              ('/img', Image),
                              ('/notify', SMSHandler),
+                             ('/notify_fire', SMSFireHandler),
                              ('/thanks', ThanksHandler),
                              ('/verify/(.+)/(.+)', VerifyHandler),
+                             ('/fire/(.w)/(.+)', FireHandler),
                              ('/complete', CompletedRequestHandler), 
                              ('/logout', LogoutHandler),
                              #payment stuff here!
