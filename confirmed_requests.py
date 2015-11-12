@@ -94,8 +94,6 @@ class CompletedRequestHandler(SessionHandler):
       else:
         print "YOU ARE NOT THERE! Nice try!"
 
-
-
 class ThanksHandler(SessionHandler):
   def get(self):
     self.response.out.write(template.render('views/thanks.html', {}))    
@@ -130,8 +128,8 @@ def send_sms(request):
   #Send to creator
   print("Sending message to ", sender.telephone)
   print("Sending message to ", acceptor.telephone)
-  sender_body = "Please confirm " + acceptor.first_name + "(" + acceptor.telephone + ") showed up. " + sender_short_url
-  acceptor_body = "Please confirm " + sender.first_name + "(" + sender.telephone + ") showed up. " + acceptor_short_url
+  sender_body = "Please contact " + acceptor.first_name + "(" + acceptor.telephone + ") if needed. " + "Check in: " + sender_short_url
+  acceptor_body = "Please contact " + sender.first_name + "(" + sender.telephone + ") if needed. " + "Check in: " + acceptor_short_url
   #Send to poster
   client.messages.create(
     to = (sender.telephone),
