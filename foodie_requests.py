@@ -7,13 +7,17 @@ from google.appengine.ext import ndb
 from google.appengine.ext.webapp import template
 from google.appengine.api import users
 from google.appengine.api import images
+from google.appengine.api import urlfetch
 from webapp2_extras import sessions, auth
 from basehandler import SessionHandler, login_required
 from models import User, Profile, Request, Endorsement, Location, Bidder
 from yelp_api import query_api
-
 from urllib2 import urlopen
+import urllib
 import json
+
+from twilio.rest import TwilioRestClient
+
 
 api_key = 'AIzaSyBAO3qaYH4LGQky8vAA07gCVex1LBhUdbE'
 
@@ -23,11 +27,13 @@ class RequestsHandler(SessionHandler):
   def get(self):
     user = self.user_model
     request_sort = cgi.escape(self.request.get('requests'))
-    current_date = datetime.datetime.now() - datetime.timedelta(hours=7)
+    current_date = datetime.datetime.now() - datetime.timedelta(hours=8)
     # Return only those two hours or more in future
     alloted_time = current_date + datetime.timedelta(hours=2)
     sorted_requests = []
     available_requests = Request.query(Request.start_time >= alloted_time).order(Request.start_time)
+    print "alloted", alloted_time
+    print "current", current_date
     if request_sort == 'price' or request_sort == 'location' or request_sort == 'hangouts' or request_sort == 'lessons':
       sorted_requests = sortRequests(request_sort, alloted_time)
 
@@ -66,9 +72,6 @@ class RequestsHandler(SessionHandler):
             # You are recipient
             approved_requests.append(request)
         
-
-
-
     # Get sorted requests
     l_requests = Request.query().order(Request.location).fetch()
     location_requests = [r for r in l_requests if r.start_time >= alloted_time ]
@@ -78,21 +81,29 @@ class RequestsHandler(SessionHandler):
     price_requests = [r for r in p_requests if r.start_time >= alloted_time]
     price_requests = [r for r in price_requests if r.recipient == None]
 
-    h_requests = Request.query(Request.interest=='fun').order(Request.start_time).fetch()
+    h_requests = Request.query(Request.interest == 'fun').order(Request.start_time).fetch()
     hangouts_requests = [r for r in h_requests if r.start_time >= alloted_time]
     hangouts_requests = [r for r in h_requests if r.recipient == None]
 
-    fl_requests = Request.query(Request.interest=='food lesson').order(Request.start_time).fetch()
+    fl_requests = Request.query(Request.interest == 'food lesson').order(Request.start_time).fetch()
     foodlesson_requests = [r for r in fl_requests if r.start_time >= alloted_time]
     foodlesson_requests = [r for r in fl_requests if r.recipient == None]
 
-    user.last_check = datetime.datetime.now() - datetime.timedelta(hours=7)
+    user.last_check = datetime.datetime.now() - datetime.timedelta(hours=8)
     print "Updated check time to: " , user.last_check
     user.put()
 
+    for request in approved_requests:
+      print "Approved:"
+      print "Request:", request.key.urlsafe()
+      print "Sender:", request.sender.urlsafe()
+      print "Recipient:", request.recipient.urlsafe()
+      
+
     self.response.out.write(template.render('views/requests.html',
                             {'user': user, 'sorted_requests': sorted_requests, 'my_requests': my_requests,
-                            'price_requests': price_requests, 'location_requests': location_requests, 'hangouts_requests': hangouts_requests, 'foodlesson_requests': foodlesson_requests, 'empty_requests': empty_requests,
+                            'price_requests': price_requests, 'location_requests': location_requests, 'hangouts_requests': hangouts_requests,
+                            'foodlesson_requests': foodlesson_requests, 'empty_requests': empty_requests,
                             'accepted_requests':approved_requests, 'pending_requests': pending_requests}))
 
 
@@ -100,30 +111,36 @@ def get_notifications(user):
   #Get Requests for Notifications
   accepted_requests = []
   new_requests = []
-  current_time = datetime.datetime.now() - datetime.timedelta(hours=7)
+  current_time = datetime.datetime.now() - datetime.timedelta(hours=8)
   # Check for last login/update
   check_time = user.last_check
   print "Last Check: " , check_time
   if check_time is None:
     # Pull all results from previous week
-    check_time = datetime.datetime.now() - datetime.timedelta(days=7, hours=7)
+    check_time = datetime.datetime.now() - datetime.timedelta(days=7, hours=8)
     print "Updated time: ", check_time
 
   # New requests
-  a_requests = Request.query(Request.sender != user.key).fetch()
-  available_requests = [r for r in a_requests if r.creation_time >= check_time]
+  available_requests = Request.query(Request.sender != user.key).fetch()
+  available_requests = [r for r in available_requests if r.creation_time >= check_time]
   available_requests = [r for r in available_requests if r.start_time >= current_time]
   available_requests = [r for r in available_requests if r.recipient == None]
 
   # Approved requests
-  app_requests = Request.query(Request.sender == user.key).fetch()
-  app_requests = [r for r in app_requests if r.start_time >= current_time]
-  app_requests = [r for r in app_requests if len(r.bidders) > 0]
-  #print app_requests
-  new_bidders = 0
-  if len(app_requests) > 0:
+  approved_requests = Request.query(Request.recipient == user.key).fetch()
+  approved_requests = [r for r in approved_requests if r.accept_time != None]
+  approved_requests = [r for r in approved_requests if r.start_time >= current_time]
+  approved_requests = [r for r in approved_requests if r.accept_time >= check_time]
 
-    for r in app_requests:
+
+  # Pending requests
+  pend_requests = Request.query(Request.sender == user.key).fetch()
+  pend_requests = [r for r in pend_requests if r.start_time >= current_time]
+  pend_requests = [r for r in pend_requests if len(r.bidders) > 0]
+  new_bidders = 0
+  if len(pend_requests) > 0:
+
+    for r in pend_requests:
       for bid in r.bidders:
         bid = bid.get()
         print "Bid Time: " , bid.bid_time
@@ -132,11 +149,11 @@ def get_notifications(user):
           if bid.bid_time > check_time:
            new_bidders += 1
   else:
-    app_requests = [r for r in app_requests if r.creation_time >= check_time]
-    print "No bidders: ", app_requests
+    pend_requests = [r for r in pend_requests if r.creation_time >= check_time]
+    print "No bidders: ", pend_requests
   user.pending_requests = new_bidders
-
   user.available_requests = len(available_requests)
+  user.approved_requests = len(approved_requests)
   user.put()
 
 class CreateRequestHandler(SessionHandler):
@@ -166,11 +183,12 @@ class CreateRequestHandler(SessionHandler):
     request.sender_name = user.username
     request.location = location
     request.start_time = start_time
-    request.creation_time = datetime.datetime.now() - datetime.timedelta(hours=7) #PST
+    request.creation_time = datetime.datetime.now() - datetime.timedelta(hours=8) #PST
     request.min_price = min_price
     request.max_price = max_price
     request.food_type = food_type
     request.interest = interest
+    request.status = "waiting for a bid"
     request.put()
     print "Added request to queue"
 
@@ -241,6 +259,12 @@ class ChooseRequestHandler(SessionHandler):
     bidder = ndb.Key(urlsafe = cgi.escape(self.request.get('bidder'))).get()
     request.recipient = bidder.sender
     request.recipient_name = bidder.name
+    request.accept_time = datetime.datetime.now() - datetime.timedelta(hours=8)
+    # Get location data
+    location = bidder.location.get()
+    request.latitude = location.latitude
+    request.longitude = location.longitude
+    request.status = "accepted"
     request.put()
 
 class JoinRequestHandler(SessionHandler):
@@ -270,6 +294,11 @@ class JoinRequestHandler(SessionHandler):
         for a in business['location']['display_address']:
           location_string +=a + " " 
         location['location'] = location_string
+      if business['location']['coordinate']:
+        coordinates = ""
+        for a in business['location']['coordinate']:
+          coordinates += str(business['location']['coordinate'][a]) + " "
+        location["coordinates"] = coordinates
       results.append(location)
     self.response.out.write(template.render('views/confirm_request.html', {'results':results, 'request': request}))
   
@@ -284,13 +313,17 @@ class JoinRequestHandler(SessionHandler):
     if existing_location is None:
       # Add new location
       categories = location[3].split(',')
+      coordinates = location[4].split(' ')
       new_location = Location()
       new_location.name = location[0]
       new_location.address = location[1]
       new_location.image_url = location[2]
       for c in categories:
         new_location.categories.append(c)
+      new_location.longitude = float(coordinates[0])
+      new_location.latitude = float(coordinates[1])
       new_location.put()
+      
     else:
       new_location = existing_location
 
@@ -309,9 +342,10 @@ class JoinRequestHandler(SessionHandler):
           bidder.sender = self.user_model.key
           bidder.location = new_location.key
           bidder.name = self.user_model.username
-          bidder.bid_time = datetime.datetime.now() - datetime.timedelta(hours=7)
+          bidder.bid_time = datetime.datetime.now() - datetime.timedelta(hours=8)
           bidder.put()
           request.bidders.append(bidder.key)
+          request.status = "pending"
           request.put()
     else:
       print "Already connected"
@@ -329,9 +363,38 @@ class DeleteRequestHandler(SessionHandler):
       request.key.delete()
       user.open_requests -= 1
       user.put()
-
     else:
       print "Not permitted to delete"
+
+class CancelRequestHandler(SessionHandler):
+  def post(self):
+    user = self.user_model
+    request_key = self.request.get('request')
+    request = ndb.Key(urlsafe = request_key).get()
+    cancel_bid = ""
+    # See if pending or completed
+    if request.recipient != None:
+      request.recipient = None
+      request.recipient_name = None
+      request.status = "pending"
+
+    for bid in request.bidders:
+      bid = bid.get()
+      if bid.sender == user.key:
+        cancel_bid = bid
+        print "Removing from request"
+
+    if cancel_bid != "":
+      request.bidders.remove(cancel_bid.key)
+
+    # Change state of request
+    if len(request.bidders) > 0:
+      request.status = "pending"
+    else:
+      request.status = "waiting for bid"
+
+    request.put()
+
 
 class CheckTimeConflict(SessionHandler):
   ''' jQuery async function to check time permittance '''
@@ -363,7 +426,6 @@ class CheckTimeConflict(SessionHandler):
     alloted_date = start_time + datetime.timedelta(hours=2) #Max limit
 
     create = timeCheck(ongoing_request, alloted_date, start_time)
-    print create
     if create is True:
       self.response.out.write('Available')
     else:
@@ -376,7 +438,7 @@ def timeCheck(ongoing_request, alloted_date, start_time):
   create = False
   print "Requested: ", start_time
   print "MAX: ", alloted_date
-  current_time = datetime.datetime.now() - datetime.timedelta(hours=7)
+  current_time = datetime.datetime.now() - datetime.timedelta(hours=8)
   min_time = start_time - datetime.timedelta(hours=2) #Min limit
   # Check to see if time has already passed
   if start_time > current_time:
@@ -412,3 +474,4 @@ class GetLocationHandler(SessionHandler):
       self.response.out.write(current_location)
     else:
       self.response.out.write("Couldn't find location")
+

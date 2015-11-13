@@ -12,7 +12,12 @@ class User(auth_models.User):
   zip_code = ndb.IntegerProperty(default = 0)
   wepay_id = ndb.StringProperty()
   avatar = ndb.BlobProperty()
+<<<<<<< HEAD
 
+=======
+  telephone = ndb.StringProperty()
+  
+>>>>>>> 236fe5224a715c633294716af675ee795adf9a25
   # Notifications
   available_requests = ndb.IntegerProperty(default=0)
   my_requests = ndb.IntegerProperty(default = 0)
@@ -30,7 +35,7 @@ class User(auth_models.User):
 
 ''' Profile entity hold information specific to user on profile '''
 class Profile(ndb.Model):
-  owner = ndb.KeyProperty(kind= "User")
+  owner = ndb.KeyProperty(kind = "User")
   about_me = ndb.StringProperty()
 
 
@@ -43,6 +48,7 @@ class Request(ndb.Model):
   location = ndb.StringProperty()
   creation_time = ndb.DateTimeProperty(auto_now_add=True)
   start_time = ndb.DateTimeProperty()
+  accept_time = ndb.DateTimeProperty()
   min_price = ndb.IntegerProperty(default = 0)
   max_price = ndb.IntegerProperty(default = 0)
   food_type = ndb.StringProperty()
@@ -50,6 +56,8 @@ class Request(ndb.Model):
   bidders = ndb.KeyProperty(kind="Bidder", repeated=True)
   bidder_names = ndb.StringProperty(repeated=True)
   status= ndb.StringProperty()
+  longitude = ndb.FloatProperty()
+  latitude = ndb.FloatProperty()
 
 class Bidder(ndb.Model):
   sender = ndb.KeyProperty(kind="User")
@@ -64,6 +72,8 @@ class Location(ndb.Model):
   image_url = ndb.StringProperty()
   rating = ndb.StringProperty()
   categories = ndb.StringProperty(repeated = True)
+  longitude = ndb.FloatProperty()
+  latitude = ndb.FloatProperty()
 
 class Endorsement(ndb.Model):
   recipient = ndb.KeyProperty(kind="User")

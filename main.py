@@ -9,6 +9,7 @@ from webapp2_extras import sessions, auth, json
 from basehandler import SessionHandler, login_required
 from account_creation import RegisterHandler, UsernameHandler
 from foodie_requests import *
+from confirmed_requests import *
 from wepay import *
 from models import User, Profile, Request, Endorsement, Rating, PendingReview
 from ratings import CreateRating, DeletePending
@@ -57,7 +58,7 @@ class ProfileHandler(SessionHandler):
       new_profile.about_me = "I love to eat food"
       new_profile.put()
 
-    current_date = datetime.datetime.now() - datetime.timedelta(hours=7)
+    current_date = datetime.datetime.now() - datetime.timedelta(hours=8)
     get_notifications(self.user_model)
     # Get comments
     comments = Endorsement.query(Endorsement.recipient == profile_owner.key).order(Endorsement.creation_time).fetch()
@@ -101,7 +102,7 @@ class CommentHandler(SessionHandler):
       endorsement = Endorsement()
       endorsement.recipient = recipient_key
       endorsement.sender = user.first_name + " " + user.last_name
-      endorsement.creation_time = datetime.datetime.now() - datetime.timedelta(hours=7) #PST
+      endorsement.creation_time = datetime.datetime.now() - datetime.timedelta(hours=8) #PST
       endorsement.rating = rating
       endorsement.text = comment
       endorsement.put()
@@ -130,18 +131,42 @@ class SearchHandler(SessionHandler):
     user = self.user_model
     search = self.request.get('search').lower().strip()
     print "Search Term: ", search
+    
+    #Seach for people
     results = []
     profiles = []
+<<<<<<< HEAD
     current_time = datetime.datetime.now() - datetime.timedelta(hours=7)
     #TODO check for location, ect
 
+=======
+    
+    # Search for requests
+    available_requests = []
+    available_users = []
+
+    completed_requests = []
+    completed_users = []
+    current_time = datetime.datetime.now() - datetime.timedelta(hours=8)
+    
+>>>>>>> 236fe5224a715c633294716af675ee795adf9a25
     # Check for type
     food_type_requests = Request.query(Request.food_type == search).fetch()
     food_type = [x for x in food_type_requests if x.start_time > current_time]
     if food_type:
       print "Type Match: "
       for match in food_type:
-        print match.sender_name, "requested:", match.food_type, "for:", match.start_time, "in:", match.location
+        sender = User.query(User.username == match.sender_name).get()
+        if match.recipient != None:
+          print 'STATUS: COMPLETED REQUESTS'
+          print match.sender_name, "requested:", match.food_type,"for:", match.start_time, "in:", match.location
+          completed_requests.append(match)
+          completed_users.append(sender)
+        else:
+          print 'STATUS: AVAILABLE REQUESTS'
+          print match.sender_name, "requested:", match.food_type,"for:", match.start_time, "in:", match.location
+          available_requests.append(match)
+          available_users.append(sender)
 
     # Location Search
     location_requests = Request.query(Request.location == search).fetch()
@@ -149,7 +174,17 @@ class SearchHandler(SessionHandler):
     if locations:
       print "Location Match: "
       for match in locations:
-        print match.sender_name, "requested:", match.food_type,"for:", match.start_time, "in:", match.location
+        sender = User.query(User.username == match.sender_name).get()
+        if match.recipient != None:
+          print 'STATUS: COMPLETED REQUESTS'
+          print match.sender_name, "requested:", match.food_type,"for:", match.start_time, "in:", match.location
+          completed_requests.append(match)
+          completed_users.append(sender)
+        else:
+          print 'STATUS: AVAILABLE REQUESTS'
+          print match.sender_name, "requested:", match.food_type,"for:", match.start_time, "in:", match.location
+          available_requests.append(match)
+          available_users.append(sender)
 
     if ' ' in search:
       search_list = search.split(' ')
@@ -169,7 +204,10 @@ class SearchHandler(SessionHandler):
         profiles.append(profile)
 
     results = zip(results, profiles)
-    self.response.out.write(template.render('views/search.html', {'user':user, 'search_results':results}))
+    available = zip(available_users, available_requests)
+    completed = zip(completed_users, completed_requests)
+    self.response.out.write(template.render('views/search.html',
+      {'user':user, 'search_results':results, 'available_requests':available, 'completed_requests':completed}))
 
 
 class LogoutHandler(SessionHandler):
@@ -258,10 +296,17 @@ app = webapp2.WSGIApplication([
                              ('/choose/(.+)', ChooseRequestHandler),
                              ('/comment', CommentHandler),
                              ('/delete', DeleteRequestHandler),
+                             ('/cancel', CancelRequestHandler),
                              ('/query', SearchHandler),
                              ('/request', CreateRequestHandler),
                              ('/getlocation', GetLocationHandler),
                              ('/img', Image),
+                             ('/notify', SMSHandler),
+                             ('/notify_fire', SMSFireHandler),
+                             ('/thanks', ThanksHandler),
+                             ('/verify/(.+)/(.+)', VerifyHandler),
+                             ('/fire/(.w)/(.+)', FireHandler),
+                             ('/complete', CompletedRequestHandler), 
                              ('/logout', LogoutHandler),
                              ('/ratings', RatingsHandler),
                              ('/createpending', CreatePendingRatingHandler),

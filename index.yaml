@@ -17,6 +17,16 @@ indexes:
 
 - kind: Request
   properties:
+  - name: interest
+  - name: start_time
+
+- kind: Request
+  properties:
+  - name: recipient
+  - name: accept_time
+
+- kind: Request
+  properties:
   - name: recipient
   - name: start_time
 
