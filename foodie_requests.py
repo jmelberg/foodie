@@ -32,8 +32,6 @@ class RequestsHandler(SessionHandler):
     alloted_time = current_date + datetime.timedelta(hours=2)
     sorted_requests = []
     available_requests = Request.query(Request.start_time >= alloted_time).order(Request.start_time)
-    for a in available_requests:
-      print a
     print "alloted", alloted_time
     print "current", current_date
     if request_sort == 'price' or request_sort == 'location' or request_sort == 'hangouts' or request_sort == 'lessons':
@@ -94,6 +92,13 @@ class RequestsHandler(SessionHandler):
     user.last_check = datetime.datetime.now() - datetime.timedelta(hours=8)
     print "Updated check time to: " , user.last_check
     user.put()
+
+    for request in approved_requests:
+      print "Approved:"
+      print "Request:", request.key.urlsafe()
+      print "Sender:", request.sender.urlsafe()
+      print "Recipient:", request.recipient.urlsafe()
+      
 
     self.response.out.write(template.render('views/requests.html',
                             {'user': user, 'sorted_requests': sorted_requests, 'my_requests': my_requests,
@@ -255,6 +260,10 @@ class ChooseRequestHandler(SessionHandler):
     request.recipient = bidder.sender
     request.recipient_name = bidder.name
     request.accept_time = datetime.datetime.now() - datetime.timedelta(hours=8)
+    # Get location data
+    location = bidder.location.get()
+    request.latitude = location.latitude
+    request.longitude = location.longitude
     request.status = "accepted"
     request.put()
 
@@ -285,6 +294,11 @@ class JoinRequestHandler(SessionHandler):
         for a in business['location']['display_address']:
           location_string +=a + " " 
         location['location'] = location_string
+      if business['location']['coordinate']:
+        coordinates = ""
+        for a in business['location']['coordinate']:
+          coordinates += str(business['location']['coordinate'][a]) + " "
+        location["coordinates"] = coordinates
       results.append(location)
     self.response.out.write(template.render('views/confirm_request.html', {'results':results, 'request': request}))
   
@@ -299,13 +313,17 @@ class JoinRequestHandler(SessionHandler):
     if existing_location is None:
       # Add new location
       categories = location[3].split(',')
+      coordinates = location[4].split(' ')
       new_location = Location()
       new_location.name = location[0]
       new_location.address = location[1]
       new_location.image_url = location[2]
       for c in categories:
         new_location.categories.append(c)
+      new_location.longitude = float(coordinates[0])
+      new_location.latitude = float(coordinates[1])
       new_location.put()
+      
     else:
       new_location = existing_location
 
@@ -408,7 +426,6 @@ class CheckTimeConflict(SessionHandler):
     alloted_date = start_time + datetime.timedelta(hours=2) #Max limit
 
     create = timeCheck(ongoing_request, alloted_date, start_time)
-    print create
     if create is True:
       self.response.out.write('Available')
     else:
@@ -458,59 +475,3 @@ class GetLocationHandler(SessionHandler):
     else:
       self.response.out.write("Couldn't find location")
 
-class SMSHandler(SessionHandler):
-  def get(self):
-    current_time = datetime.datetime.now() - datetime.timedelta(hours=8)
-    max_time = current_time - datetime.timedelta(minutes=30)
-    # Get all requests in accepted state
-    #completed_requests = Request.query(Request.start_time >= current_time,
-    #  Request.start_time < max_time).fetch()
-    completed_requests = Request.query(Request.start_time >= current_time).fetch()
-    completed_requests = [x for x in completed_requests if x.recipient != None and x.status == "accepted"]
-    for request in completed_requests:
-      send_sms(request)
-
-class VerifyHandler(SessionHandler):
-  def get(self, request_id):
-    request = ndb.Key(urlsafe=request_id).get()
-    sender = User.query(User.username == request.sender_name).get()
-    accepter = User.query(User.username == request.recipient_name).get()
-    print "Sender: ", sender.username
-    print "Accepter:", accepter.username
-    request.status = "complete"
-    request.put()
-    self.response.out.write(template.render('views/thanks.html', {}))
-
-def shorten_url(url):
-  post_url = 'https://www.googleapis.com/urlshortener/v1/url?key='+api_key
-  postdata = json.dumps({'longUrl':url})
-  result = urlfetch.fetch(url=post_url, payload=postdata,
-    method=urlfetch.POST,
-    headers={'Content-Type':'application/json'})
-  return json.loads(result.content)['id']
-
-def send_sms(request):
-  AUTH_TOKEN = '3d55c9d85ab388eacc42e8cfb1ad06e4'
-  ACCOUNT_SID = 'AC8d1e55b2a96dde764f3b6df1313bc3d1'
-  TWILIO_NUMBER = '+6503992009'
-
-  sender = User.query(User.username == request.sender_name).get()
-  accepter = User.query(User.username == request.recipient_name).get()
-  print "Sender: ", sender.username
-  print "Accepter:", accepter.username
-  key = request.key.urlsafe()
-
-  short_url = shorten_url("http://localhost:8080/verify/" + key)
-  print short_url
-  # client = TwilioRestClient(ACCOUNT_SID, AUTH_TOKEN)
-  # #Send to creator
-  # client.messages.create(
-  #   to = '+' + sender.phone_number,
-  #   from = TWILIO_NUMBER,
-  #   body = "Please confirm", acceptor.name, "showed up.", short_url)
-
-  # #Send to acceptor
-  # client.messages.create(
-  #   to = '+' + acceptor.phone_number,
-  #   from = TWILIO_NUMBER,
-  #   body = "Please confirm", sender.name, "showed up.", short_url)

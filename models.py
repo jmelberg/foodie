@@ -12,6 +12,7 @@ class User(auth_models.User):
   zip_code = ndb.IntegerProperty(default = 0)
   wepay_id = ndb.StringProperty()
   avatar = ndb.BlobProperty()
+  telephone = ndb.StringProperty()
   
   # Notifications
   available_requests = ndb.IntegerProperty(default=0)
@@ -51,6 +52,8 @@ class Request(ndb.Model):
   bidders = ndb.KeyProperty(kind="Bidder", repeated=True)
   bidder_names = ndb.StringProperty(repeated=True)
   status= ndb.StringProperty()
+  longitude = ndb.FloatProperty()
+  latitude = ndb.FloatProperty()
 
 class Bidder(ndb.Model):
   sender = ndb.KeyProperty(kind="User")
@@ -65,6 +68,8 @@ class Location(ndb.Model):
   image_url = ndb.StringProperty()
   rating = ndb.StringProperty()
   categories = ndb.StringProperty(repeated = True)
+  longitude = ndb.FloatProperty()
+  latitude = ndb.FloatProperty()
 
 class Endorsement(ndb.Model):
   recipient = ndb.KeyProperty(kind="User")

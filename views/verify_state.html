@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.0/css/materialize.min.css">
+ <!--Import jQuery before materialize.js-->
+ <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+ <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.0/js/materialize.min.js"></script>
+ <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+ <script src="https://refreshless.com/nouislider/documentation/assets/wNumb.js"></script>
+ <link href="http://materializecss.com/extras/noUiSlider/nouislider.css" rel="stylesheet">
+ <!-- Slider JS -->
+ <script src="http://materializecss.com/extras/noUiSlider/nouislider.js"></script>
+ <script src="/js/create_request.js" type="text/javascript"></script>
+ <script>
+  var x = document.getElementById("found_location");
+  var latitude;
+  var longitude;
+
+  function getLocation() {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(setPosition);
+    } else { 
+      x.innerHTML = "Geolocation is not supported by this browser.";
+    }
+  }
+
+  function setPosition(position) {
+    latitude = position.coords.latitude;
+    longitude = position.coords.longitude;
+    $.ajax({
+      url:"/complete",
+      method: "GET",
+      data:{'latitude' : latitude, 'longitude': longitude, 'request': document.getElementById("user_request").value, 'message' : document.getElementById("user_message").value}
+    });
+    setTimeout(function(){ // Refresh after 1 second
+      window.location.href = '/thanks';
+    }, 200);
+  }
+  </script></head>
+<body>
+  <button id="location_button" onclick="getLocation()" class="btn-flat">Use Current Location</button>
+  <p id="found_location"></p>
+  <input style="display:none;" id="user_location" name="user_location" >
+  <input style="display:none;" id="user_request" name="user_request" value="{{request.key.urlsafe}}">
+  <input style="display:none;" id="user_message" name="user_message" value="{{receiver.key.urlsafe}}">
+
+</body>
+</html>
