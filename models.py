@@ -12,7 +12,7 @@ class User(auth_models.User):
   zip_code = ndb.IntegerProperty(default = 0)
   wepay_id = ndb.StringProperty()
   avatar = ndb.BlobProperty()
-  
+
   # Notifications
   available_requests = ndb.IntegerProperty(default=0)
   my_requests = ndb.IntegerProperty(default = 0)
@@ -83,3 +83,19 @@ class Notification(ndb.Model):
   sender = ndb.KeyProperty(kind="User")
   recipient = ndb.KeyProperty(kind="User")
   status = ndb.StringProperty()
+
+class Rating(ndb.Model):
+    person = ndb.StringProperty()
+    ratingtype = ndb.StringProperty()
+    experience = ndb.IntegerProperty()
+    enthusiasm = ndb.IntegerProperty()
+    friendliness = ndb.IntegerProperty()
+    experienceComments = ndb.StringProperty()
+    enthusiasmComments = ndb.StringProperty()
+    friendlinessComments = ndb.StringProperty()
+
+class PendingReview(ndb.Model):
+    ratingtype = ndb.StringProperty()
+    sender = ndb.KeyProperty(kind="User")
+    recipient = ndb.KeyProperty(kind="User")
+    date = ndb.DateTimeProperty(auto_now_add=True)

@@ -10,7 +10,8 @@ from basehandler import SessionHandler, login_required
 from account_creation import RegisterHandler, UsernameHandler
 from foodie_requests import *
 from wepay import *
-from models import User, Profile, Request, Endorsement
+from models import User, Profile, Request, Endorsement, Rating, PendingReview
+from ratings import CreateRating, DeletePending
 
 client_id = 175855
 client_secret = 'dfb950e7ea'
@@ -104,7 +105,7 @@ class CommentHandler(SessionHandler):
       endorsement.rating = rating
       endorsement.text = comment
       endorsement.put()
-      # modify rating 
+      # modify rating
       if rating == "positive":
         recipient_user.positive = recipient_user.positive + 1
       elif rating == "neutral":
@@ -119,7 +120,7 @@ class CommentHandler(SessionHandler):
 class SearchHandler(SessionHandler):
   ''' Search for users by the following criteria:
         Username
-        First Name 
+        First Name
         Last Name
         First & Last Name
         Food Type
@@ -133,7 +134,7 @@ class SearchHandler(SessionHandler):
     profiles = []
     current_time = datetime.datetime.now() - datetime.timedelta(hours=7)
     #TODO check for location, ect
-    
+
     # Check for type
     food_type_requests = Request.query(Request.food_type == search).fetch()
     food_type = [x for x in food_type_requests if x.start_time > current_time]
@@ -191,8 +192,51 @@ class GetWePayUserTokenHandler(SessionHandler):
     acct_id = r["user_id"]
     user.wepay_id = str(acct_id)
     user.put()
-    
-        
+
+class RatingsHandler(SessionHandler):
+    def get(self):
+        user = self.user_model
+        pending = PendingReview()
+        review = pending.query(PendingReview.sender == user.key)
+        self.response.out.write(template.render('views/ratings.html', {'rating': review}))
+    def post(self):
+        user = self.user_model
+        rating = Rating()
+        pendingkey = cgi.escape(self.request.get("pendingkey"))
+        ratingtype = cgi.escape(self.request.get("ratingtype"))
+        experience = cgi.escape(self.request.get("experience"))
+        enthusiasm = cgi.escape(self.request.get("enthusiasm"))
+        friendliness = cgi.escape(self.request.get("friendliness"))
+        experiencecomment = cgi.escape(self.request.get("experiencecomments"))
+        enthusiasmcomment = cgi.escape(self.request.get("enthusiasmcomments"))
+        friendlinesscomment = cgi.escape(self.request.get("friendlinesscomments"))
+        recipient = cgi.escape(self.request.get("recipient"))
+        experience = int(experience)
+        enthusiasm = int(enthusiasm)
+        friendliness = int(friendliness)
+        rating.person = recipient
+        rating.ratingtype = ratingtype
+        rating.experience = experience
+        rating.enthusiasm = enthusiasm
+        rating.friendliness = friendliness
+        rating.experienceComments = experiencecomment
+        rating.enthusiasmComments = enthusiasmcomment
+        rating.friendlinessComments = friendlinesscomment
+        rating.put()
+        DeletePending(pendingkey)
+
+class PendingRatingHandler(SessionHandler):
+    def get(self):
+        user = self.user_model
+        review = PendingReview().query(PendingReview.sender == user)
+        self.response.out.write(template.render('views/pendingratings.html', {'review': review}))
+
+
+class CreatePendingRatingHandler(SessionHandler):
+    def get(self):
+        user = self.user_model
+        CreateRating("foodie", user.key, user.key)
+        CreateRating("expert", user.key, user.key)
 
 config = {}
 config['webapp2_extras.sessions'] = {
@@ -219,12 +263,8 @@ app = webapp2.WSGIApplication([
                              ('/getlocation', GetLocationHandler),
                              ('/img', Image),
                              ('/logout', LogoutHandler),
-                             #payment stuff here!
-                             #('/createpayment', CreatePaymentHandler),
-                             #('/getpayments', GetPaymentHandler),
-                             #('/approvepayment', PaymentApprovedHandler),
-                             #('/completepayment', CompletePaymentHandler),
-                             #('/chargepayment', ChargePaymentHandler),
+                             ('/ratings', RatingsHandler),
+                             ('/createpending', CreatePendingRatingHandler),
+                             ('/pendingratings', PendingRatingHandler),
                              ('/getwepaytoken', GetWePayUserTokenHandler),
-                             #('/setwepaytoken/', SetWePayUserTokenHandler),
                               ], debug=False, config=config)

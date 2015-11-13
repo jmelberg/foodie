@@ -1,0 +1,15 @@
+.wineglass {
+  background-image: url("../lib/images/wine.svg");
+  background-repeat: no-repeat;
+  height: 32px;
+  width: 32px;
+  display: inline-block; }
+
+.wineglassactive {
+  background-image: url("../lib/images/wineactive.svg");
+  background-repeat: no-repeat;
+  height: 32px;
+  width: 32px;
+  display: inline-block; }
+
+/*# sourceMappingURL=app.css.map */
