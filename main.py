@@ -271,14 +271,15 @@ class CreatePendingRatingHandler(SessionHandler):
         CreateRating("expert", user.key, user.key)
 
 class AuthorizedPaymentHandler(SessionHandler):
-    def get(self):
+    def get(self, request_id, preapproval_id):
+        print request_id + ' ' + preapproval_id
         #THIS CODE IS TO CONFIRM THAT PAYMENT IS AUTHORIZED!!!!
         self.redirect('/')
 
 
 class TestPaymentHandler(SessionHandler):
     def get(self):
-        CreatePayment("69.69", "1526170804", "Hello")
+        CreatePayment("butthole", "69.69", "1526170804", "Hello")
 
 config = {}
 config['webapp2_extras.sessions'] = {
@@ -311,7 +312,7 @@ app = webapp2.WSGIApplication([
                              ('/verify/(.+)/(.+)', VerifyHandler),
                              ('/fire/(.w)/(.+)', FireHandler),
                              ('/complete', CompletedRequestHandler),
-                             ('/paymentauthorized', AuthorizedPaymentHandler),
+                             ('/paymentauthorized/(.+)/(.+)', AuthorizedPaymentHandler),
                              ('/logout', LogoutHandler),
                              ('/ratings', RatingsHandler),
                              ('/testpayment', TestPaymentHandler),
