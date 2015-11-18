@@ -15,6 +15,7 @@ from wepay import *
 from models import User, Profile, Request, Endorsement, Rating, PendingReview
 from ratings import CreateRating, DeletePending
 from payments import CreatePaymentExample, CreatePayment, ChargePayment
+from reviews import *
 
 client_id = 175855
 client_secret = 'dfb950e7ea'
@@ -87,37 +88,6 @@ class Image(SessionHandler):
     else:
       self.response.out.write(user.avatar)
 
-
-class CommentHandler(SessionHandler):
-  ''' Leave a comment for another user '''
-  def post(self):
-    user = self.user_model
-    rating = cgi.escape(self.request.get('rating'))
-    comment = cgi.escape(self.request.get('comment'))
-    # Person getting endorsement
-    recipient = cgi.escape(self.request.get('recipient'))
-    recipient_user = User.query(User.username == recipient).get()
-    recipient_key = recipient_user.key
-
-    if comment != None:
-      endorsement = Endorsement()
-      endorsement.recipient = recipient_key
-      endorsement.sender = user.first_name + " " + user.last_name
-      endorsement.creation_time = datetime.datetime.now() - datetime.timedelta(hours=8) #PST
-      endorsement.rating = rating
-      endorsement.text = comment
-      endorsement.put()
-      # modify rating
-      if rating == "positive":
-        recipient_user.positive = recipient_user.positive + 1
-      elif rating == "neutral":
-        recipient_user.neutral = recipient_user.neutral + 1
-      else:
-        recipient_user.negative = recipient_user.negative + 1
-      recipient_user.percent_positive = (recipient_user.positive / (recipient_user.positive + recipient_user.negative)) * 100
-      recipient_user.put()
-
-    self.redirect('/foodie/{}'.format(recipient))
 
 class SearchHandler(SessionHandler):
   ''' Search for users by the following criteria:
@@ -226,65 +196,20 @@ class GetWePayUserTokenHandler(SessionHandler):
     user.wepay_id = str(acct_id)
     user.put()
 
-class RatingsHandler(SessionHandler):
-    def get(self):
-        user = self.user_model
-        pending = PendingReview()
-        review = pending.query(PendingReview.sender == user.key)
-        self.response.out.write(template.render('views/ratings.html', {'rating': review}))
-    def post(self):
-        user = self.user_model
-        rating = Rating()
-        pendingkey = cgi.escape(self.request.get("pendingkey"))
-        ratingtype = cgi.escape(self.request.get("ratingtype"))
-        experience = cgi.escape(self.request.get("experience"))
-        enthusiasm = cgi.escape(self.request.get("enthusiasm"))
-        friendliness = cgi.escape(self.request.get("friendliness"))
-        experiencecomment = cgi.escape(self.request.get("experiencecomments"))
-        enthusiasmcomment = cgi.escape(self.request.get("enthusiasmcomments"))
-        friendlinesscomment = cgi.escape(self.request.get("friendlinesscomments"))
-        recipient = cgi.escape(self.request.get("recipient"))
-        experience = int(experience)
-        enthusiasm = int(enthusiasm)
-        friendliness = int(friendliness)
-        rating.person = recipient
-        rating.ratingtype = ratingtype
-        rating.experience = experience
-        rating.enthusiasm = enthusiasm
-        rating.friendliness = friendliness
-        rating.experienceComments = experiencecomment
-        rating.enthusiasmComments = enthusiasmcomment
-        rating.friendlinessComments = friendlinesscomment
-        rating.put()
-        DeletePending(pendingkey)
-
-class PendingRatingHandler(SessionHandler):
-    def get(self):
-        user = self.user_model
-        review = PendingReview().query(PendingReview.sender == user)
-        self.response.out.write(template.render('views/pendingratings.html', {'review': review}))
-
-class CreatePendingRatingHandler(SessionHandler):
-    def get(self):
-        user = self.user_model
-        CreateRating("foodie", user.key, user.key)
-        CreateRating("expert", user.key, user.key)
-
 class AuthorizedPaymentHandler(SessionHandler):
-    def get(self, request_id, preapproval_id):
-        print request_id + ' ' + preapproval_id
-        #THIS CODE IS TO CONFIRM THAT PAYMENT IS AUTHORIZED!!!!
+  def get(self, request_id, preapproval_id):
+    print request_id + ' ' + preapproval_id
+    #THIS CODE IS TO CONFIRM THAT PAYMENT IS AUTHORIZED!!!!
 
-        #SOME BOOLEAN IN REQUESTS MODEL THAT PAYMENT IS PROCESSED SET FROM FALSE TO TRUE
+    #SOME BOOLEAN IN REQUESTS MODEL THAT PAYMENT IS PROCESSED SET FROM FALSE TO TRUE
 
-        #PREAPPROVAL ID IS ALSO SET INTO THE PREAPPROVAL ID
-        
-        self.redirect('/')
-
+    #PREAPPROVAL ID IS ALSO SET INTO THE PREAPPROVAL ID
+    
+    self.redirect('/')
 
 class TestPaymentHandler(SessionHandler):
-    def get(self):
-        CreatePayment("butthole", "69.69", "1526170804", "Hello")
+  def get(self):
+    CreatePayment("butthole", "69.69", "1526170804", "Hello")
 
 config = {}
 config['webapp2_extras.sessions'] = {
