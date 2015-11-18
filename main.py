@@ -274,6 +274,11 @@ class AuthorizedPaymentHandler(SessionHandler):
     def get(self, request_id, preapproval_id):
         print request_id + ' ' + preapproval_id
         #THIS CODE IS TO CONFIRM THAT PAYMENT IS AUTHORIZED!!!!
+
+        #SOME BOOLEAN IN REQUESTS MODEL THAT PAYMENT IS PROCESSED SET FROM FALSE TO TRUE
+
+        #PREAPPROVAL ID IS ALSO SET INTO THE PREAPPROVAL ID
+        
         self.redirect('/')
 
 
