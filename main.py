@@ -1,6 +1,7 @@
 import cgi
 import webapp2
 import time, datetime
+import requests
 from google.appengine.ext import ndb
 from google.appengine.ext.webapp import template
 from google.appengine.api import users
@@ -13,12 +14,12 @@ from confirmed_requests import *
 from wepay import *
 from models import User, Profile, Request, Endorsement, Rating, PendingReview
 from ratings import CreateRating, DeletePending
+from payments import CreatePaymentExample, CreatePayment, ChargePayment
 
 client_id = 175855
 client_secret = 'dfb950e7ea'
 redirect_url = 'http://localhost:8080/'
 wepay = WePay(False, None)
-
 
 class LoginHandler(SessionHandler):
   def get(self):
@@ -131,16 +132,11 @@ class SearchHandler(SessionHandler):
     user = self.user_model
     search = self.request.get('search').lower().strip()
     print "Search Term: ", search
-    
+
     #Seach for people
     results = []
     profiles = []
-<<<<<<< HEAD
-    current_time = datetime.datetime.now() - datetime.timedelta(hours=7)
-    #TODO check for location, ect
 
-=======
-    
     # Search for requests
     available_requests = []
     available_users = []
@@ -148,9 +144,8 @@ class SearchHandler(SessionHandler):
     completed_requests = []
     completed_users = []
     current_time = datetime.datetime.now() - datetime.timedelta(hours=8)
-    
->>>>>>> 236fe5224a715c633294716af675ee795adf9a25
-    # Check for type
+
+        # Check for type
     food_type_requests = Request.query(Request.food_type == search).fetch()
     food_type = [x for x in food_type_requests if x.start_time > current_time]
     if food_type:
@@ -207,7 +202,7 @@ class SearchHandler(SessionHandler):
     available = zip(available_users, available_requests)
     completed = zip(completed_users, completed_requests)
     self.response.out.write(template.render('views/search.html',
-      {'user':user, 'search_results':results, 'available_requests':available, 'completed_requests':completed}))
+    {'user':user, 'search_results':results, 'available_requests':available, 'completed_requests':completed}))
 
 
 class LogoutHandler(SessionHandler):
@@ -269,12 +264,15 @@ class PendingRatingHandler(SessionHandler):
         review = PendingReview().query(PendingReview.sender == user)
         self.response.out.write(template.render('views/pendingratings.html', {'review': review}))
 
-
 class CreatePendingRatingHandler(SessionHandler):
     def get(self):
         user = self.user_model
         CreateRating("foodie", user.key, user.key)
         CreateRating("expert", user.key, user.key)
+
+class TestPaymentHandler(SessionHandler):
+    def get(self):
+        CreatePayment("69.69", "1526170804", "Hello")
 
 config = {}
 config['webapp2_extras.sessions'] = {
@@ -306,9 +304,10 @@ app = webapp2.WSGIApplication([
                              ('/thanks', ThanksHandler),
                              ('/verify/(.+)/(.+)', VerifyHandler),
                              ('/fire/(.w)/(.+)', FireHandler),
-                             ('/complete', CompletedRequestHandler), 
+                             ('/complete', CompletedRequestHandler),
                              ('/logout', LogoutHandler),
                              ('/ratings', RatingsHandler),
+                             ('/testpayment', TestPaymentHandler),
                              ('/createpending', CreatePendingRatingHandler),
                              ('/pendingratings', PendingRatingHandler),
                              ('/getwepaytoken', GetWePayUserTokenHandler),

@@ -12,12 +12,8 @@ class User(auth_models.User):
   zip_code = ndb.IntegerProperty(default = 0)
   wepay_id = ndb.StringProperty()
   avatar = ndb.BlobProperty()
-<<<<<<< HEAD
-
-=======
   telephone = ndb.StringProperty()
-  
->>>>>>> 236fe5224a715c633294716af675ee795adf9a25
+
   # Notifications
   available_requests = ndb.IntegerProperty(default=0)
   my_requests = ndb.IntegerProperty(default = 0)

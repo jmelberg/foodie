@@ -21,6 +21,7 @@ $(document).ready(function(){
       type: "POST",
       url: '/ratings',
         data: {
+        'recipient':recipient,
         'pendingkey':keyz,
         'ratingtype':type,
         'experience':5,
