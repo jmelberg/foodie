@@ -1,0 +1,225 @@
+.feed_divider {
+  position: relative;
+  float: left;
+  clear: both;
+  width: 100%;
+  height: 40px;
+  background-color: rgba(84, 62, 39, 0.82);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, .5);
+  opacity: 0.9;
+}
+
+
+.header {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 3;
+  width: 823px;
+  min-height: 100px;
+  margin: 0 auto;
+  text-shadow: 1px 2px 5px rgba(0, 0, 0, .5);
+  font-size: 1em;
+  font-weight: 400;
+  line-height: 1.38;
+  color: rgb(0, 0, 0);
+}
+
+.header_container {
+  position: absolute;
+  top: 209px;
+  left: 0;
+  right: 0;
+  z-index: 4;
+  width: 100%;
+  height: 178px;
+  margin: 0 auto;
+}
+
+.img1 {
+  float: left;
+  width: 200px;
+  height: 200px;
+  margin-top: 20px;
+  background: url('../images/1.PNG') rgba(222, 222, 222, 0);
+  background-repeat: no-repeat;
+  background-size: 170px 170px;
+  background-position: center center;
+}
+
+.img2 {
+  float: left;
+  width: 200px;
+  height: 200px;
+  margin-top: 20px;
+  background: url('../images/2.PNG') rgba(222, 222, 222, 0);
+  background-repeat: no-repeat;
+  background-size: 170px 170px;
+  background-position: center center;
+}
+
+.img3 {
+  float: left;
+  width: 200px;
+  height: 200px;
+  margin-top: 20px;
+  background: url('../images/3.PNG') rgba(222, 222, 222, 0);
+  background-repeat: no-repeat;
+  background-size: 170px 170px;
+  background-position: center center;
+}
+
+.img4 {
+  float: left;
+  width: 200px;
+  height: 200px;
+  margin-top: 20px;
+  background: url('../images/4.PNG') rgba(222, 222, 222, 0);
+  background-repeat: no-repeat;
+  background-size: 170px 170px;
+  background-position: center center;
+}
+
+.img5 {
+  float: left;
+  width: 200px;
+  height: 200px;
+  margin-top: 20px;
+  background: url('../images/5.PNG') rgba(222, 222, 222, 0);
+  background-repeat: no-repeat;
+  background-size: 170px 170px;
+  background-position: center center;
+}
+
+.img6 {
+  float: left;
+  width: 200px;
+  height: 200px;
+  margin-top: 20px;
+  background: url('../images/7.PNG') rgba(222, 222, 222, 0);
+  background-repeat: no-repeat;
+  background-size: 170px 170px;
+  background-position: center center;
+  overflow: visible;
+}
+
+.img1:hover,
+.img2:hover,
+.img3:hover,
+.img4:hover,
+.img5:hover,
+.img6:hover {
+  background-size: cover;
+}
+
+.img_tray {
+  position: relative;
+  float: left;
+  z-index: 15;
+  width: 100%;
+  height: 239px;
+  max-height: 239px;
+  overflow: hidden;
+}
+
+.layer {
+  position: relative;
+  float: left;
+  z-index: 1;
+  width: 100%;
+  height: 450px;
+  background-color: rgb(91, 91, 91);
+  opacity: 0.3;
+}
+
+
+.main_picture {
+  position: absolute;
+  left: 0;
+  right: 0;
+  width: 100%;
+  height: 450px;
+  margin: 0 auto;
+  background: url('../images/f-three-eight-four-385-coldharbour-lane-brixton-cocktail-bar-restaurant-hipster-industrial-small-plates-ping-pong-food.jpg') rgb(0, 0, 0);
+  background-size: auto auto;
+  background-position: center center;
+  box-shadow: 2px 0 5px rgba(0, 0, 0, .5) inset;
+}
+
+.category {
+  position: relative;
+  float: left;
+  clear: both;
+  z-index: 6;
+  width: 7.5%;
+  min-height: 31px;
+  margin: 10px 0 0 2%;
+  font-size: 1em;
+  font-weight: 300;
+  color: rgb(255, 255, 255);
+}
+
+
+.request {
+  display: block;
+  position: absolute;
+  top: 111px;
+  left: 0;
+  right: 0;
+  z-index: 2;
+  width: 28%;
+  height: 67px;
+  margin: 0 auto;
+  border: 4px solid rgb(255, 255, 255);
+  border-radius: 3px;
+  background-color: rgba(0, 0, 0, 0.27);
+  font-size: 1.75em;
+  font-weight: 500;
+  line-height: 1.38;
+  text-align: center;
+  color: rgb(255, 255, 255);
+}
+
+.request:hover {
+  background-color: rgba(96, 95, 39, 0.79);
+}
+
+.divider-1 {
+  z-index: 5;
+}
+
+.divider-2 {
+  z-index: 7;
+  margin-left: -0.5%;
+}
+
+
+
+.nearby span,
+.upcoming span {
+  border-top-width: 0;
+  border-right-width: 0;
+  border-bottom-width: 0;
+  border-left-width: 0;
+  border-color: transparent;
+  border-style: none;
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+  border-bottom-left-radius: 0;
+  background-color: transparent;
+  font-family: inherit;
+  font-style: inherit;
+  font-size: inherit;
+  font-weight: inherit;
+  text-transform: inherit;
+  text-decoration: inherit;
+  letter-spacing: inherit;
+  word-spacing: inherit;
+  color: inherit;
+  opacity: 1;
+  word-break: normal;
+  word-wrap: normal;
+  white-space: normal;
+}

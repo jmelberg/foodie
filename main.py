@@ -36,7 +36,7 @@ class LoginHandler(SessionHandler):
       u = self.auth.get_user_by_password(username, password, remember=True,
       save_session=True)
       get_notifications(self.user_model)
-      self.redirect('/foodie/{}'.format(self.user_model.username))
+      self.redirect('/feed')
     except( auth.InvalidAuthIdError, auth.InvalidPasswordError):
       error = "Invalid Email/Password"
       print error
@@ -68,6 +68,12 @@ class ProfileHandler(SessionHandler):
     self.response.out.write(template.render('views/profile.html',
                              {'owner':profile_owner, 'profile':profile, 'endorsements': comments,
                             'history': history, 'user': viewer}))
+
+class FeedHandler(SessionHandler):
+  """handler to display a feed page"""
+  def get(self):
+    user = self.user_model
+    self.response.out.write(template.render('views/feed.html', {'user': self.user_model}))
 
 class Image(SessionHandler):
   """Serves the image associated with an avatar"""
@@ -239,6 +245,7 @@ app = webapp2.WSGIApplication([
                              ('/register', RegisterHandler),
                              ('/checkusername', UsernameHandler),
                              ('/foodie/(\w+)', ProfileHandler),
+                             ('/feed', FeedHandler),
                              ('/requests', RequestsHandler),
                              ('/editrequest/(.+)', EditRequestHandler),
                              ('/checktime', CheckTimeConflict),
