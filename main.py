@@ -270,6 +270,12 @@ class CreatePendingRatingHandler(SessionHandler):
         CreateRating("foodie", user.key, user.key)
         CreateRating("expert", user.key, user.key)
 
+class AuthorizedPaymentHandler(SessionHandler):
+    def get(self):
+        #THIS CODE IS TO CONFIRM THAT PAYMENT IS AUTHORIZED!!!!
+        self.redirect('/')
+
+
 class TestPaymentHandler(SessionHandler):
     def get(self):
         CreatePayment("69.69", "1526170804", "Hello")
@@ -305,6 +311,7 @@ app = webapp2.WSGIApplication([
                              ('/verify/(.+)/(.+)', VerifyHandler),
                              ('/fire/(.w)/(.+)', FireHandler),
                              ('/complete', CompletedRequestHandler),
+                             ('/paymentauthorized', AuthorizedPaymentHandler),
                              ('/logout', LogoutHandler),
                              ('/ratings', RatingsHandler),
                              ('/testpayment', TestPaymentHandler),
