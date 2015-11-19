@@ -12,7 +12,7 @@ from account_creation import RegisterHandler, UsernameHandler
 from foodie_requests import *
 from confirmed_requests import *
 from wepay import *
-from models import User, Profile, Request, Endorsement, Rating, PendingReview
+from models import User, Profile, Request, Endorsement, Rating, PendingReview, PaymentLinks, PaymentModel
 from ratings import CreateRating, DeletePending
 from payments import CreatePaymentExample, CreatePayment, ChargePayment
 
@@ -204,7 +204,6 @@ class SearchHandler(SessionHandler):
     self.response.out.write(template.render('views/search.html',
     {'user':user, 'search_results':results, 'available_requests':available, 'completed_requests':completed}))
 
-
 class LogoutHandler(SessionHandler):
   """ Terminate current session """
   @login_required
@@ -216,7 +215,6 @@ class LogoutHandler(SessionHandler):
 class GetWePayUserTokenHandler(SessionHandler):
   def get(self):
     self.response.out.write(template.render('views/payments.html', {'user': self.user_model}))
-
   def post(self):
     user = self.user_model
     code = cgi.escape(self.request.get("acct_json"))
@@ -270,6 +268,11 @@ class CreatePendingRatingHandler(SessionHandler):
         CreateRating("foodie", user.key, user.key)
         CreateRating("expert", user.key, user.key)
 
+class PaymentsViewHandler(SessionHandler):
+    def get(self):
+        payment = "Yo"
+        self.response.out.write(template.render('views/payments.html', {'payments': payment}))
+
 class AuthorizedPaymentHandler(SessionHandler):
     def get(self, request_id, preapproval_id):
         print request_id + ' ' + preapproval_id
@@ -278,13 +281,13 @@ class AuthorizedPaymentHandler(SessionHandler):
         #SOME BOOLEAN IN REQUESTS MODEL THAT PAYMENT IS PROCESSED SET FROM FALSE TO TRUE
 
         #PREAPPROVAL ID IS ALSO SET INTO THE PREAPPROVAL ID
-        
-        self.redirect('/')
 
+        self.redirect('/')
 
 class TestPaymentHandler(SessionHandler):
     def get(self):
-        CreatePayment("butthole", "69.69", "1526170804", "Hello")
+        user = self.user_model
+        pay = CreatePayment("butthole", user.key, user.key, user.key, "69.69", "1526170804", "Hello")
 
 config = {}
 config['webapp2_extras.sessions'] = {
