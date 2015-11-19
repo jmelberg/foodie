@@ -134,8 +134,8 @@ def send_sms(request):
   sender_key = sender.key.urlsafe()
   acceptor_key = acceptor.key.urlsafe()
 
-  sender_short_url = shorten_url("http://localhost:8080/verify/" + key + "/" + sender_key)
-  acceptor_short_url = shorten_url("http://localhost:8080/verify/" + key +"/" + acceptor_key)
+  sender_short_url = shorten_url("http://food-enthusiast.appspot.com/verify/" + key + "/" + sender_key)
+  acceptor_short_url = shorten_url("http://food-enthusiast.appspot.com/verify/" + key +"/" + acceptor_key)
   print sender_short_url
   print acceptor_short_url
   client = TwilioRestClient(ACCOUNT_SID, AUTH_TOKEN)
@@ -170,7 +170,7 @@ def send_fire_notifiation(request):
   sender_key = sender.key.urlsafe()
   acceptor_key = acceptor.key.urlsafe()
 
-  sender_short_url = shorten_url("http://localhost:8080/fire/" + key + "/" + acceptor_key)
+  sender_short_url = shorten_url("http://food-enthusiast.appspot.com/fire/" + key + "/" + acceptor_key)
   print sender_short_url
   client = TwilioRestClient(ACCOUNT_SID, AUTH_TOKEN)
   #Send to creator

@@ -1,6 +1,7 @@
 import cgi
 import webapp2
 import time, datetime
+import requests
 from google.appengine.ext import ndb
 from google.appengine.ext.webapp import template
 from google.appengine.api import users
@@ -11,13 +12,15 @@ from account_creation import RegisterHandler, UsernameHandler
 from foodie_requests import *
 from confirmed_requests import *
 from wepay import *
-from models import User, Profile, Request, Endorsement
+from models import User, Profile, Request, Endorsement, Rating, PendingReview
+from ratings import CreateRating, DeletePending
+from payments import CreatePaymentExample, CreatePayment, ChargePayment
+from reviews import *
 
 client_id = 175855
 client_secret = 'dfb950e7ea'
 redirect_url = 'http://localhost:8080/'
 wepay = WePay(False, None)
-
 
 class LoginHandler(SessionHandler):
   def get(self):
@@ -92,41 +95,10 @@ class Image(SessionHandler):
       self.response.out.write(user.avatar)
 
 
-class CommentHandler(SessionHandler):
-  ''' Leave a comment for another user '''
-  def post(self):
-    user = self.user_model
-    rating = cgi.escape(self.request.get('rating'))
-    comment = cgi.escape(self.request.get('comment'))
-    # Person getting endorsement
-    recipient = cgi.escape(self.request.get('recipient'))
-    recipient_user = User.query(User.username == recipient).get()
-    recipient_key = recipient_user.key
-
-    if comment != None:
-      endorsement = Endorsement()
-      endorsement.recipient = recipient_key
-      endorsement.sender = user.first_name + " " + user.last_name
-      endorsement.creation_time = datetime.datetime.now() - datetime.timedelta(hours=8) #PST
-      endorsement.rating = rating
-      endorsement.text = comment
-      endorsement.put()
-      # modify rating 
-      if rating == "positive":
-        recipient_user.positive = recipient_user.positive + 1
-      elif rating == "neutral":
-        recipient_user.neutral = recipient_user.neutral + 1
-      else:
-        recipient_user.negative = recipient_user.negative + 1
-      recipient_user.percent_positive = (recipient_user.positive / (recipient_user.positive + recipient_user.negative)) * 100
-      recipient_user.put()
-
-    self.redirect('/foodie/{}'.format(recipient))
-
 class SearchHandler(SessionHandler):
   ''' Search for users by the following criteria:
         Username
-        First Name 
+        First Name
         Last Name
         First & Last Name
         Food Type
@@ -136,11 +108,11 @@ class SearchHandler(SessionHandler):
     user = self.user_model
     search = self.request.get('search').lower().strip()
     print "Search Term: ", search
-    
+
     #Seach for people
     results = []
     profiles = []
-    
+
     # Search for requests
     available_requests = []
     available_users = []
@@ -148,8 +120,8 @@ class SearchHandler(SessionHandler):
     completed_requests = []
     completed_users = []
     current_time = datetime.datetime.now() - datetime.timedelta(hours=8)
-    
-    # Check for type
+
+        # Check for type
     food_type_requests = Request.query(Request.food_type == search).fetch()
     food_type = [x for x in food_type_requests if x.start_time > current_time]
     if food_type:
@@ -206,7 +178,7 @@ class SearchHandler(SessionHandler):
     available = zip(available_users, available_requests)
     completed = zip(completed_users, completed_requests)
     self.response.out.write(template.render('views/search.html',
-      {'user':user, 'search_results':results, 'available_requests':available, 'completed_requests':completed}))
+    {'user':user, 'search_results':results, 'available_requests':available, 'completed_requests':completed}))
 
 
 class LogoutHandler(SessionHandler):
@@ -229,8 +201,21 @@ class GetWePayUserTokenHandler(SessionHandler):
     acct_id = r["user_id"]
     user.wepay_id = str(acct_id)
     user.put()
+
+class AuthorizedPaymentHandler(SessionHandler):
+  def get(self, request_id, preapproval_id):
+    print request_id + ' ' + preapproval_id
+    #THIS CODE IS TO CONFIRM THAT PAYMENT IS AUTHORIZED!!!!
+
+    #SOME BOOLEAN IN REQUESTS MODEL THAT PAYMENT IS PROCESSED SET FROM FALSE TO TRUE
+
+    #PREAPPROVAL ID IS ALSO SET INTO THE PREAPPROVAL ID
     
-        
+    self.redirect('/')
+
+class TestPaymentHandler(SessionHandler):
+  def get(self):
+    CreatePayment("butthole", "69.69", "1526170804", "Hello")
 
 config = {}
 config['webapp2_extras.sessions'] = {
@@ -263,14 +248,12 @@ app = webapp2.WSGIApplication([
                              ('/thanks', ThanksHandler),
                              ('/verify/(.+)/(.+)', VerifyHandler),
                              ('/fire/(.w)/(.+)', FireHandler),
-                             ('/complete', CompletedRequestHandler), 
+                             ('/complete', CompletedRequestHandler),
+                             ('/paymentauthorized/(.+)/(.+)', AuthorizedPaymentHandler),
                              ('/logout', LogoutHandler),
-                             #payment stuff here!
-                             #('/createpayment', CreatePaymentHandler),
-                             #('/getpayments', GetPaymentHandler),
-                             #('/approvepayment', PaymentApprovedHandler),
-                             #('/completepayment', CompletePaymentHandler),
-                             #('/chargepayment', ChargePaymentHandler),
+                             ('/ratings', RatingsHandler),
+                             ('/testpayment', TestPaymentHandler),
+                             ('/createpending', CreatePendingRatingHandler),
+                             ('/pendingratings', PendingRatingHandler),
                              ('/getwepaytoken', GetWePayUserTokenHandler),
-                             #('/setwepaytoken/', SetWePayUserTokenHandler),
                               ], debug=False, config=config)
