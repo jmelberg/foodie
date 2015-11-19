@@ -25,7 +25,7 @@ wepay = WePay(False, None)
 class LoginHandler(SessionHandler):
   def get(self):
     if self.user_model != None:
-      self.redirect('/foodie/{}'.format(self.user_model.username))
+      self.redirect('/feed'.format(self.user_model.username))
     else:
       self.response.out.write(template.render('views/login.html', {}))
   def post(self):

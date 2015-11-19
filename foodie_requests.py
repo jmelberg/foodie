@@ -206,7 +206,7 @@ class EditRequestHandler(SessionHandler):
     food_type = request.food_type
     interest = request.interest
 
-    self.response.out.write(template.render('views/edit_request.html', {'request': request, 'edit_time': edit_time, 'edit_date': edit_date}))
+    self.response.out.write(template.render('views/edit_request.html', {'user': self.user_model, 'request': request, 'edit_time': edit_time, 'edit_date': edit_date}))
 
   def post(self, request_id):
     print "in post"
