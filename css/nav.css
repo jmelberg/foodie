@@ -154,15 +154,17 @@ nav {
   background-color: rgb(213, 88, 40);
   box-shadow: 0 2px 5px rgba(0, 0, 0, .5);
 }
+
 .notification {
-  display: block;
-  float: left;
-  width: 30px;
-  height: 30px;
-  margin-left: 11.60473%;
-  background: url('../images/ic_notifications_none_white_36px.svg') rgba(222, 222, 222, 0);
-  background-size: cover;
-  background-position: center center;
+    display: block;
+    float: left;
+    width: 25px;
+    height: 25px;
+    margin: 20px 15px;
+    background: url('../images/notification.png') rgba(222, 222, 222, 0);
+    background-size: cover;
+    padding: 0 15px;
+    background-position: center center;
 }
 
 .profile_block {
@@ -267,3 +269,27 @@ nav {
   word-wrap: normal;
   white-space: normal;
 }
+
+@media only screen and (max-width: 992px){
+nav .brand-logo {
+    padding-left: 10%;
+}
+}
+
+nav .input-field input {
+    height: 60px;
+}
+
+.input-field input[type=search]:focus {
+    background-color: rgba(255, 255, 255, 0.8);
+}
+
+input[type=search]{
+  margin: 0;
+}
+
+.dropdown2-content{
+   width: 400px !important;
+   margin-left: 175px;
+}
+

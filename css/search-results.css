@@ -1,5 +1,5 @@
 .search-container{
-  width: 70%;
+  width: 60%;
   padding-top: 50px;
 }
 
@@ -36,4 +36,35 @@ background-color: rgb(140, 28, 27);
 
 .btn-floating:hover {
     background-color: #F44336;
+}
+
+.no-result{
+    text-align: center;
+    margin-top: 100px;
+    color: #757575;
+    font-size: 18px;
+}
+
+.food-img{
+  width:120px;
+  height:120px;
+  background: url('../images/default_food.jpg');
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: cover;
+  margin-left:10%;
+}
+
+.search-result-title{
+  font-size: 1.7em;
+}
+
+.search-detail{
+  line-height: 1.8em;
+  font-weight: 100;
+  font-size: 1em;
+}
+
+.search-row{
+  margin-bottom: -20px;
 }

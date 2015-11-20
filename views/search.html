@@ -29,14 +29,27 @@
         Available Requests
         <ul class="collection">
           {% for result in available_requests %}
-            <li class="collection-item avatar">
-              <a href="/foodie/{{result.0.username}}">
-              <img src="/img?user_id={{result.0.key.urlsafe}}" alt="" class="circle">
-              <span class="title">{{result.0.username}}</span>
-              </a>
-              <p> <b>{{result.0.first_name}} {{result.0.last_name}}</b> requested<b> <a href="/confirm/{{result.1.key.urlsafe}}">{{result.1.food_type}}</a></b><br>
-                {{result.1.start_time}} in {{result.1.location|title}}
-              </p>
+            <li class="collection-item">
+              <div class="row search-row">
+              <div class= "col s3">
+                <div class="food-img"></div>
+              </div>
+              <div class= "col s4">
+                <a class = "search-result-title" href="/confirm/{{result.1.key.urlsafe}}">{{result.1.food_type}}</a> &nbsp; for {{result.1.interest}}
+                <p class = "search-detail">
+                  Requested By <b><a href="/foodie/{{result.0.username}}"> {{result.0.first_name}} {{result.0.last_name}} </a></b></br>
+                  {{result.0.percent_positive}}% positive rating </br>
+                  ${{result.1.min_price}} - ${{result.1.max_price}}
+                </p>
+              </div>
+              <div class= "col s5">
+                <p class = "search-detail">
+                  </br></br>
+                  {{result.1.location|title}}</br>
+                  {{result.1.start_time}}
+                </p>
+              </div>
+            </div>
             </li>
           {% endfor %}
         </ul>
@@ -46,19 +59,43 @@
         Completed Requests
         <ul class="collection">
           {% for result in completed_requests %}
-            <li class="collection-item avatar">
-              <a href="/foodie/{{result.0.username}}">
-              <img src="/img?user_id={{result.0.key.urlsafe}}" alt="" class="circle">
-              <span class="title">{{result.0.username}}</span>
-              </a>
-              <p> <b>{{result.0.first_name}} {{result.0.last_name}}</b> requested<b> {{result.1.food_type}}</b><br>
-                on {{result.1.start_time}} in {{result.1.location|title}}
-              </p>
+            <li class="collection-item">
+              <div class="row search-row">
+              <div class= "col s3">
+                <div class="food-img"></div>
+              </div>
+              <div class= "col s4">
+                <a class = "search-result-title">{{result.1.food_type}}</a> &nbsp; for {{result.1.interest}}
+                <p class = "search-detail">
+                  Requested By <b><a href="/foodie/{{result.0.username}}"> {{result.0.first_name}} {{result.0.last_name}} </a></b></br>
+                  {{result.0.percent_positive}}% positive rating </br>
+                  ${{result.1.min_price}} - ${{result.1.max_price}}
+                </p>
+              </div>
+              <div class= "col s5">
+                <p class = "search-detail">
+                  </br></br>
+                  {{result.1.location|title}}</br>
+                  {{result.1.start_time}}
+                </p>
+              </div>
+            </div>
             </li>
           {% endfor %}
         </ul>
     {% else %}
     {% endif %}
+
+    {% if search_results or available_requests or completed_requests%}
+    {% else %}
+    <div class= "no-result">
+      <i class="material-icons">announcement</i></br>
+      Sorry we didn't find any results.</br>
+      Check the spelling, or try a different search.
+    </div>
+    {% endif %}
+
+
 
         <div class="fixed-action-btn" style="bottom: 45px; right: 100px;">
           <a class="btn-floating btn-large">

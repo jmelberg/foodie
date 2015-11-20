@@ -66,15 +66,26 @@
         </div>
        </form>
        </li>
+        <li><a href="/requests?q=mine" title="My Request"><i class="material-icons">event_note</i></a></li>
+        <li><a href="/request" title="Request A Service"><i class="material-icons">add</i></a></li>
         <li>
-          {% if user.pending_requests > 0 or user.approved_requests > 0 %}
-          <a href="/requests?q=mine"><i class="material-icons" style="color: #605f27;">event_note</i>
-          {% else %}
-         <a href="/requests?q=mine"><i class="material-icons">event_note</i>
-          {% endif %}
-        </a>
+        {% if user.pending_requests > 0 or user.approved_requests > 0 %}
+          <a class="notification dropdown-button" title="Notification" href="#" data-activates="dropdown2"></a>
+        {% else %}
+          <a class="dropdown-button" title="Notification" href="#" data-activates="dropdown2" ><i class="material-icons">notifications_none</i></a>
+        {% endif %}
         </li>
-        <li><a href="/request"><i class="material-icons">add</i></a></li>
+        <ul id="dropdown2" class="dropdown-content dropdown2-content">     
+         {% if user.pending_requests > 0 %}     
+          <li><a href="/requests#pending">You have {{user.pending_requests}} new pending request(s)</a></li>
+         {% endif %}
+         {% if user.approved_requests > 0 %}   
+          <li><a href="/requests#accepted">You have {{user.approved_requests}} new accepted request(s)</a></li>
+         {% endif %}
+         {% if user.pending_requests == 0 and user.approved_requests == 0%}   
+          <li ><a>No new notifications</a></li>
+         {% endif %}
+        </ul>
         <li>
         <a class="dropdown-button" href="#!" data-activates="dropdown1">
            <img src ="/img?user_id={{user.key.urlsafe}}" class="circle_nav">
@@ -98,6 +109,7 @@
           </a>
         </li>
         <li><a href="/request"><i class="material-icons left">add</i>Request a Service</a></li>
+        <li><a href="/foodie/{{user.username}}"> <img src ="/img?user_id={{user.key.urlsafe}}" class="circle_nav">My Profile</a></li>
         <li><a href="/logout" name="logout" style="size:10px;"></a></li>
       </ul>
     </div>
