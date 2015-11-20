@@ -1,5 +1,5 @@
 .search-container{
-  width: 80%;
+  width: 70%;
   padding-top: 50px;
 }
 
@@ -7,4 +7,33 @@
   background-color: #fff;
   margin-top: -10px;
   height: 100%;
+}
+
+.header-block{
+  border: solid 1px #e0e0e0;
+  height: 122px;
+  background-color: rgb(240, 238, 229);
+}
+
+.page-header{
+  margin-left: 13%;
+  margin-top: 80px;
+  color: rgb(51, 51, 51);
+}
+
+.collection {
+  border-left: 0px;
+  border-right: 0px;
+}
+
+.collection .collection-item {
+  padding: 20px 20px;
+}
+
+.btn-floating {
+background-color: rgb(140, 28, 27);
+}
+
+.btn-floating:hover {
+    background-color: #F44336;
 }

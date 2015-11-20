@@ -1,10 +1,15 @@
 {% extends 'base.html' %}
 {% block content %}
+<script type="text/javascript" src="../js/request_actions.js"></script>
+
 <div class= "search-background">
+  <div class="row header-block">
+    <div class="page-header"><h5>Search Results</h5></div>
+  </div>
   <div class = "container search-container">
-    <div class="row">
-      <div class="page-header"><h5>Search Results</h5></div>
-      User Search:
+    <div class= "row">
+    {% if search_results %}
+      User Search
        <ul class="collection">
         {% for result in search_results %}
           <li class="collection-item avatar">
@@ -18,7 +23,10 @@
           </li>
         {% endfor %}
         </ul>
-        Available Requests:
+    {% else %}
+    {% endif %}
+    {% if available_requests %}
+        Available Requests
         <ul class="collection">
           {% for result in available_requests %}
             <li class="collection-item avatar">
@@ -32,7 +40,10 @@
             </li>
           {% endfor %}
         </ul>
-        Completed Requests:
+    {% else %}
+    {% endif %}
+    {% if completed_requests %}
+        Completed Requests
         <ul class="collection">
           {% for result in completed_requests %}
             <li class="collection-item avatar">
@@ -46,6 +57,22 @@
             </li>
           {% endfor %}
         </ul>
+    {% else %}
+    {% endif %}
+
+        <div class="fixed-action-btn" style="bottom: 45px; right: 100px;">
+          <a class="btn-floating btn-large">
+            <i class="large material-icons">search</i>
+          </a>
+          <ul>
+            <li id="hangouts_sort"><a class="btn-floating teal btn tooltipped" data-position="left" data-delay="50" data-tooltip="Hangouts" href="/requests?q=hangouts">H</a></li>
+            <li id="lessons_sort"><a class="btn-floating teal btn tooltipped" data-position="left" data-delay="50" data-tooltip="Food Type" href="/requests?q=lessons">F</a></li>
+            <li><a class="btn-floating red btn tooltipped" data-position="left" data-delay="50" data-tooltip="All" href='/requests?q=all' ><i class="material-icons">autorenew</i></a></li>
+            <li><a class="btn-floating yellow darken-1 btn tooltipped" data-position="left" data-delay="50" data-tooltip="Price" href='/requests?q=price'><i class="material-icons">attach_money</i></a></li>
+            <li><a class="btn-floating green btn tooltipped" data-position="left" data-delay="50" data-tooltip="Time" href='/requests?q=time'><i class="material-icons">access_time</i></a></li>
+            <li><a class="btn-floating blue btn tooltipped" data-position="left" data-delay="50" data-tooltip="Location" href='/requests?q=location' ><i class="material-icons">place</i></a></li>
+          </ul>
+        </div>
       </div>
     </div>
   </div>
