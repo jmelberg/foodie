@@ -13,6 +13,7 @@ class User(auth_models.User):
   wepay_id = ndb.StringProperty()
   avatar = ndb.BlobProperty()
   telephone = ndb.StringProperty()
+  credit_id = ndb.StringProperty()
 
   # Notifications
   available_requests = ndb.IntegerProperty(default=0)

@@ -14,7 +14,7 @@ from confirmed_requests import *
 from wepay import *
 from models import User, Profile, Request, Endorsement, Rating, PendingReview, PaymentLinks, PaymentModel
 from ratings import CreateRating, DeletePending
-from payments import CreatePaymentExample, CreatePayment, ChargePayment
+from payments import CreatePaymentExample, CreatePayment, ChargePayment, AddCreditCard, AuthorizeCreditCard, Charge
 
 client_id = 175855
 client_secret = 'dfb950e7ea'
@@ -289,6 +289,41 @@ class TestPaymentHandler(SessionHandler):
         user = self.user_model
         pay = CreatePayment("butthole", user.key, user.key, user.key, "69.69", "1526170804", "Hello")
 
+class CreditCardHandler(SessionHandler):
+    def get(self):
+        self.response.out.write(template.render('views/creditcard.html', {'wutwut': 'inthebutt'}))
+
+
+class PostCardHandler(SessionHandler):
+    def post(self, name, creditcard, expmonth, expyear, cvv, zipcode):
+        name = cgi.escape(self.request.get("pendingkey"))
+        creditcard = cgi.escape(self.request.get("ratingtype"))
+        expmonth = cgi.escape(self.request.get("expmonth"))
+        expyear = cgi.escape(self.request.get("expyear"))
+        cvv = cgi.escape(self.request.get("cvv"))
+        zipcode = cgi.escape(self.request.get("zipcode"))
+        add = AddCreditCard(name, creditcard, expmonth, expyear, cvv, zipcode)
+        print add
+        authorize = AuthorizeCreditCard()
+        Charge()
+
+class TestChargeHandler(SessionHandler):
+    def get(self):
+        #This is to add a credit card, look at the class for parameters...
+        add  = AddCreditCard("Chris Navy", "chikorita415@gmail.com", "4242424242424242", "09", "20", "3050 El Camino Real" ,"Santa Clara" ,"CA","193", "95051")
+        pay = add.json()
+        #This is the credit card id that you use to charge your payments, send this into the Database, in the User Model.
+        print pay["credit_card_id"]
+        #You need to call the authorize class to be able to use the credit card id.
+        authorize = AuthorizeCreditCard(pay["credit_card_id"])
+        #This creates the charge. Look at class for Parameters
+        Charge("1526170804", pay["credit_card_id"], "7.45", "Test Payment for Foodie")
+
+class ChargeHandler(SessionHandler):
+    def get(self):
+        Charge("1526170804", "3943601348", "8.41", "Test Payment for Foodie")
+        print "Change Created!"
+
 config = {}
 config['webapp2_extras.sessions'] = {
     'secret_key': 'zomg-this-key-is-so-secret',
@@ -320,6 +355,10 @@ app = webapp2.WSGIApplication([
                              ('/verify/(.+)/(.+)', VerifyHandler),
                              ('/fire/(.w)/(.+)', FireHandler),
                              ('/complete', CompletedRequestHandler),
+                             ('/creditcard', CreditCardHandler),
+                             ('/samplecharge', TestChargeHandler),
+                             ('/chargethis', ChargeHandler),
+                             ('/postcard', PostCardHandler),
                              ('/paymentauthorized/(.+)/(.+)', AuthorizedPaymentHandler),
                              ('/logout', LogoutHandler),
                              ('/ratings', RatingsHandler),
