@@ -8,26 +8,25 @@
 
 
 <div class= "background">
-  <div class = "container">
-    <div class="row">
-      <div class="col s6">
-        <div class= "form-container">
-            <h5>Request a Service</h5></br>
-            <div class="row">
-              <div class="input-field col s6">
-                <input placeholder="Coffee" id="food_type" name="food_type" type="text" class="validate">
-                <label for="type">Food Type</label>
-              </div>
+<div class = "container">
+  <div class="row">
+    <div class="col s12 m6 l6">
+      <div class= "form-container">
+          <h5>Request a Service</h5></br>
+          <div class="row">
+            <div class="input-field col s6">
+              <input placeholder="Coffee" id="food_type" name="food_type" type="text" class="validate">
+              <label for="type">Food Type</label>
             </div>
-            <div class="row">
-              <div class="input-field col s6">
-                <input placeholder="San Jose, CA" id="location" name="location" type="text" class="validate">
-                <label for="location">Location</label>
-              </div>
-              <div class="input-field col s6">
-                <button id="location_button" onclick="getLocation()" class="btn-flat"> << Use Current Location</button>
-                <p id="found_location"></p>
-              </div>
+          </div>
+          <div class="row">
+            <div class="input-field col s6">
+              <input placeholder="San Jose, CA" id="location" name="location" type="text" class="validate">
+              <label for="location">Location</label>
+            </div>
+            <div class="input-field col s6">
+              <button id="location_button" onclick="getLocation()" class="btn-flat"> <i class="material-icons">my_location</i>&nbsp;&nbsp;Use Current Location</button>
+              <p id="found_location"></p>
             </div>
             <script>
               $.getScript("../js/create_request.js");
@@ -104,7 +103,9 @@
           <a id="send_request" type="submit" class="btn-flat disabled">Send Request</a>
         </div>
       </div>
-      <div class="request-suggestion-grid col s6">
+      
+    </div>
+    <div class="request-suggestion-grid col s0 m6">
         <div class="request-suggestion-wrapper">
           <div class="request-suggestion-text"></div>
           <div class="request-suggestion-item"></div>
@@ -162,7 +163,6 @@
           foodTypeInputId: "food_type"
         });
       </script>
-    </div>
   </div>
 </div>
   <!-- Modal for terms and conditions -->

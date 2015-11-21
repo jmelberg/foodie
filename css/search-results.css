@@ -1,5 +1,5 @@
 .search-container{
-  width: 80%;
+  width: 60%;
   padding-top: 50px;
 }
 
@@ -7,4 +7,64 @@
   background-color: #fff;
   margin-top: -10px;
   height: 100%;
+}
+
+.header-block{
+  border: solid 1px #e0e0e0;
+  height: 122px;
+  background-color: rgb(240, 238, 229);
+}
+
+.page-header{
+  margin-left: 13%;
+  margin-top: 80px;
+  color: rgb(51, 51, 51);
+}
+
+.collection {
+  border-left: 0px;
+  border-right: 0px;
+}
+
+.collection .collection-item {
+  padding: 20px 20px;
+}
+
+.btn-floating {
+background-color: rgb(140, 28, 27);
+}
+
+.btn-floating:hover {
+    background-color: #F44336;
+}
+
+.no-result{
+    text-align: center;
+    margin-top: 100px;
+    color: #757575;
+    font-size: 18px;
+}
+
+.food-img{
+  width:120px;
+  height:120px;
+  background: url('../images/default_food.jpg');
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: cover;
+  margin-left:10%;
+}
+
+.search-result-title{
+  font-size: 1.7em;
+}
+
+.search-detail{
+  line-height: 1.8em;
+  font-weight: 100;
+  font-size: 1em;
+}
+
+.search-row{
+  margin-bottom: -20px;
 }
