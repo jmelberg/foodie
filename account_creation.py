@@ -36,7 +36,8 @@ class RegisterHandler(SessionHandler):
     try:
       u = self.auth.get_user_by_password(username, password, remember=True,
       save_session=True)
-      self.redirect('/foodie/{}'.format(self.user_model.username))
+      self.redirect('/feed')
+
     except( auth.InvalidAuthIdError, auth.InvalidPasswordError):
       error = "Invalid Email/Password"
       self.response.out.write(template.render('views/login.html', {'error':error}))

@@ -44,8 +44,8 @@ class LoginHandler(SessionHandler):
 
 class FeedHandler(SessionHandler):
   def get(self):
-
-      self.response.out.write(template.render('views/feed.html',{'user': self.user_model}))
+    get_notifications(self.user_model)
+    self.response.out.write(template.render('views/feed.html',{'user': self.user_model}))
 
 class ProfileHandler(SessionHandler):
   """handler to display a profile page"""
@@ -62,9 +62,12 @@ class ProfileHandler(SessionHandler):
       new_profile.put()
 
     current_date = datetime.datetime.now() - datetime.timedelta(hours=8)
-    get_notifications(self.user_model)
-    # Get comments
-    comments = Endorsement.query(Endorsement.recipient == profile_owner.key).order(Endorsement.creation_time).fetch()
+    #get_notifications(self.user_model)
+    
+    # Get comments that have match to request
+    comments = Endorsement.query(Endorsement.recipient == profile_owner.key).fetch()
+    comments = [x for x in comments if x.request != None]
+    
 
     # Get profile history
     history =  Request.query(Request.start_time <= current_date, Request.sender == profile_owner.key).order(Request.start_time)
@@ -105,6 +108,8 @@ class ProfileHandler(SessionHandler):
         my_reqs.remove(request)
 
     result = my_reqs + pending_reqs + accepted_reqs
+
+
 
     self.response.out.write(template.render('views/profile.html',
                              {'owner':profile_owner, 'profile':profile, 'endorsements': comments,

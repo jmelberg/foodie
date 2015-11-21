@@ -77,6 +77,7 @@ class Endorsement(ndb.Model):
   creation_time = ndb.DateTimeProperty(auto_now_add=True)
   rating = ndb.StringProperty()
   text = ndb.StringProperty()
+  request = ndb.KeyProperty(kind="Request")
 
 ''' Handles transations between users '''
 class Transaction(ndb.Model):
@@ -84,11 +85,6 @@ class Transaction(ndb.Model):
   receiver = ndb.KeyProperty(kind = "User")
   amount = ndb.FloatProperty(default = 0)
   description = ndb.StringProperty()
-
-class Notification(ndb.Model):
-  sender = ndb.KeyProperty(kind="User")
-  recipient = ndb.KeyProperty(kind="User")
-  status = ndb.StringProperty()
 
 class Rating(ndb.Model):
     person = ndb.StringProperty()
