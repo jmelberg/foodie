@@ -84,7 +84,10 @@
          {% if user.approved_requests > 0 %}   
           <li><a href="/requests#accepted">You have {{user.approved_requests}} new accepted request(s)</a></li>
          {% endif %}
-         {% if user.pending_requests == 0 and user.approved_requests == 0%}   
+         {% if user.available_requests > 0 %}
+          <li><a href="/requests"> {{user.available_requests}} new request(s)</a></li>
+         {% endif %}
+         {% if user.pending_requests == 0 and user.approved_requests == 0 and user.available_request == 0 %}   
           <li ><a>No new notifications</a></li>
          {% endif %}
         </ul>
