@@ -1,66 +1,183 @@
 {% extends "base.html" %}
 {% block content %}
 <script type="text/javascript" src="../js/edit_request.js"></script>
+<link rel="stylesheet" media="screen" href="../css/request_suggestion_grid.css" type="text/css" />
+<script type="text/javascript" src= "../js/flickr_me.js"></script> 
+<script type="text/javascript" src= "../js/request_suggestion_grid.js"></script> 
+
 <div class= "background">
-<div class = "container">
-  <div class="row">
-    <div class="col s6">
-      <div class= "form-container">
-        <h5>Edit Request</h5></br>
-         <div class="row">
-          <div class="input-field col s6">
-            <label>Food Type</label><br />
-            <input id="edit_food_type" name="edit_food_type" type="text" class="validate" value="{{request.food_type}}">
+  <div class = "container">
+    <div class="row">
+      <div class="col s12 m6 l6">
+        <div class= "form-container">
+          <h5>Edit My Request</h5></br>
+           <div class="row">
+            <div class="input-field col s6">
+              <label>Food Type</label><br />
+              <input id="edit_food_type" name="edit_food_type" type="text" class="validate" value="{{request.food_type}}">
+            </div>
+            <div class="input-field col s6">
+              <label>Location</label><br/>
+              <input id="edit_location" name="edit_location" type="text" class="validate" value="{{request.location}}" >
+            </div>
+            <div class="col s6"></div>
           </div>
-          <div class="input-field col s6">
-            <label>Location</label><br/>
-            <input id="edit_location" name="edit_location" type="text" class="validate" value="{{request.location}}" >
-          </div>
-          <div class="col s6"></div>
-        </div>
-        <div class="row">
-          <div class="input-field col s6">
-            <label>Date</label><br/>
-            <input type="date" class="datepicker" id="edit_date" name="edit_date" value={{edit_date}} required>
-          </div>
-          <div class="input-field col s6">
-            <label>Time</label><br />
-            <input type="time" class="timepicker" id="edit_time" name="edit_time" value={{edit_time}} required>
-            <small id="edit_slot_available">Available</small>
-          </div>
-        </div>
-        <div class="row">
-          <div class="input-field col s12">
-            <label>Price Range</label> <br /><br />
-            <div id="edit_slider">
-              <input type="number" id="edit_min_price" name="edit_min_price" style="display:none;" value={{request.min_price}} >
-              <input type="number" id="edit_max_price" name="edit_max_price" style="display:none;" value={{request.max_price}} >
+          <div class="row">
+            <div class="input-field col s6">
+              <label>Date</label><br/>
+              <input type="date" class="datepicker" id="edit_date" name="edit_date" value={{edit_date}} required>
+            </div>
+            <div class="input-field col s6">
+              <label>Time</label><br />
+              <input type="time" class="timepicker" id="edit_time" name="edit_time" value={{edit_time}} required>
+              <small id="edit_slot_available">Available</small>
             </div>
           </div>
-        </div>
-
-        <div class="row">
-          <div class="input-field col s5">
-            <label>Interest</label><br />    
-            <p>
-              <input name="edit_interest" type="radio" id="edit_interest_food_lesson" value="food lesson">
-              <label for="edit_interest_food_lesson">Food Lesson</label>
-            </p>
-            <p>
-              <input name="edit_interest" type="radio" id="edit_interest_fun" value="fun">
-              <label for="edit_interest_fun">Fun</label>
-            </p></br></br></br>        
+          <div class="row">
+            <div class="input-field col s12">
+              <label>Price Range</label> <br /><br />
+              <div id="edit_slider">
+                <input type="number" id="edit_min_price" name="edit_min_price" style="display:none;" value={{request.min_price}} >
+                <input type="number" id="edit_max_price" name="edit_max_price" style="display:none;" value={{request.max_price}} >
+              </div>
+            </div>
           </div>
-        </div>  
-        <!-- TODO: Field checking -->
-        <a id="submit_edit" class="btn-flat">Edit Request</a>
-        <a href="/requests" class="btn-flat">Cancel </a>
-        <input name="edit_request" id="edit_request" value={{request.key.urlsafe}} hidden>
-        <!--<input name="edit_interest" id="edit_interest" value={{request.interest}}hidden> -->
+
+          <div class="row">
+            <div class="input-field col s5">
+              <label>Interest</label><br />    
+              <p>
+                <input name="edit_interest" type="radio" id="edit_interest_food_lesson" value="food lesson">
+                <label for="edit_interest_food_lesson">Food Lesson</label>
+              </p>
+              <p>
+                <input name="edit_interest" type="radio" id="edit_interest_fun" value="fun">
+                <label for="edit_interest_fun">Fun</label>
+              </p></br></br></br>        
+            </div>
+          </div>  
+          <!-- TODO: Field checking -->
+          <a id="submit_edit" class="btn-flat">Edit Request</a>
+          <a href="/requests" class="btn-flat">Cancel </a>
+          <input name="edit_request" id="edit_request" value={{request.key.urlsafe}} hidden>
+          <!--<input name="edit_interest" id="edit_interest" value={{request.interest}}hidden> -->
+      </div>
     </div>
-    <div class="col s6"></div>
+            <div class="request-suggestion-grid col s0 m6">
+              <div class="request-suggestion-wrapper">
+                <div class="request-suggestion-text"></div>
+                <div class="request-suggestion-item"></div>
+              </div>
+              <div class="request-suggestion-wrapper">
+                <div class="request-suggestion-text"></div>
+                <div class="request-suggestion-item"></div>
+              </div>
+              <div class="request-suggestion-wrapper">
+                <div class="request-suggestion-text"></div>
+                <div class="request-suggestion-item"></div>
+              </div>
+              <div class="request-suggestion-wrapper">
+                <div class="request-suggestion-text"></div>
+                <div class="request-suggestion-item"></div>
+              </div>
+              <div class="request-suggestion-wrapper">
+                <div class="request-suggestion-text"></div>
+                <div class="request-suggestion-item"></div>
+              </div>
+              <div class="request-suggestion-wrapper">
+                <div class="request-suggestion-text"></div>
+                <div class="request-suggestion-item"></div>
+              </div>
+              <div class="request-suggestion-wrapper">
+                <div class="request-suggestion-text"></div>
+                <div class="request-suggestion-item"></div>
+              </div>
+              <div class="request-suggestion-wrapper">
+                <div class="request-suggestion-text"></div>
+                <div class="request-suggestion-item"></div>
+              </div>
+              <div class="request-suggestion-wrapper">
+                <div class="request-suggestion-text"></div>
+                <div class="request-suggestion-item"></div>
+              </div>
+              <div class="request-suggestion-wrapper">
+                <div class="request-suggestion-text"></div>
+                <div class="request-suggestion-item"></div>
+              </div>
+              <div class="request-suggestion-wrapper">
+                <div class="request-suggestion-text"></div>
+                <div class="request-suggestion-item"></div>
+              </div>
+              <div class="request-suggestion-wrapper">
+                <div class="request-suggestion-text"></div>
+                <div class="request-suggestion-item"></div>
+              </div>
+            </div>
+            <script>
+              RequestSuggestionGrid.init({
+                wrapperSelector: "request-suggestion-wrapper",
+                itemSelector: "request-suggestion-item",
+                textSelector: "request-suggestion-text",
+                foodTypeInputId: "edit_food_type"
+              });
+            </script>
+    </div>
   </div>
-</div>
-</div>
-</div>
+  </div>
+
 {% endblock %}
+
+<meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+    <meta charset="utf-8">
+    <style>
+      html, body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+      }
+      #map {
+        height: 100%;
+      }
+      .controls {
+        margin-top: 10px;
+        border: 1px solid transparent;
+        border-radius: 2px 0 0 2px;
+        box-sizing: border-box;
+        -moz-box-sizing: border-box;
+        height: 32px;
+        outline: none;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+      }
+
+      #pac-input {
+        background-color: #fff;
+        font-family: Roboto;
+        font-size: 15px;
+        font-weight: 300;
+        margin-left: 12px;
+        padding: 0 11px 0 13px;
+        text-overflow: ellipsis;
+        width: 300px;
+      }
+
+      #pac-input:focus {
+        border-color: #4d90fe;
+      }
+
+      .pac-container {
+        font-family: Roboto;
+      }
+
+      #type-selector {
+        color: #fff;
+        background-color: #4d90fe;
+        padding: 5px 11px 0px 11px;
+      }
+
+      #type-selector label {
+        font-family: Roboto;
+        font-size: 13px;
+        font-weight: 300;
+      }
+
+    </style>

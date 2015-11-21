@@ -28,6 +28,7 @@
               <button id="location_button" onclick="getLocation()" class="btn-flat"> <i class="material-icons">my_location</i>&nbsp;&nbsp;Use Current Location</button>
               <p id="found_location"></p>
             </div>
+          </div>
             <script>
               $.getScript("../js/create_request.js");
               var x = document.getElementById("found_location");
@@ -102,9 +103,9 @@
           <a href="/requests" class="btn-flat">Cancel</a>
           <a id="send_request" type="submit" class="btn-flat disabled">Send Request</a>
         </div>
-      </div>
-      
-    </div>
+      </div>    
+
+
     <div class="request-suggestion-grid col s0 m6">
         <div class="request-suggestion-wrapper">
           <div class="request-suggestion-text"></div>
@@ -164,6 +165,7 @@
         });
       </script>
   </div>
+</div>
 </div>
   <!-- Modal for terms and conditions -->
   <div id="terms" class="modal modal-fixed-footer" style= "width: 30%;">
