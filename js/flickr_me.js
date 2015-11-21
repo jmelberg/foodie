@@ -8,22 +8,27 @@
 */
 var FlickrMe = (function($){
 	var apiKey = "37b008c37e61a536200947c81c78dc87";
-	var method = "flickr.photos.search"; //static api key
+	var searchMethod = "flickr.photos.search"; //static api key
 	var returnFormat = "json";
 	var sort = "relevance";
 	var rootAPIUrl = "https://www.flickr.com/services/rest/?jsoncallback=?"; 
-
+	var resultUrls = false;
 
 	function _createUrls(response,size) {
+		resultUrls = false;					//reset result
 		var photo = response.photos.photo;
-		// console.log(photo);
 		var urls = new Array();
 
 		$.each(photo, function( key,val ){
-			console.log(_constructUrl(val,size));
+			urls.push( _constructUrl(val,size) );
 		});
+
+		resultUrls = urls;
+
+		return urls;
 	}
 
+	//build url
 	function _constructUrl(options,size) {
 		var farmId = options.farm;
 		var serverID = options.server;
@@ -35,6 +40,24 @@ var FlickrMe = (function($){
 		return { title: options.title, 
 				 url: urlBase
 		};
+	}
+
+	/*DEPRECATED*/
+	function _getUrlsAndSizes(photoId) {
+		$.ajax({
+			url: rootAPIUrl,
+			data: {
+				api_key: apiKey,
+				photo_id: photoId
+			},
+			dataType: "jsonp",
+			error: function(XMLHttpRequest, textStatus, errorThrown) { 
+				console.log(textStatus);
+				console.log(errorThrown);
+		    }
+		}).done(function(d){
+			console.log(d);
+		});
 	}
 
 	return {
@@ -55,11 +78,10 @@ var FlickrMe = (function($){
 			k	large 2048, 2048 on longest side†
 			
 			Example: FlickrMe.search("hello world",'n');
-
+			More Info: https://www.flickr.com/services/api/misc.urls.html
 		* @return {title:sometime,url:someurl}	
 		*/
-		search: function(searchKey,size) {
-			
+		searchKey: function(searchKey,size,doneCB) {
 			$.ajax({
 				url: rootAPIUrl,
 				data: {
@@ -67,7 +89,8 @@ var FlickrMe = (function($){
 					api_key: apiKey,
 					format: returnFormat,
 					sort: sort,
-					method: method,
+					method: searchMethod,
+					per_page: "4"
 				},
 				dataType: "jsonp",
 				error: function(XMLHttpRequest, textStatus, errorThrown) { 
@@ -76,12 +99,9 @@ var FlickrMe = (function($){
 			    }
 			}).done(function(data) {
 				if(data.stat == 'ok') {
-					console.log(data);
-
 					//create urls
-					return _createUrls(data,size);
-				} else {
-					//broken
+					doneCB( _createUrls(data,size) );
+				} else {//request unsuccessful
 					console.log("error");
 					console.log(data);
 				}
