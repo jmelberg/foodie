@@ -39,10 +39,9 @@
         </div>
       </div>
       <!-- timeline start-->
-      <div id="timeline" class="col s9 card blue-grey" style="height: 85vh; overflow-y: scroll;">
-
+      <div id="timeline" class="col s9 card" style="height: 85vh; overflow-y: scroll;">
+      <h4 class= "history-title">History</h4>
       <div id="cd-timeline">
-
         {% for request in result %}
         {% if forloop.counter|divisibleby:2 %}
         <div class="cd-timeline-block"> <!-- cd-timeline-block start -->

@@ -1,6 +1,10 @@
 {% extends "base.html" %}
 {% block content %}
 <script type="text/javascript" src="../js/request_actions.js"></script>
+<div class="row header-block">
+  <div class="page-header"><h5>Please Choose A Bid</h5></div>
+</div>
+<div class = "container search-container">
 <input id="request" name="request" style="display:none;" value={{request.key.urlsafe}}>
   <div id="bid" class="col s12">
     <div class="row">
@@ -8,7 +12,7 @@
         <br />
         {% for bid in bids %}
           <li class="collection-item avatar">
-            <img src ="/img?user_id={{bid.0.sender.urlsafe}}&height=350&width=350" class="circle">
+            <img src ="/img?user_id={{bid.0.sender.urlsafe}}" class="circle">
             <span class="title">
               <b>Requestor:</b><a href="/foodie/{{bid.0.name}}"> {{bid.0.name}}</a></span>
             <p>
@@ -21,7 +25,7 @@
           {% empty %}
           <li class="collection-header">
            <center>
-            <h5>No Requests Yet</h5>
+            <h5>No Bids Yet</h5>
            </center>
           </li>
           {% endfor %}
@@ -42,5 +46,6 @@
     <button id="select_bid_button" class="modal-action modal-close btn-flat">Accept</button>
     <button type="cancel" id="close_modal" class="modal-action modal-close btn-flat">Cancel</button>
   </div>
+</div>
 </div>
 {% endblock %}

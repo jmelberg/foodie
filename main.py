@@ -22,7 +22,7 @@ wepay = WePay(False, None)
 class LoginHandler(SessionHandler):
   def get(self):
     if self.user_model != None:
-      self.redirect('/foodie/{}'.format(self.user_model.username))
+      self.redirect('/feed'.format(self.user_model.username))
     else:
       self.response.out.write(template.render('views/login.html', {}))
   def post(self):
@@ -36,11 +36,16 @@ class LoginHandler(SessionHandler):
       u = self.auth.get_user_by_password(username, password, remember=True,
       save_session=True)
       get_notifications(self.user_model)
-      self.redirect('/foodie/{}'.format(self.user_model.username))
+      self.redirect('/feed')
     except( auth.InvalidAuthIdError, auth.InvalidPasswordError):
       error = "Invalid Email/Password"
       print error
       self.response.out.write(template.render('views/login.html', {'error': error}))
+
+class FeedHandler(SessionHandler):
+  def get(self):
+
+      self.response.out.write(template.render('views/feed.html',{'user': self.user_model}))
 
 class ProfileHandler(SessionHandler):
   """handler to display a profile page"""
@@ -275,6 +280,7 @@ app = webapp2.WSGIApplication([
                              ('/register', RegisterHandler),
                              ('/checkusername', UsernameHandler),
                              ('/foodie/(\w+)', ProfileHandler),
+                             ('/feed', FeedHandler),
                              ('/requests', RequestsHandler),
                              ('/editrequest/(.+)', EditRequestHandler),
                              ('/checktime', CheckTimeConflict),
