@@ -38,8 +38,59 @@
         <div class = "row profile-tabs">
         </div>
       </div>
-      <div class= "col s0 m0 l9 profile-right">
-      </div>
+      <!-- timeline start-->
+      <div id="timeline" class="col s9 card blue-grey" style="height: 85vh; overflow-y: scroll;">
+
+      <div id="cd-timeline">
+
+        {% for request in result %}
+        {% if forloop.counter|divisibleby:2 %}
+        <div class="cd-timeline-block"> <!-- cd-timeline-block start -->
+          <div class="row">
+            <div class="cd-timeline-img cd-picture">
+              <img src="../images/cd-icon-picture.svg" alt="Picture">
+            </div> <!-- cd-timeline-img -->
+
+            <div class="col s7" style="visibility: hidden;">placeholder</div>
+
+            <div class="cd-timeline-content col s5">
+              <div class="card-image ">
+                <img src="/img?user_id={{request.sender.urlsafe}}">
+              </div>
+              <div class="card-content">
+                <span><b>Requester:</b> {{request.sender_name}}</span><br />
+                <span><b>For:</b> {{request.start_time.date}} @ {{request.start_time.time}}</span><br />
+                <span><b>Type:</b> {{request.food_type}}</span><br />
+                <span><b>Interest:</b> {{request.status}}</span><br />
+                <span><a class="orange lighten-1 white-text waves-effect waves-light btn" id="signInBtn" style="width: 100%;">Share Your Experience</a></span>
+              </div>
+            </div>
+          </div>
+        </div> <!-- cd-timeline-block end -->        
+        {% else %}
+        <div class="cd-timeline-block"> <!-- cd-timeline-block start -->
+          <div class="row">
+            <div class="cd-timeline-img cd-picture">
+              <img src="../images/cd-icon-picture.svg" alt="Picture">
+            </div> <!-- cd-timeline-img -->
+
+            <div class="cd-timeline-content col s5">
+              <div class="card-image ">
+                <img src="/img?user_id={{request.sender.urlsafe}}" class="circle">
+              </div>
+              <div class="card-content">
+                <span><b>Requester:</b> {{request.sender_name}}</span><br />
+                <span><b>For:</b> {{request.start_time.date}} @ {{request.start_time.time}}</span><br />
+                <span><b>Type:</b> {{request.food_type}}</span><br />
+                <span><b>Interest:</b> {{request.status}}</span><br />
+                <span><a class="grey white-text waves-effect waves-light btn" id="signInBtn" style="width: 100%;">Share Your Experience</a></span>
+              </div>
+            </div>
+          </div>
+        </div> <!-- cd-timeline-block end -->
+        {% endif %}
+        {% endfor %}
+      </div> <!-- cd-timeline -->
   </div>
 
 {% endblock %}

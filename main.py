@@ -1,7 +1,6 @@
 import cgi
 import webapp2
 import time, datetime
-import requests
 from google.appengine.ext import ndb
 from google.appengine.ext.webapp import template
 from google.appengine.api import users
@@ -12,25 +11,23 @@ from account_creation import RegisterHandler, UsernameHandler
 from foodie_requests import *
 from confirmed_requests import *
 from wepay import *
-from models import User, Profile, Request, Endorsement, Rating, PendingReview
-from ratings import CreateRating, DeletePending
-from payments import CreatePaymentExample, CreatePayment, ChargePayment
-from reviews import *
+from models import User, Profile, Request, Endorsement, Bidder
 
 client_id = 175855
 client_secret = 'dfb950e7ea'
 redirect_url = 'http://localhost:8080/'
 wepay = WePay(False, None)
 
+
 class LoginHandler(SessionHandler):
   def get(self):
     if self.user_model != None:
-      self.redirect('/feed'.format(self.user_model.username))
+      self.redirect('/foodie/{}'.format(self.user_model.username))
     else:
       self.response.out.write(template.render('views/login.html', {}))
   def post(self):
-    username = cgi.escape(self.request.get('email')).strip().lower()
-    password = cgi.escape(self.request.get('password'))
+    username = cgi.escape(self.request.get('login_email')).strip().lower()
+    password = cgi.escape(self.request.get('login_password'))
     try:
       if '@' in username:
         user_login = User.query(User.email_address == username).get()
@@ -39,7 +36,7 @@ class LoginHandler(SessionHandler):
       u = self.auth.get_user_by_password(username, password, remember=True,
       save_session=True)
       get_notifications(self.user_model)
-      self.redirect('/feed')
+      self.redirect('/foodie/{}'.format(self.user_model.username))
     except( auth.InvalidAuthIdError, auth.InvalidPasswordError):
       error = "Invalid Email/Password"
       print error
@@ -47,7 +44,6 @@ class LoginHandler(SessionHandler):
 
 class ProfileHandler(SessionHandler):
   """handler to display a profile page"""
-  @login_required
   def get(self, profile_id):
     viewer = self.user_model
     # Get profile info
@@ -68,15 +64,46 @@ class ProfileHandler(SessionHandler):
     # Get profile history
     history =  Request.query(Request.start_time <= current_date, Request.sender == profile_owner.key).order(Request.start_time)
 
+    # Get Request regarding the user
+    reqs = []
+    my_reqs = []
+    pending_reqs = []
+    accepted_reqs = []
+    alloted_time = current_date + datetime.timedelta(hours=2)
+
+    my_reqs = Request.query().order(Request.start_time).fetch()
+
+    for request in my_reqs:
+      if len(request.bidders) > 0:
+        if request.recipient != None:
+          accepted_reqs.append(request)
+          my_reqs.remove(request)
+        else:
+          pending_reqs.append(request)
+          my_reqs.remove(request)
+
+    for request in my_reqs:
+      if request.sender != viewer.key:
+        if request.recipient == None:
+          for bid in request.bidders:
+            bid = bid.get()
+            if bid.name == viewer.username:
+              pending_reqs.append(request)
+              my_reqs.remove(request)
+        else:
+          if request.recipient == viewer.key:
+            accepted_reqs.append(request)
+            my_reqs.remove(request)
+
+    for request in my_reqs:
+      if request.sender != viewer.key:
+        my_reqs.remove(request)
+
+    result = my_reqs + pending_reqs + accepted_reqs
+
     self.response.out.write(template.render('views/profile.html',
                              {'owner':profile_owner, 'profile':profile, 'endorsements': comments,
-                            'history': history, 'user': viewer}))
-
-class FeedHandler(SessionHandler):
-  """handler to display a feed page"""
-  def get(self):
-    user = self.user_model
-    self.response.out.write(template.render('views/feed.html', {'user': self.user_model}))
+                            'history': history, 'user': viewer, 'result': result}))
 
 class Image(SessionHandler):
   """Serves the image associated with an avatar"""
@@ -95,10 +122,41 @@ class Image(SessionHandler):
       self.response.out.write(user.avatar)
 
 
+class CommentHandler(SessionHandler):
+  ''' Leave a comment for another user '''
+  def post(self):
+    user = self.user_model
+    rating = cgi.escape(self.request.get('rating'))
+    comment = cgi.escape(self.request.get('comment'))
+    # Person getting endorsement
+    recipient = cgi.escape(self.request.get('recipient'))
+    recipient_user = User.query(User.username == recipient).get()
+    recipient_key = recipient_user.key
+
+    if comment != None:
+      endorsement = Endorsement()
+      endorsement.recipient = recipient_key
+      endorsement.sender = user.first_name + " " + user.last_name
+      endorsement.creation_time = datetime.datetime.now() - datetime.timedelta(hours=8) #PST
+      endorsement.rating = rating
+      endorsement.text = comment
+      endorsement.put()
+      # modify rating 
+      if rating == "positive":
+        recipient_user.positive = recipient_user.positive + 1
+      elif rating == "neutral":
+        recipient_user.neutral = recipient_user.neutral + 1
+      else:
+        recipient_user.negative = recipient_user.negative + 1
+      recipient_user.percent_positive = (recipient_user.positive / (recipient_user.positive + recipient_user.negative)) * 100
+      recipient_user.put()
+
+    self.redirect('/foodie/{}'.format(recipient))
+
 class SearchHandler(SessionHandler):
   ''' Search for users by the following criteria:
         Username
-        First Name
+        First Name 
         Last Name
         First & Last Name
         Food Type
@@ -108,11 +166,11 @@ class SearchHandler(SessionHandler):
     user = self.user_model
     search = self.request.get('search').lower().strip()
     print "Search Term: ", search
-
+    
     #Seach for people
     results = []
     profiles = []
-
+    
     # Search for requests
     available_requests = []
     available_users = []
@@ -120,8 +178,8 @@ class SearchHandler(SessionHandler):
     completed_requests = []
     completed_users = []
     current_time = datetime.datetime.now() - datetime.timedelta(hours=8)
-
-        # Check for type
+    
+    # Check for type
     food_type_requests = Request.query(Request.food_type == search).fetch()
     food_type = [x for x in food_type_requests if x.start_time > current_time]
     if food_type:
@@ -178,7 +236,7 @@ class SearchHandler(SessionHandler):
     available = zip(available_users, available_requests)
     completed = zip(completed_users, completed_requests)
     self.response.out.write(template.render('views/search.html',
-    {'user':user, 'search_results':results, 'available_requests':available, 'completed_requests':completed}))
+      {'user':user, 'search_results':results, 'available_requests':available, 'completed_requests':completed}))
 
 
 class LogoutHandler(SessionHandler):
@@ -201,21 +259,8 @@ class GetWePayUserTokenHandler(SessionHandler):
     acct_id = r["user_id"]
     user.wepay_id = str(acct_id)
     user.put()
-
-class AuthorizedPaymentHandler(SessionHandler):
-  def get(self, request_id, preapproval_id):
-    print request_id + ' ' + preapproval_id
-    #THIS CODE IS TO CONFIRM THAT PAYMENT IS AUTHORIZED!!!!
-
-    #SOME BOOLEAN IN REQUESTS MODEL THAT PAYMENT IS PROCESSED SET FROM FALSE TO TRUE
-
-    #PREAPPROVAL ID IS ALSO SET INTO THE PREAPPROVAL ID
     
-    self.redirect('/')
-
-class TestPaymentHandler(SessionHandler):
-  def get(self):
-    CreatePayment("butthole", "69.69", "1526170804", "Hello")
+        
 
 config = {}
 config['webapp2_extras.sessions'] = {
@@ -230,7 +275,6 @@ app = webapp2.WSGIApplication([
                              ('/register', RegisterHandler),
                              ('/checkusername', UsernameHandler),
                              ('/foodie/(\w+)', ProfileHandler),
-                             ('/feed', FeedHandler),
                              ('/requests', RequestsHandler),
                              ('/editrequest/(.+)', EditRequestHandler),
                              ('/checktime', CheckTimeConflict),
@@ -248,12 +292,14 @@ app = webapp2.WSGIApplication([
                              ('/thanks', ThanksHandler),
                              ('/verify/(.+)/(.+)', VerifyHandler),
                              ('/fire/(.w)/(.+)', FireHandler),
-                             ('/complete', CompletedRequestHandler),
-                             ('/paymentauthorized/(.+)/(.+)', AuthorizedPaymentHandler),
+                             ('/complete', CompletedRequestHandler), 
                              ('/logout', LogoutHandler),
-                             ('/ratings', RatingsHandler),
-                             ('/testpayment', TestPaymentHandler),
-                             ('/createpending', CreatePendingRatingHandler),
-                             ('/pendingratings', PendingRatingHandler),
+                             #payment stuff here!
+                             #('/createpayment', CreatePaymentHandler),
+                             #('/getpayments', GetPaymentHandler),
+                             #('/approvepayment', PaymentApprovedHandler),
+                             #('/completepayment', CompletePaymentHandler),
+                             #('/chargepayment', ChargePaymentHandler),
                              ('/getwepaytoken', GetWePayUserTokenHandler),
+                             #('/setwepaytoken/', SetWePayUserTokenHandler),
                               ], debug=False, config=config)
