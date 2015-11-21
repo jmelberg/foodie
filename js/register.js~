@@ -15,6 +15,11 @@ $(document).ready(function(){
     window.location.href = '#';
   });
 
+
+  $('#login_tab').click(function() {
+     window.location.href = '/';
+  });
+
   $(function () {
     $('#username').focus();
     $('#username').keyup(function () {

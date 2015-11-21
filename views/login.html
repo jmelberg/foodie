@@ -1,70 +1,277 @@
+
 <!DOCTYPE html>
 <html>
 <head>
   <!--Import materialize.css-->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.0/css/materialize.min.css">
+  <link type="text/css" rel="stylesheet" href="../animations/animate.css"  media="screen,projection"/>
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link href="../css/orbit.css" rel="stylesheet">
   <!--Import jQuery before materialize.js-->
   <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.0/js/materialize.min.js"></script>
   <script type="text/javascript" src="../js/register.js"></script>
+  <script type="text/javascript" src="../js/backgroundVideo.js"></script>
 
   <script>
-  $(document).ready(function(){
-    $('#register_tab').click(function() {
-      window.location.href = '/register';
-    });
-    $('#login_tab').click(function() {
-      window.location.href = '/';
-    });
-    $('#settings_tab').click(function() {
-      window.location.href = '#';
-    });
-  });
-  </script>
+    $(document).ready(function(){
+      $('.parallax').parallax();
 
+      $('#registerBtn').click(function(event) {
+        event.preventDefault();
+        console.log('he');
+        $('#data-orbit-section').hide();
+        $('#signup').show();
+        $('#signup').addClass('animated slideInDown');
+      });
+      
+      $('#signInBtn').click(function() {
+        $('#signInCard').show();
+        $('#signInCard').addClass('animated bounceInDown');
+      });
+      $('#login_tab').click(function() {
+        window.location.href = '/';
+      });
+      $('#settings_tab').click(function() {
+        window.location.href = '#';
+      });
+      $('#my-video').backgroundVideo({
+                pauseVideoOnViewLoss: false
+            });
+    });
+  </script>
   <!--Let browser know website is optimized for mobile-->
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 </head>
 <body>
-  <div class="row">
-    <div class="col s12" style="margin-bottom: 32px;">
-      <ul class="tabs">
-        <li class="tab col s3"><a id="register_tab">Register</a></li>
-        <li class="tab col s3"><a class="active" href="/" id="login_tab">Sign in</a></li>
-        <li class="tab col s3"><a id="settings_tab">Settings</a></li>
-      </ul>
-    </div>
-    <div id="login" class="col s12">
-      <div class="row">
-        <div class="col s12 m4 offset-m4">
-          <div class="card blue-grey darken-1">
-            <div class="card-content white-text" style="text-align:center;">
-              <span class="card-title">Sign in</span>
-              <br>
-              <a class="btn-floating btn-large waves-effect waves-light blue"><i class="material-icons">F</i></a>
-              <a class="btn-floating btn-large waves-effect waves-light red"><i class="material-icons">G</i></a>
-              <a class="btn-floating btn-large waves-effect waves-light blue"><i class="material-icons">T</i></a>
-
-              <form style="margin-bottom:-8px;" action="/" method="POST">
-               <div class="input-field col s12">
-                 <input id="email" name="email" type="text" class="validate">
-                 <label for="email">Enter Email</label>
-               </div>
-               <div class="input-field col s12">
-                 <input id="password" name="password" type="password" class="validate">
-                 <label for="password">Enter Password</label>
-               </div>
-               <div class="card-action" style="text-align:right;">
-                 <a href="/">Cancel</a>
-                 <button type="submit" style="background:none; border:none; text-transform:uppercase; color:orange">Log In</button>
-               </div>
-               <small>{{error}}</small>
-              </form>
+  <div class="navbar-fixed">
+  <nav class="white">
+      <div class="container">
+        <a href="/" class="brand-logo orange-text text-lighten-1">Foodie<i class="material-icons" style="float: right; margin-top: 20px; margin-left: 10px;">local_dining</i></a>
+        <a href="#" data-activates="mobile-demo" class="button-collapse"><i class="material-icons">menu</i></a>
+        <div class="row">
+          <div class="right hide-on-med-and-down">
+            <div class="col s6">
+              <a class="orange lighten-1 white-text waves-effect waves-light btn" id="signInBtn">Login</a>
             </div>
+            <!-- <div class="col s6">
+              <a class="teal lighten-1 waves-effect waves-light btn" id="registerBtn"><span class="white-text">Register</span></a>
+            </div> -->
+          </div>
+        </div>
+      </div>
+  </nav>
+  </div>
+  <div class="parallax-container">
+
+  <div class="row">
+      <div class="container">
+        <div class="col s4 center-align animated fadeInLeft orange-text text-lighten-2">
+          <h1>Food</h1>
+        </div>
+        <div class="col s4 center-align animated fadeInDown orange-text text-lighten-2">
+          <h1>Unites</h1>
+        </div>
+        <div class="col s4 center-align animated fadeInRight orange-text text-lighten-2">
+          <h1>People</h1>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col s12 m4 offset-m4" id="signInCard" style="display: none;">
+        <div class="card blue-grey darken-1">
+          <div class="card-content white-text" style="text-align:center;">
+            <span class="card-title">Login</span>
+            <br>
+            <!-- <a class="btn-floating btn-large waves-effect waves-light blue"><i class="material-icons">F</i></a>
+            <a class="btn-floating btn-large waves-effect waves-light red"><i class="material-icons">G</i></a>
+            <a class="btn-floating btn-large waves-effect waves-light blue"><i class="material-icons">T</i></a> -->
+
+            <form style="margin-bottom:-8px;" action="/" method="POST">
+              <div class="input-field col s12">
+                <input id="login_email" name="login_email" type="text" class="validate">
+                <label for="login_email">Enter Email</label>
+              </div>
+              <div class="input-field col s12">
+                <input id="login_password" name="login_password" type="password" class="validate">
+                <label for="login_password">Enter Password</label>
+              </div>
+              <div class="card-action" style="text-align:right;">
+                <a href="/">Cancel</a>
+                <button type="submit" style="background:none; border:none; text-transform:uppercase; color:orange">Log In</button>
+              </div>
+              <small></small>
+            </form>
           </div>
         </div>
       </div>
     </div>
+    
+    <div class="parallax">
+
+    <div id="video-wrap" class="video-wrap">
+            <video preload="metadata" autoplay loop id="my-video">
+                <source src="../videos/hifood.webm" type="video/webm">
+            </video>
+        </div>
+
+    </div>
   </div>
+  <div class="section orange lighten-1 white-text" id="mid">
+  <div class="row">
+
+    <div class="col s6">
+      <h2>The world lacks taste.</h2>
+      <h3>Go eat some food.</h3>
+      <br />
+      <h4>Problem:</h4> <h5>People are forgetting about their culture and traditions, soon enough the only place that anyone can learn about these are in books.</h5>
+      <br />
+      <h4>Solution:</h4> <h5>People eat food.<br /> People talk over food.<br /> People laugh over food.<br /> People cry over food.<br /> Food unites people.</h5>
+    </div>
+
+    <div class="col s6" id="data-orbit-section">
+        <ul class="data-orbit-wrap row">
+          <li class="data-strap">
+          <a href="" id="registerBtn">
+            <img class="circle responsive-img padded-20" src="https://image.freepik.com/free-icon/restaurant-cutlery-circular-symbol-of-a-spoon-and-a-fork-in-a-circle_318-61086.png">
+          </a>
+          </li>
+          <li class="data-circle-search-wrap">
+            <ul class="data-circle-search">
+              <li class="data-body"><i class="icon-body-fill"></i></li>
+              <li class="data-body"><i class="icon-body-fill"></i></li>
+              <li class="data-body"><i class="icon-body-fill"></i></li>
+            </ul>
+          </li>
+          <li class="data-circle-shopping-wrap">
+            <ul class="data-circle-shopping">
+              <li class="data-body"><i class="icon-body-fill"></i></li>
+              <li class="data-body"><i class="icon-body-fill"></i></li>
+              <li class="data-body"><i class="icon-body-fill"></i></li>
+              <li class="data-body"><i class="icon-body-fill"></i></li>
+            </ul>
+          </li>
+          <li class="data-circle-social-wrap">
+            <ul class="data-circle-social">
+              <li class="data-body"><i class="icon-body-fill"></i></li>
+              <li class="data-body"><i class="icon-body-fill"></i></li>
+              <li class="data-body"><i class="icon-body-fill"></i></li>
+              <li class="data-body"><i class="icon-body-fill"></i></li>
+              <li class="data-body"><i class="icon-body-fill"></i></li>
+              <li class="data-body"><i class="icon-body-fill"></i></li>
+              <li class="data-body"><i class="icon-body-fill"></i></li>
+            </ul>
+          </li>
+          <li class="data-circle-human-wrap">
+            <ul class="data-circle-human">
+              <li class="data-body"><i class="icon-body-fill"></i></li>
+              <li class="data-body"><i class="icon-body-fill"></i></li>
+              <li class="data-body"><i class="icon-body-fill"></i></li>
+              <li class="data-body"><i class="icon-body-fill"></i></li>
+            </ul>
+          </li>
+          <li class="data-orbit-user">
+            <img src="http://www.clker.com/cliparts/2/I/Y/q/j/n/sign-up-button-md.png">
+          </li>
+        </ul>
+      </div>
+
+      <div id="signup" class="col s6" style="display: none;">
+      <br/>
+  <div class="row">
+      <div class="card blue-grey darken-1">
+        <div class="card-content white-text" style="text-align:center;">
+          <span class="card-title">Sign up</span>
+          <br>
+          <!-- <a class="btn-floating btn-large waves-effect waves-light blue"><i class="material-icons">F</i></a>
+          <a class="btn-floating btn-large waves-effect waves-light red"><i class="material-icons">G</i></a>
+          <a class="btn-floating btn-large waves-effect waves-light blue"><i class="material-icons">T</i></a> -->
+
+          <form style="margin-bottom:-8px;" action="/register" method="POST" enctype="multipart/form-data">
+            <div class="input-field col s12">
+              <input id="username" name="username" type="text" class="validate">
+              <label for="username">Enter Username</label>
+              <small id="available" style="display:none;"></small>
+            </div>
+            <div class="input-field col s12">
+              <input id="email" name="email" type="text" class="validate">
+              <label for="email">Enter Email</label>
+              <small id="email_available" style="display:none;"></small>
+            </div>
+            <div class="input-field col s6">
+              <input id="password" name="password" type="password" class="validate">
+              <label for="password">Enter Password</label>
+            </div>
+            <div class="input-field col s6">
+              <input id="confirm_password" type="password" class="validate">
+              <label for="confirm_password">Confirm Password</label>
+            </div>
+            <div class="col s12">
+              <small id="passwords_match" style="display:none;"></small>              
+            </div>
+            <div class="input-field col s6">
+              <input id="first_name" name="first_name" type="text" class="validate">
+              <label for="first_name">Enter First Name</label>
+            </div>
+            <div class="input-field col s6">
+              <input id="last_name" name="last_name" type="text" class="validate">
+              <label for="last_name">Enter Last Name</label>
+            </div>
+            <div class="input-field col s12">
+              <div class="file-field">
+                <div class="btn">
+                  <span>Profile Picture</span>
+                  <input type="file" name="img" id="img">
+                </div>
+                <div class="file-path-wrapper">
+                  <input class="file-path validate" type="text" >
+                </div>
+              </div>
+            </div>
+
+
+            <div class="card-action" style="text-align:right;">
+              <a href="/">Cancel</a>
+              <button id="signup_button" type="submit" style="background:none;
+                      border:none; text-transform:uppercase;
+                      color:orange; display:none;">Sign up</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+</div>
+
+      </div>
+  </div>
+  <div class="parallax-container">
+    <div class="parallax">
+      <img src="../images/veg2.jpg">
+    </div>
+  </div>
+  <div class="orange lighten-1 section" id="footer">
+    <div class="row container">
+      <div class="col s6 left-align">
+        <h2 class="header white-text">Food</h2>
+        <a class="btn-floating btn-large waves-effect waves-light blue"><i class="material-icons">F</i></a>
+        <a class="btn-floating btn-large waves-effect waves-light red"><i class="material-icons">G</i></a>
+        <a class="btn-floating btn-large waves-effect waves-light blue"><i class="material-icons">T</i></a>
+      </div>
+      <div class="col s6 right-align">
+        <img src="../images/logo.png" style="width: 40%; height: 40%;">
+      </div>
+    </div>
+  </div>
+
 </body>
+<style type="text/css">
+  .parallax-container {
+    height: 510px;
+  }
+
+  #mid {
+    background: -webkit-gradient(linear, left top, right bottom, from(#ffa726), to(#ffe082));
+    background: -webkit-linear-gradient(left, #ffa726, #ffe082);
+  }
+</style>
 </html>
