@@ -1,9 +1,7 @@
 {% extends "base.html" %}
 {% block content %}
-<div class= "container">
-  <div class= "row">
-    <div class = "profile-container">
-      <div class= "col s12 m12 l3 profile-left">
+  <div class= "row" >
+      <div class= "col s12 m12 l3 profile-left" style= "padding: 0 0;">
         <div class = "row user-block">
           <div class= "profile-img" style= "background: url('/img?user_id={{owner.key.urlsafe}}'); background-size: cover;"></div>
           <div class="profile-name">{{owner.first_name}}&nbsp;{{owner.last_name}}</div>
@@ -42,7 +40,6 @@
       </div>
       <div class= "col s0 m0 l9 profile-right">
       </div>
-    </div>
   </div>
-</div>
+
 {% endblock %}
