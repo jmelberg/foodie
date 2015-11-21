@@ -244,6 +244,7 @@ class EditRequestHandler(SessionHandler):
 
 class ChooseRequestHandler(SessionHandler):
   def get(self, request_id):
+    user = self.user_model
     request = ndb.Key(urlsafe = request_id).get()
     bidders = []
     locations = []
@@ -252,7 +253,7 @@ class ChooseRequestHandler(SessionHandler):
       bidders.append(bid)
       locations.append(bid.location.get())
     choices = zip(bidders, locations)
-    self.response.out.write(template.render('views/choose_request.html', {'request':request,'bids': choices}))
+    self.response.out.write(template.render('views/choose_request.html', {'user': self.user_model,'request':request,'bids': choices}))
 
   def post(self, request_id):
     request = ndb.Key(urlsafe = request_id).get()
@@ -270,6 +271,7 @@ class ChooseRequestHandler(SessionHandler):
 class JoinRequestHandler(SessionHandler):
   ''' Processes current requests and removes from database '''
   def get(self, request_id):
+    user = self.user_model
     request = ndb.Key(urlsafe=request_id).get()
     if request.location is None or request.food_type is None:
       self.redirect('/requests')
@@ -300,7 +302,7 @@ class JoinRequestHandler(SessionHandler):
           coordinates += str(business['location']['coordinate'][a]) + " "
         location["coordinates"] = coordinates
       results.append(location)
-    self.response.out.write(template.render('views/confirm_request.html', {'results':results, 'request': request}))
+    self.response.out.write(template.render('views/confirm_request.html', {'user': self.user_model,'results':results, 'request': request}))
   
   def post(self, request_id):
     location = self.request.get('location')
