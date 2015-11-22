@@ -11,13 +11,13 @@
 
 .header-block{
   border: solid 1px #e0e0e0;
-  height: 122px;
+  height: 100px;
   background-color: rgb(240, 238, 229);
 }
 
 .page-header{
   margin-left: 13%;
-  margin-top: 80px;
+  margin-top: 60px;
   color: rgb(51, 51, 51);
 }
 

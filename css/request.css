@@ -1,11 +1,7 @@
 
 .background{
   height: 100%;
-<<<<<<< HEAD
-  background: url('../images/14221923709_d1d10e9c93_z.jpg') #f0eee5;
-=======
   background: #f0eee5;
->>>>>>> 8cc9d107dddcd5381549e4a7f801ccd196648bf8
   background-size: auto auto;
   background-position: center center;
 }
@@ -16,7 +12,7 @@
 .form-container{
   padding: 5% 10%;
   background-color: #fafafa;
-  margin: 10% 5%;
+  margin: 30px 5%;
   border:1px solid #e0e0e0;
 }
 
