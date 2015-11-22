@@ -1,7 +1,6 @@
 import cgi
 import webapp2
 import time, datetime
-import requests
 from google.appengine.ext import ndb
 from google.appengine.ext.webapp import template
 from google.appengine.api import users
@@ -12,24 +11,25 @@ from account_creation import RegisterHandler, UsernameHandler
 from foodie_requests import *
 from confirmed_requests import *
 from wepay import *
-from models import User, Profile, Request, Endorsement, Rating, PendingReview, PaymentLinks, PaymentModel
 from ratings import CreateRating, DeletePending
 from payments import CreatePaymentExample, CreatePayment, ChargePayment, AddCreditCard, AuthorizeCreditCard, Charge
+from models import User, Profile, Request, Endorsement, Bidder
 
 client_id = 175855
 client_secret = 'dfb950e7ea'
 redirect_url = 'http://localhost:8080/'
 wepay = WePay(False, None)
 
+
 class LoginHandler(SessionHandler):
   def get(self):
     if self.user_model != None:
-      self.redirect('/foodie/{}'.format(self.user_model.username))
+      self.redirect('/feed'.format(self.user_model.username))
     else:
       self.response.out.write(template.render('views/login.html', {}))
   def post(self):
-    username = cgi.escape(self.request.get('email')).strip().lower()
-    password = cgi.escape(self.request.get('password'))
+    username = cgi.escape(self.request.get('login_email')).strip().lower()
+    password = cgi.escape(self.request.get('login_password'))
     try:
       if '@' in username:
         user_login = User.query(User.email_address == username).get()
@@ -38,15 +38,19 @@ class LoginHandler(SessionHandler):
       u = self.auth.get_user_by_password(username, password, remember=True,
       save_session=True)
       get_notifications(self.user_model)
-      self.redirect('/foodie/{}'.format(self.user_model.username))
+      self.redirect('/feed')
     except( auth.InvalidAuthIdError, auth.InvalidPasswordError):
       error = "Invalid Email/Password"
       print error
       self.response.out.write(template.render('views/login.html', {'error': error}))
 
+class FeedHandler(SessionHandler):
+  def get(self):
+    get_notifications(self.user_model)
+    self.response.out.write(template.render('views/feed.html',{'user': self.user_model}))
+
 class ProfileHandler(SessionHandler):
   """handler to display a profile page"""
-  @login_required
   def get(self, profile_id):
     viewer = self.user_model
     # Get profile info
@@ -60,16 +64,58 @@ class ProfileHandler(SessionHandler):
       new_profile.put()
 
     current_date = datetime.datetime.now() - datetime.timedelta(hours=8)
-    get_notifications(self.user_model)
-    # Get comments
-    comments = Endorsement.query(Endorsement.recipient == profile_owner.key).order(Endorsement.creation_time).fetch()
+    #get_notifications(self.user_model)
+
+    # Get comments that have match to request
+    comments = Endorsement.query(Endorsement.recipient == profile_owner.key).fetch()
+    comments = [x for x in comments if x.request != None]
+
 
     # Get profile history
     history =  Request.query(Request.start_time <= current_date, Request.sender == profile_owner.key).order(Request.start_time)
 
+    # Get Request regarding the user
+    reqs = []
+    my_reqs = []
+    pending_reqs = []
+    accepted_reqs = []
+    alloted_time = current_date + datetime.timedelta(hours=2)
+
+    my_reqs = Request.query().order(Request.start_time).fetch()
+
+    for request in my_reqs:
+      if len(request.bidders) > 0:
+        if request.recipient != None:
+          accepted_reqs.append(request)
+          my_reqs.remove(request)
+        else:
+          pending_reqs.append(request)
+          my_reqs.remove(request)
+
+    for request in my_reqs:
+      if request.sender != viewer.key:
+        if request.recipient == None:
+          for bid in request.bidders:
+            bid = bid.get()
+            if bid.name == viewer.username:
+              pending_reqs.append(request)
+              my_reqs.remove(request)
+        else:
+          if request.recipient == viewer.key:
+            accepted_reqs.append(request)
+            my_reqs.remove(request)
+
+    for request in my_reqs:
+      if request.sender != viewer.key:
+        my_reqs.remove(request)
+
+    result = my_reqs + pending_reqs + accepted_reqs
+
+
+
     self.response.out.write(template.render('views/profile.html',
                              {'owner':profile_owner, 'profile':profile, 'endorsements': comments,
-                            'history': history, 'user': viewer}))
+                            'history': history, 'user': viewer, 'result': result}))
 
 class Image(SessionHandler):
   """Serves the image associated with an avatar"""
@@ -145,7 +191,7 @@ class SearchHandler(SessionHandler):
     completed_users = []
     current_time = datetime.datetime.now() - datetime.timedelta(hours=8)
 
-        # Check for type
+    # Check for type
     food_type_requests = Request.query(Request.food_type == search).fetch()
     food_type = [x for x in food_type_requests if x.start_time > current_time]
     if food_type:
@@ -202,7 +248,7 @@ class SearchHandler(SessionHandler):
     available = zip(available_users, available_requests)
     completed = zip(completed_users, completed_requests)
     self.response.out.write(template.render('views/search.html',
-    {'user':user, 'search_results':results, 'available_requests':available, 'completed_requests':completed}))
+      {'user':user, 'search_results':results, 'available_requests':available, 'completed_requests':completed}))
 
 class LogoutHandler(SessionHandler):
   """ Terminate current session """
@@ -332,7 +378,6 @@ class AuthorizePaymentsHandler(SessionHandler):
         user.credit_id = credit
         user.put()
 
-
 config = {}
 config['webapp2_extras.sessions'] = {
     'secret_key': 'zomg-this-key-is-so-secret',
@@ -346,6 +391,7 @@ app = webapp2.WSGIApplication([
                              ('/register', RegisterHandler),
                              ('/checkusername', UsernameHandler),
                              ('/foodie/(\w+)', ProfileHandler),
+                             ('/feed', FeedHandler),
                              ('/requests', RequestsHandler),
                              ('/editrequest/(.+)', EditRequestHandler),
                              ('/checktime', CheckTimeConflict),
@@ -371,9 +417,12 @@ app = webapp2.WSGIApplication([
                              ('/paymentauthorized/(.+)/(.+)', AuthorizedPaymentHandler),
                              ('/authorizepayment', AuthorizePaymentsHandler),
                              ('/logout', LogoutHandler),
-                             ('/ratings', RatingsHandler),
-                             ('/testpayment', TestPaymentHandler),
-                             ('/createpending', CreatePendingRatingHandler),
-                             ('/pendingratings', PendingRatingHandler),
+                             #payment stuff here!
+                             #('/createpayment', CreatePaymentHandler),
+                             #('/getpayments', GetPaymentHandler),
+                             #('/approvepayment', PaymentApprovedHandler),
+                             #('/completepayment', CompletePaymentHandler),
+                             #('/chargepayment', ChargePaymentHandler),
                              ('/getwepaytoken', GetWePayUserTokenHandler),
+                             #('/setwepaytoken/', SetWePayUserTokenHandler),
                               ], debug=False, config=config)

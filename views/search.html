@@ -1,47 +1,117 @@
 {% extends 'base.html' %}
 {% block content %}
-<div class="page-header"><h2>Search Results</h2></div>
-User Search:
- <ul class="collection">
-  {% for result in search_results %}
-    <li class="collection-item avatar">
-      <a href="/foodie/{{result.0.username}}">
-      <img src="/img?user_id={{result.0.key.urlsafe}}" alt="" class="circle">
-      <span class="title">{{result.0.username}}</span>
-      </a>
-      <p> <b>{{result.0.first_name}} {{result.0.last_name}}</b><br>
-        {{result.1.about_me}}
-      </p>
-    </li>
-  {% endfor %}
-  </ul>
-  Available Requests:
-  <ul class="collection">
-    {% for result in available_requests %}
-      <li class="collection-item avatar">
-        <a href="/foodie/{{result.0.username}}">
-        <img src="/img?user_id={{result.0.key.urlsafe}}" alt="" class="circle">
-        <span class="title">{{result.0.username}}</span>
-        </a>
-        <p> <b>{{result.0.first_name}} {{result.0.last_name}}</b> requested<b> <a href="/confirm/{{result.1.key.urlsafe}}">{{result.1.food_type}}</a></b><br>
-          {{result.1.start_time}} in {{result.1.location|title}}
-        </p>
-      </li>
-    {% endfor %}
-  </ul>
-  Completed Requests:
-  <ul class="collection">
-    {% for result in completed_requests %}
-      <li class="collection-item avatar">
-        <a href="/foodie/{{result.0.username}}">
-        <img src="/img?user_id={{result.0.key.urlsafe}}" alt="" class="circle">
-        <span class="title">{{result.0.username}}</span>
-        </a>
-        <p> <b>{{result.0.first_name}} {{result.0.last_name}}</b> requested<b> {{result.1.food_type}}</b><br>
-          on {{result.1.start_time}} in {{result.1.location|title}}
-        </p>
-      </li>
-    {% endfor %}
-  </ul>
+<script type="text/javascript" src="../js/request_actions.js"></script>
+
+<div class= "search-background">
+  <div class="row header-block">
+    <div class="page-header"><h5>Search Results</h5></div>
+  </div>
+  <div class = "container search-container">
+    <div class= "row">
+    {% if search_results %}
+      User Search
+       <ul class="collection">
+        {% for result in search_results %}
+          <li class="collection-item avatar">
+            <a href="/foodie/{{result.0.username}}">
+            <img src="/img?user_id={{result.0.key.urlsafe}}" alt="" class="circle">
+            <span class="title">{{result.0.username}}</span>
+            </a>
+            <p> <b>{{result.0.first_name}} {{result.0.last_name}}</b><br>
+              {{result.1.about_me}}
+            </p>
+          </li>
+        {% endfor %}
+        </ul>
+    {% else %}
+    {% endif %}
+    {% if available_requests %}
+        Available Requests
+        <ul class="collection">
+          {% for result in available_requests %}
+            <li class="collection-item">
+              <div class="row search-row">
+              <div class= "col s3">
+                <div class="food-img"></div>
+              </div>
+              <div class= "col s4">
+                <a class = "search-result-title" href="/confirm/{{result.1.key.urlsafe}}">{{result.1.food_type|title}}</a> &nbsp; for {{result.1.interest}}
+                <p class = "search-detail">
+                  Requested By <b><a href="/foodie/{{result.0.username}}"> {{result.0.first_name}} {{result.0.last_name}} </a></b></br>
+                  {{result.0.percent_positive}}% positive rating </br>
+                  ${{result.1.min_price}} - ${{result.1.max_price}}
+                </p>
+              </div>
+              <div class= "col s5">
+                <p class = "search-detail">
+                  </br></br>
+                  {{result.1.location|title}}</br>
+                  {{result.1.start_time}}
+                </p>
+              </div>
+            </div>
+            </li>
+          {% endfor %}
+        </ul>
+    {% else %}
+    {% endif %}
+    {% if completed_requests %}
+        Completed Requests
+        <ul class="collection">
+          {% for result in completed_requests %}
+            <li class="collection-item">
+              <div class="row search-row">
+              <div class= "col s3">
+                <div class="food-img"></div>
+              </div>
+              <div class= "col s4">
+                <a class = "search-result-title">{{result.1.food_type|title}}</a> &nbsp; for {{result.1.interest}}
+                <p class = "search-detail">
+                  Requested By <b><a href="/foodie/{{result.0.username}}"> {{result.0.first_name}} {{result.0.last_name}} </a></b></br>
+                  {{result.0.percent_positive}}% positive rating </br>
+                  ${{result.1.min_price}} - ${{result.1.max_price}}
+                </p>
+              </div>
+              <div class= "col s5">
+                <p class = "search-detail">
+                  </br></br>
+                  {{result.1.location|title}}</br>
+                  {{result.1.start_time}}
+                </p>
+              </div>
+            </div>
+            </li>
+          {% endfor %}
+        </ul>
+    {% else %}
+    {% endif %}
+
+    {% if search_results or available_requests or completed_requests%}
+    {% else %}
+    <div class= "no-result">
+      <i class="material-icons">announcement</i></br>
+      Sorry we didn't find any results.</br>
+      Check the spelling, or try a different search.
+    </div>
+    {% endif %}
+
+
+
+        <div class="fixed-action-btn" style="bottom: 45px; right: 100px;">
+          <a class="btn-floating btn-large">
+            <i class="large material-icons">search</i>
+          </a>
+          <ul>
+            <li id="hangouts_sort"><a class="btn-floating teal btn tooltipped" data-position="left" data-delay="50" data-tooltip="Hangouts" href="/requests?q=hangouts">H</a></li>
+            <li id="lessons_sort"><a class="btn-floating teal btn tooltipped" data-position="left" data-delay="50" data-tooltip="Food Type" href="/requests?q=lessons">F</a></li>
+            <li><a class="btn-floating red btn tooltipped" data-position="left" data-delay="50" data-tooltip="All" href='/requests?q=all' ><i class="material-icons">autorenew</i></a></li>
+            <li><a class="btn-floating yellow darken-1 btn tooltipped" data-position="left" data-delay="50" data-tooltip="Price" href='/requests?q=price'><i class="material-icons">attach_money</i></a></li>
+            <li><a class="btn-floating green btn tooltipped" data-position="left" data-delay="50" data-tooltip="Time" href='/requests?q=time'><i class="material-icons">access_time</i></a></li>
+            <li><a class="btn-floating blue btn tooltipped" data-position="left" data-delay="50" data-tooltip="Location" href='/requests?q=location' ><i class="material-icons">place</i></a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
 {% endblock %}

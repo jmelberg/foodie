@@ -45,7 +45,6 @@ class RequestsHandler(SessionHandler):
     # Get User requests
     my_requests = Request.query(Request.start_time >= alloted_time - datetime.timedelta(hours=2),
                                 Request.sender == user.key).order(Request.start_time).fetch()
-    logging.warn(my_requests)
 
     for request in my_requests:
       if len(request.bidders) > 0:
@@ -98,7 +97,8 @@ class RequestsHandler(SessionHandler):
       print "Request:", request.key.urlsafe()
       print "Sender:", request.sender.urlsafe()
       print "Recipient:", request.recipient.urlsafe()
-      
+    
+    get_notifications(user)
 
     self.response.out.write(template.render('views/requests.html',
                             {'user': user, 'sorted_requests': sorted_requests, 'my_requests': my_requests,
@@ -167,14 +167,14 @@ class CreateRequestHandler(SessionHandler):
     user = self.user_model
     location = cgi.escape(self.request.get("location")).strip().lower()
     date = cgi.escape(self.request.get("date"))
-    time = cgi.escape(self.request.get("time"))
+    r_time = cgi.escape(self.request.get("time"))
     min_price = int(cgi.escape(self.request.get("min_price")))
     max_price = int(cgi.escape(self.request.get("max_price")))
     food_type = cgi.escape(self.request.get("food_type")).strip().lower()
     interest = cgi.escape(self.request.get("interest")).strip().lower()
 
     # Convert date and time to datetime
-    format_date = str(date+ " " +time+":00.0")
+    format_date = str(date+ " " +r_time+":00.0")
     start_time = datetime.datetime.strptime(format_date, "%Y-%m-%d %H:%M:%S.%f")
     
     # Create request
@@ -191,7 +191,7 @@ class CreateRequestHandler(SessionHandler):
     request.status = "waiting for a bid"
     request.put()
     print "Added request to queue"
-
+    time.sleep(1)
     self.redirect('/')
 
 class EditRequestHandler(SessionHandler):
@@ -206,7 +206,7 @@ class EditRequestHandler(SessionHandler):
     food_type = request.food_type
     interest = request.interest
 
-    self.response.out.write(template.render('views/edit_request.html', {'request': request, 'edit_time': edit_time, 'edit_date': edit_date}))
+    self.response.out.write(template.render('views/edit_request.html', {'user': self.user_model, 'request': request, 'edit_time': edit_time, 'edit_date': edit_date}))
 
   def post(self, request_id):
     print "in post"
@@ -244,6 +244,7 @@ class EditRequestHandler(SessionHandler):
 
 class ChooseRequestHandler(SessionHandler):
   def get(self, request_id):
+    user = self.user_model
     request = ndb.Key(urlsafe = request_id).get()
     bidders = []
     locations = []
@@ -252,7 +253,7 @@ class ChooseRequestHandler(SessionHandler):
       bidders.append(bid)
       locations.append(bid.location.get())
     choices = zip(bidders, locations)
-    self.response.out.write(template.render('views/choose_request.html', {'request':request,'bids': choices}))
+    self.response.out.write(template.render('views/choose_request.html', {'user': self.user_model,'request':request,'bids': choices}))
 
   def post(self, request_id):
     request = ndb.Key(urlsafe = request_id).get()
@@ -270,6 +271,7 @@ class ChooseRequestHandler(SessionHandler):
 class JoinRequestHandler(SessionHandler):
   ''' Processes current requests and removes from database '''
   def get(self, request_id):
+    user = self.user_model
     request = ndb.Key(urlsafe=request_id).get()
     if request.location is None or request.food_type is None:
       self.redirect('/requests')
@@ -300,7 +302,7 @@ class JoinRequestHandler(SessionHandler):
           coordinates += str(business['location']['coordinate'][a]) + " "
         location["coordinates"] = coordinates
       results.append(location)
-    self.response.out.write(template.render('views/confirm_request.html', {'results':results, 'request': request}))
+    self.response.out.write(template.render('views/confirm_request.html', {'user': self.user_model,'results':results, 'request': request}))
   
   def post(self, request_id):
     location = self.request.get('location')
