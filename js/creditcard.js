@@ -3,31 +3,53 @@ USE PAYME API TO CREATE PAYMENT LINKS TO FOODIE AND POST TO PYTHON BACK END!
 */
 $(document).ready(function(){
 
-  <form>
-  <input id="name" placeholder="Name" />
-  <input id="creditcard" placeholder="credit card" />
-  <input id="expmonth" placeholder="expiration month" />
-  <input id="expyear" placeholder="expiration year" />
-  <input id="cvv" placeholder="cvv" />
-  <input id="zipcode" placeholder="zipcode" />
-  <button>Post Credit Card info</button>
-  </form>
+  $('.modal-trigger').leanModal();
 
-$("#postcard").click(function(){
-  var name = document.getElementById('name').value;
-  var creditcard = document.getElementById('creditcard').value;
-  var expmonth = document.getElementById('expmonth').value;
-  var expyear = document.getElementById('expyear').value;
-  var cvv = document.getElementById('cvv').value;
-  var zipcode = document.getElementById('zipcode').value;
 
-  $.ajax({
-    type: "POST",
-    url: '/postcard',
-      data: {'name':name, 'credit':creditcard, 'expmonth':expmonth, 'expyear':expyear, 'cvv':cvv, 'zipcode':zipcode}
+  WePay.set_endpoint("stage"); // change to "production" when live
+
+  // Shortcuts
+  var d = document;
+      d.id = d.getElementById,
+      valueById = function(id) {
+          return d.id(id).value;
+      };
+
+  // For those not using DOM libraries
+  var addEvent = function(e,v,f) {
+      if (!!window.attachEvent) { e.attachEvent('on' + v, f); }
+      else { e.addEventListener(v, f, false); }
+  };
+
+  // Attach the event to the DOM
+  addEvent(d.id('cc-submit'), 'click', function() {
+      var userName = [valueById('name')].join(' ');
+          response = WePay.credit_card.create({
+          "client_id":        175855,
+          "user_name":        valueById('name'),
+          "email":            valueById('email'),
+          "cc_number":        valueById('cc-number'),
+          "cvv":              valueById('cc-cvv'),
+          "expiration_month": valueById('cc-month'),
+          "expiration_year":  valueById('cc-year'),
+          "address": {
+              "zip": valueById('zip')
+          }
+      }, function(data) {
+          if (data.error) {
+              console.log(data);
+              // handle error response
+          } else {
+              // call your own app's API to save the token inside the data;
+              // show a success page
+              alert(JSON.stringify(data.credit_card_id));
+              $.ajax({
+                type: "POST",
+                url: '/authorizepayment',
+                  data: {'credit_card_id': JSON.stringify(data.credit_card_id)}
+              });
+          }
+      });
   });
-
-
-});
 
 });

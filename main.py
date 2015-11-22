@@ -324,6 +324,15 @@ class ChargeHandler(SessionHandler):
         Charge("1526170804", "3943601348", "8.41", "Test Payment for Foodie")
         print "Change Created!"
 
+class AuthorizePaymentsHandler(SessionHandler):
+    def post(self):
+        user = self.user_model
+        credit = cgi.escape(self.request.get("credit_card_id"))
+        authorize = AuthorizeCreditCard(credit)
+        user.credit_id = credit
+        user.put()
+
+
 config = {}
 config['webapp2_extras.sessions'] = {
     'secret_key': 'zomg-this-key-is-so-secret',
@@ -360,6 +369,7 @@ app = webapp2.WSGIApplication([
                              ('/chargethis', ChargeHandler),
                              ('/postcard', PostCardHandler),
                              ('/paymentauthorized/(.+)/(.+)', AuthorizedPaymentHandler),
+                             ('/authorizepayment', AuthorizePaymentsHandler),
                              ('/logout', LogoutHandler),
                              ('/ratings', RatingsHandler),
                              ('/testpayment', TestPaymentHandler),
