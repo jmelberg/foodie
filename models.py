@@ -73,7 +73,8 @@ class Location(ndb.Model):
 
 class Endorsement(ndb.Model):
   recipient = ndb.KeyProperty(kind="User")
-  sender = ndb.StringProperty()
+  sender = ndb.KeyProperty(kind="User")
+  sender_name = ndb.StringProperty()
   creation_time = ndb.DateTimeProperty(auto_now_add=True)
   rating = ndb.StringProperty()
   text = ndb.StringProperty()

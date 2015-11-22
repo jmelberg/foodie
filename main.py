@@ -63,11 +63,7 @@ class ProfileHandler(SessionHandler):
 
     current_date = datetime.datetime.now() - datetime.timedelta(hours=8)
     #get_notifications(self.user_model)
-    
-    # Get comments that have match to request
-    comments = Endorsement.query(Endorsement.recipient == profile_owner.key).fetch()
-    comments = [x for x in comments if x.request != None]
-    
+
 
     # Get profile history
     history =  Request.query(Request.start_time <= current_date, Request.sender == profile_owner.key).order(Request.start_time)
@@ -82,33 +78,33 @@ class ProfileHandler(SessionHandler):
     my_reqs = Request.query().order(Request.start_time).fetch()
 
     for request in my_reqs:
-      if len(request.bidders) > 0:
-        if request.recipient != None:
-          accepted_reqs.append(request)
-          my_reqs.remove(request)
-        else:
-          pending_reqs.append(request)
-          my_reqs.remove(request)
-
-    for request in my_reqs:
-      if request.sender != viewer.key:
+      if request.sender != profile_owner.key:
         if request.recipient == None:
           for bid in request.bidders:
             bid = bid.get()
-            if bid.name == viewer.username:
+            if bid.name == profile_owner.username:
               pending_reqs.append(request)
               my_reqs.remove(request)
         else:
-          if request.recipient == viewer.key:
+          if request.recipient == profile_owner.key:
             accepted_reqs.append(request)
             my_reqs.remove(request)
 
     for request in my_reqs:
-      if request.sender != viewer.key:
+      if request.sender != profile_owner.key:
         my_reqs.remove(request)
 
     result = my_reqs + pending_reqs + accepted_reqs
+    comments = []
+    for r in result:
+      c = Endorsement.query(Endorsement.request == r.key).fetch()
+      if c:
+        # Both have reviewed
+        comments.append(c)
+      else:
+        comments.append("None")
 
+    result = zip(result, comments)
 
 
     self.response.out.write(template.render('views/profile.html',
@@ -136,30 +132,46 @@ class CommentHandler(SessionHandler):
   ''' Leave a comment for another user '''
   def post(self):
     user = self.user_model
+    request_key = cgi.escape(self.request.get('request_comment'))
+    request = ndb.Key(urlsafe=request_key).get()
     rating = cgi.escape(self.request.get('rating'))
     comment = cgi.escape(self.request.get('comment'))
+    
+    if comment != None:
+      endorsement = Endorsement()
+      endorsement.request = request.key
+      endorsement.creation_time = datetime.datetime.now() - datetime.timedelta(hours=8)
+      endorsement.reating = rating
+      endorsement.text = comment
+
+      if request.sender_name == user.username:
+        # Foodie reviewing Expert
+        endorsement.sender_name = request.sender_name
+        endorsement.recipient = request.recipient
+        endorsement.sender = request.sender
+      else:
+        # Expert reviewing Foodie
+        endorsement.sender = request.recipient
+        endorsement.recipient = request.sender
+        endorsement.sender_name = request.recipient_name
+
+      endorsement.put()
+
     # Person getting endorsement
-    recipient = cgi.escape(self.request.get('recipient'))
+    recipient = cgi.escape(self.request.get('recipient_name'))
     recipient_user = User.query(User.username == recipient).get()
     recipient_key = recipient_user.key
 
-    if comment != None:
-      endorsement = Endorsement()
-      endorsement.recipient = recipient_key
-      endorsement.sender = user.first_name + " " + user.last_name
-      endorsement.creation_time = datetime.datetime.now() - datetime.timedelta(hours=8) #PST
-      endorsement.rating = rating
-      endorsement.text = comment
-      endorsement.put()
-      # modify rating 
-      if rating == "positive":
-        recipient_user.positive = recipient_user.positive + 1
-      elif rating == "neutral":
-        recipient_user.neutral = recipient_user.neutral + 1
-      else:
-        recipient_user.negative = recipient_user.negative + 1
-      recipient_user.percent_positive = (recipient_user.positive / (recipient_user.positive + recipient_user.negative)) * 100
-      recipient_user.put()
+      
+    # modify rating 
+    if rating == "positive":
+      recipient_user.positive = recipient_user.positive + 1
+    elif rating == "neutral":
+      recipient_user.neutral = recipient_user.neutral + 1
+    else:
+      recipient_user.negative = recipient_user.negative + 1
+    recipient_user.percent_positive = (recipient_user.positive / (recipient_user.positive + recipient_user.negative)) * 100
+    recipient_user.put()
 
     self.redirect('/foodie/{}'.format(recipient))
 
