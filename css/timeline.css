@@ -163,7 +163,8 @@ header h1 {
   margin-left: 60px;
   background: white;
   border-radius: 0.25em;
-  padding: 1em;
+  padding: 0 !important;
+
   /*box-shadow: 0 3px 0 #d7e4ed;*/
 }
 .cd-timeline-content:after {

@@ -22,14 +22,22 @@ var RequestSuggestionGrid = (function($,FM){
 	);
 
 	function displaySuggestionImages(categories) {
-		grabUrlFromCategory(categories,function(index) {
+		grabUrlFromCategory(
+			categories,
+			function(index) {
+				return function(data){
+					var randomIndex = Math.floor( Math.random() * data.length );
 
-			return function(data){
-				var randomIndex = Math.floor( Math.random() * data.length );
-				var url = "url(" + data[randomIndex].url + ")";
-				wrappers[index].getElementsByClassName(itemSelector)[0].style.backgroundImage = url;
-				wrappers[index].getElementsByClassName(textSelector)[0].innerHTML = categories[index];
-			}
+					//prefetch image
+					var newImage = new Image();
+					newImage.src = data[randomIndex].url;
+					newImage.onload = function() {
+						var url = "url(" + this.src + ")";
+						wrappers[index].getElementsByClassName(itemSelector)[0].style.backgroundImage = url;
+					};
+					
+					wrappers[index].getElementsByClassName(textSelector)[0].innerHTML = categories[index];
+				}
 		});
 	}
 
