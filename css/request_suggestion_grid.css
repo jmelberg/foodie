@@ -19,6 +19,8 @@
     -webkit-transform: scale(1,1);
     transform: scale(1,1)
 	background-color: #fafafa;
+  /*background: url('../images/default_food.jpg');*/
+	
 }
 /*
 .request-suggestion-item:hover {

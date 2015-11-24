@@ -1,6 +1,9 @@
 {% extends 'base.html' %}
 {% block content %}
 <script type="text/javascript" src="../js/request_actions.js"></script>
+<script type="text/javascript" src="../js/flickr_me.js"></script>
+<script type="text/javascript" src="../js/food_type_displays.js"></script>
+
 
 <div class= "search-background">
   <div class="row header-block">
@@ -32,7 +35,10 @@
             <li class="collection-item">
               <div class="row search-row">
               <div class= "col s3">
-                <div class="food-img"></div>
+                <div id="food-img-{{result.1.key.urlsafe}}" class="food-img"></div>
+                <script type="text/javascript">
+                  FoodTypeDisplays.displayBackground({'backgroundId':'food-img-{{result.1.key.urlsafe}}'},'{{result.1.food_type}}');
+                </script>
               </div>
               <div class= "col s4">
                 <a class = "search-result-title" href="/confirm/{{result.1.key.urlsafe}}">{{result.1.food_type|title}}</a> &nbsp; for {{result.1.interest}}
