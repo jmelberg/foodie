@@ -31,6 +31,7 @@
       
       $('#signInBtn').click(function() {
         $('#signInCard').show();
+        $('.getstarted-btn').hide();
         $('#signInCard').addClass('animated bounceInDown');
       });
       $('#login_tab').click(function() {
@@ -61,6 +62,7 @@
   <div class= "heading-layer">
   <div class="row heading">
       <div class="container heading-container">
+       <div class="row">
         <div class="col s4 center-align animated fadeInLeft orange-text text-lighten-2 " style= "width:28%;">
           <h1>Food</h1>
         </div>
@@ -70,24 +72,29 @@
         <div class="col s4 center-align animated fadeInRight orange-text text-lighten-2 ">
           <h1>People</h1>
         </div>
-        <h4 style="text-align: center; color: white;" >The world lacks taste. Go eat some food.</h4>
+        </div>
+        <div class="row">
+          <h4 style="text-align: center; color: white;" >The world lacks taste. Go eat some food.</h4>
+        </div>
       </div>
   </div>
+    <div class ="row" style="text-align: center;">
+      <a class= "getstarted-btn" href = "#mid" style="text-align: center; color: white;"><i class="fa fa-chevron-down"></i></a>
+    </div>
     <div class="row">
       <div class="col s12 m4 offset-m4" id="signInCard" style="display: none;">
-
-        <div class="card orange-text" style="opacity:0.7; background-color:#121212;">
-          <div class="card-content" style="text-align:center;">
-            <span class="card-title" style="color:white;">Login</span>
+        <div class="card login-card">
+          <div class="card-content black-text" style="text-align:center;">
+            <span class="card-title">Login</span>
             <br>
             <form style="margin-bottom:-8px;" action="/" method="POST">
               <div class="input-field col s12">
                 <input id="login_email" name="login_email" type="text" class="validate">
-                <label for="login_email" style="color:white;">Enter Email</label>
+                <label for="login_email">Enter Email</label>
               </div>
               <div class="input-field col s12">
                 <input id="login_password" name="login_password" type="password" class="validate">
-                <label for="login_password" style="color:white;">Enter Password</label>
+                <label for="login_password">Enter Password</label>
               </div>
               <div class="card-action" style="text-align:right;">
                 <a href="/">Cancel</a>
@@ -102,6 +109,7 @@
   </div>
     
     <div class="parallax">
+
       <div id="video-wrap" class="video-wrap">
             <video preload="metadata" autoplay loop id="my-video" controls muted>
                 <source src="../videos/summer_dining.webm" type="video/webm">
@@ -211,7 +219,7 @@
             </ul>
           </li>
           <li class="data-orbit-user">
-            <img src="../images/signup-olive.png">
+            <img src="../images/signup-orange.png">
           </li>
         </ul>
       </div>
@@ -219,47 +227,51 @@
       <div id="signup" class="col s6" style="display: none;">
       <br/>
   <div class="row">
-      <div style="margin-right: 3rem;">
-        <div class="card-content white-text" style="text-align:center;">
-          <span class="card-title"><h3>Sign up</h3></span>
+      <div class="card " style="margin-right: 3rem;">
+        <div class="card-content black-text" style="text-align:center;">
+          <span class="card-title">Sign up</span>
           <br>
+          <!-- <a class="btn-floating btn-large waves-effect waves-light blue"><i class="material-icons">F</i></a>
+          <a class="btn-floating btn-large waves-effect waves-light red"><i class="material-icons">G</i></a>
+          <a class="btn-floating btn-large waves-effect waves-light blue"><i class="material-icons">T</i></a> -->
+
           <form style="margin-bottom:-8px;" action="/register" method="POST" enctype="multipart/form-data">
             <div class="input-field col s12">
               <input id="username" name="username" type="text" class="validate">
-              <label for="username" style="color:white;">Enter Username</label>
+              <label for="username">Enter Username</label>
               <small id="available" style="display:none;"></small>
             </div>
             <div class="input-field col s12">
               <input id="email" name="email" type="text" class="validate">
-              <label for="email" style="color:white;">Enter Email</label>
+              <label for="email">Enter Email</label>
               <small id="email_available" style="display:none;"></small>
             </div>
             <div class="input-field col s6">
               <input id="password" name="password" type="password" class="validate">
-              <label for="password" style="color:white;">Enter Password</label>
+              <label for="password">Enter Password</label>
             </div>
             <div class="input-field col s6">
               <input id="confirm_password" type="password" class="validate">
-              <label for="confirm_password" style="color:white;">Confirm Password</label>
+              <label for="confirm_password">Confirm Password</label>
             </div>
             <div class="col s12">
               <small id="passwords_match" style="display:none;"></small>              
             </div>
             <div class="input-field col s6">
               <input id="first_name" name="first_name" type="text" class="validate">
-              <label for="first_name" style="color:white;">Enter First Name</label>
+              <label for="first_name">Enter First Name</label>
             </div>
             <div class="input-field col s6">
               <input id="last_name" name="last_name" type="text" class="validate">
-              <label for="last_name" style="color:white;">Enter Last Name</label>
+              <label for="last_name">Enter Last Name</label>
             </div>
             <div class="input-field col s12">
               <input id="telephone" name="telephone" type="text" class="validate">
-              <label for="telephone" style="color:white;">Phone Number</label>
+              <label for="telephone">Phone Number</label>
             </div>
             <div class="input-field col s12">
               <div class="file-field">
-                <div class="btn">
+                <div class="btn profile-btn">
                   <span>Profile Picture</span>
                   <input type="file" name="img" id="img">
                 </div>
@@ -305,7 +317,6 @@
             <div class="row">
                 <div class="col s10 offset-l1" style="text-align: center; margin-top:70px;">
                     <img src="../images/logo.png" style="width: 120px; height: 120px">
-                    <h5><strong>ProjectPie</strong></h5>
                     <p style="font-size: 14px;">1 Washington Sq<br>San Jose, CA 95192</p>
                     <ul class="list-unstyled">
                         <li style="font-size: 14px;"><i class="fa fa-phone fa-fw"></i> (123) 456-7890</li>
@@ -321,16 +332,52 @@
                             <a href="#"><i class="fa fa-twitter fa-fw fa-3x"></i></a>
                         </li>
                         <li>
-                            <a href="#"> <i class="fa fa-google fa-fw fa-3x"></i></a>
+                            <a href="#"> <i class="fa fa-google-plus fa-fw fa-3x"></i></a>
                         </li>
                     </ul>
                     <hr class="small">
-                    <p class="text-muted" style="font-size: 14px;">ProjectPie v1.0 &copy; Copyright 2015 </p>
+                    <p class="text-muted" style="font-size: 14px;">Project Pie v1.0 &copy; Copyright 2015 </p>
                 </div>
             </div>
         </div>
   </div>
+    <!-- jQuery -->
+    <script src="lib/startbootstrap-stylish-portfolio-1.0.3/startbootstrap-stylish-portfolio-1.0.3/js/jquery.js"></script>
 
+    <!-- Bootstrap Core JavaScript -->
+    <script src="lib/startbootstrap-stylish-portfolio-1.0.3/startbootstrap-stylish-portfolio-1.0.3/js/bootstrap.min.js"></script>
+
+    <!-- Custom Theme JavaScript -->
+    <script>
+    // Closes the sidebar menu
+    $("#menu-close").click(function(e) {
+        e.preventDefault();
+        $("#sidebar-wrapper").toggleClass("active");
+    });
+
+    // Opens the sidebar menu
+    $("#menu-toggle").click(function(e) {
+        e.preventDefault();
+        $("#sidebar-wrapper").toggleClass("active");
+    });
+
+    // Scrolls to the selected menu item on the page
+    $(function() {
+        $('a[href*=#]:not([href=#])').click(function() {
+            if (location.pathname.replace(/^\//, '') == this.pathname.replace(/^\//, '') || location.hostname == this.hostname) {
+
+                var target = $(this.hash);
+                target = target.length ? target : $('[name=' + this.hash.slice(1) + ']');
+                if (target.length) {
+                    $('html,body').animate({
+                        scrollTop: target.offset().top
+                    }, 1000);
+                    return false;
+                }
+            }
+        });
+    });
+    </script>
 </body>
 <style type="text/css">
   .parallax-container-1 {

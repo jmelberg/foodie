@@ -81,7 +81,6 @@ class ProfileHandler(SessionHandler):
 
     result = sorted(my_reqs, key=lambda x: x.start_time)
 
-
     comments = []
     for r in result:
       c = Endorsement.query(Endorsement.request == r.key).fetch()
