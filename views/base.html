@@ -73,10 +73,10 @@
         {% if user.pending_requests > 0 or user.approved_requests > 0 %}
           <a class="notification dropdown-button" title="Notification" href="#" data-activates="dropdown2"></a>
         {% else %}
-          <a class="dropdown-button" title="Notification" href="#" data-activates="dropdown2" ><i class="material-icons">notifications_none</i></a>
+          <a class="dropdown-button" title="Notification" href="#" data-activates="notification-dropdown" ><i class="material-icons">notifications_none</i></a>
         {% endif %}
         </li>
-        <ul id="dropdown2" class="dropdown-content dropdown2-content">     
+        <ul id="notification-dropdown" class="dropdown-content dropdown2-content">     
          {% if user.pending_requests > 0 %}     
           <li><a href="/requests#pending">You have {{user.pending_requests}} new pending request(s)</a></li>
          {% endif %}
@@ -91,12 +91,12 @@
          {% endif %}
         </ul>
         <li>
-        <a class="dropdown-button" href="#!" data-activates="dropdown1">
+        <a class="dropdown-button" href="#!" data-activates="profile-dropdown">
            <img src ="/img?user_id={{user.key.urlsafe}}" class="circle_nav">
         {{user.first_name}}&nbsp;{{user.last_name}}
         <i class="material-icons right">arrow_drop_down</i></a></li>
-        <ul id="dropdown1" class="dropdown-content">          
-          <li><a href="/foodie/{{user.username}}">My Profile</a></li>
+        <ul id="profile-dropdown" class="dropdown-content">          
+          <li><a href="/foodie/{{user.username}}?q=timeline/all">My Profile</a></li>
           <li class="divider"></li>
           <li><a href="/logout">Log Out</a></li>
         </ul>
