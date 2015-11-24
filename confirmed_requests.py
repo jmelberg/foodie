@@ -25,9 +25,9 @@ class SMSHandler(SessionHandler):
     current_time = datetime.datetime.now() - datetime.timedelta(hours=8)
     max_time = current_time - datetime.timedelta(minutes=30)
     # Get all requests in accepted state
-    completed_requests = Request.query(Request.status == "accepted").fetch()
-    #completed_requests = Request.query(Request.start_time >= current_time, Request.start_time < max_time).fetch()
-    #completed_requests = [x for x in completed_requests if x.recipient != None and x.status == "accepted"]
+    #completed_requests = Request.query(Request.status == "accepted").fetch()
+    completed_requests = Request.query(Request.start_time >= current_time, Request.start_time < max_time).fetch()
+    completed_requests = [x for x in completed_requests if x.recipient != None and x.status == "accepted"]
     for request in completed_requests:
       send_sms(request)
 
@@ -77,6 +77,9 @@ class CompletedRequestHandler(SessionHandler):
     print "Request:", request.longitude, request.latitude
     print "Actual:", longitude, latitude
 
+    expert = ndb.Key(urlsafe = request.recipient).get()
+    foodie = ndb.Key(urlsafe = request.sender).get()
+
     if request.recipient == user_key:
       if latitude <= (request.latitude - 0.01) or latitude >= (request.latitude + 0.01):
         if longitude <= (request.longitude - 0.01) or longitude >= (request.longitude + 0.01):
@@ -84,9 +87,15 @@ class CompletedRequestHandler(SessionHandler):
           if request.status == "foodie":
             #Foodie checked in already
             request.status = "complete"
+            # PROCESS Full PAYMENT
+            Charge(expert.wepay_id, foodie.credit_id, request.price, "Full payment processed")
+
           elif request.status == "approved":
             #Expert is first to check in
             request.status = "expert"
+            # Process First HALF of payment
+            Charge(expert.wepay_id, foodie.credit_id, request.price/2, "Partial payment processed")
+
           else:
             # Request has expired
             print "Request is no longer valid"
@@ -102,6 +111,9 @@ class CompletedRequestHandler(SessionHandler):
           print "Requestor approved"
           if request.status == "expert":
             request.status = "complete"
+            # Process Last HALF of payment 
+            Charge(expert.wepay_id, foodie.credit_id, request.price/2, "Partial payment processed")
+
           elif request.status =="approved":
             request.status = "foodie"
           else:

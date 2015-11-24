@@ -56,3 +56,4 @@ class UsernameHandler(SessionHandler):
     		self.response.out.write('Username is available')
     	else:
     		self.response.out.write('Username is taken')
+
