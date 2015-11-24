@@ -4,11 +4,12 @@ var FoodTypeDisplays = (function($,FM) {
 
 	function displayImage(foodType) {
 		FM.searchKey(foodType,'n',function(data){
-			var randomIndex = Math.floor( Math.random() * data.length );
+			// var index = Math.floor( Math.random() * data.length );
+			var index = 1;
 
 			//prefetch image
 			var newImage = new Image();
-			newImage.src = data[randomIndex].url;
+			newImage.src = data[index].url;
 			newImage.onload = function() {
 				imgEle.src = this.src;
 			};

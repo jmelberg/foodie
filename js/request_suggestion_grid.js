@@ -18,7 +18,17 @@ var RequestSuggestionGrid = (function($,FM){
 		"sushi",
 		"shake shack burgers",
 		"in-n-out burgers",
-		"desserts"
+		"desserts",
+		"pancakes",
+		"ramen",
+		"donut",
+		"coffee",
+		"beer",
+		"wine",
+		"wingstop",
+		"cambodian food",
+		"indian food",
+		"fried chicken"
 	);
 
 	function displaySuggestionImages(categories) {
