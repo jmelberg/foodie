@@ -67,7 +67,7 @@ $(document).ready(function(){
       status = finalAgreement(filled_time, filled_food_type, filled_location, confirmed_aggreement);
     });
 
-    noUiSlider.create(slider, {
+    /*noUiSlider.create(slider, {
       start: [20, 80],
       connect: true,
       step: 1,
@@ -87,15 +87,16 @@ $(document).ready(function(){
       } else {
         min_price.value = value;
       }
-    });
+    });*/
 
     $('#send_request').click(function() {
       if ($('#agreement:checked').length>0 && status === true){
         var date = $('#date').val();
         var time = $('#time').val();
         var location = $('#location').val();
-        var m_price = $('#min_price').val();
-        var mx_price = $('#max_price').val();
+        var price = $("#price-input");
+        /*var m_price = $('#min_price').val();
+        var mx_price = $('#max_price').val();*/
         var food_type = $('#food_type').val();
         var interest = $('input[type="radio"]:checked').val();
       
@@ -103,7 +104,9 @@ $(document).ready(function(){
           type: "POST",
           url: '/request',
           data: {'date':date, 'time':time, 'location':location,
-          'max_price': mx_price, 'min_price':m_price, 'food_type': food_type, 'interest': interest}
+          // 'max_price': mx_price, 'min_price':m_price,
+          'price' : price,
+           'food_type': food_type, 'interest': interest}
         });
         setTimeout(function(){ // Refresh after 1 second
         window.location.href = '/requests';
