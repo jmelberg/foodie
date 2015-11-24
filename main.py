@@ -63,7 +63,6 @@ class ProfileHandler(SessionHandler):
       new_profile.put()
 
     current_date = datetime.datetime.now() - datetime.timedelta(hours=8)
-    #get_notifications(self.user_model)
 
     # Get profile history
     history =  Request.query(Request.start_time <= current_date, Request.sender == profile_owner.key).order(Request.start_time)
