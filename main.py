@@ -78,29 +78,11 @@ class ProfileHandler(SessionHandler):
     my_reqs = Request.query(ndb.OR(Request.sender==profile_owner.key, Request.recipient == profile_owner.key)).order(Request.start_time).fetch()
     my_reqs = [x for x in my_reqs if x.status != "pending"]
     my_reqs = [x for x in my_reqs if x.status != "waiting for a bid"]
-    for request in my_reqs:
-      if request.sender != profile_owner.key:
-        if request.recipient == None:
-          for bid in request.bidders:
-            bid = bid.get()
-            if bid.name == profile_owner.username:
-              pending_reqs.append(request)
-              my_reqs.remove(request)
-        else:
-          if request.recipient == profile_owner.key:
-            accepted_reqs.append(request)
-            my_reqs.remove(request)
 
-    for request in my_reqs:
-      if request.sender != profile_owner.key:
-        my_reqs.remove(request)
+    result = sorted(my_reqs, key=lambda x: x.start_time)
 
-    all_requests = my_reqs + pending_reqs + accepted_reqs
+
     comments = []
-    print pending_reqs
-
-    result = sorted(all_requests, key=lambda x: x.start_time)
-
     for r in result:
       c = Endorsement.query(Endorsement.request == r.key).fetch()
       if c:
