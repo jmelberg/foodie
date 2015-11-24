@@ -38,6 +38,7 @@ h1 {
 }
 .heading-container{
 	width:65%;
+    font-weight: 400;
 }
 
 .login-header{
@@ -78,6 +79,3 @@ a:hover {
 margin-top:120px;
 }
 
-.blue-grey.darken-1 {
-    background-color: white !important;
-}
