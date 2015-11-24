@@ -31,6 +31,7 @@
       
       $('#signInBtn').click(function() {
         $('#signInCard').show();
+        $('.getstarted-btn').hide();
         $('#signInCard').addClass('animated bounceInDown');
       });
       $('#login_tab').click(function() {
@@ -48,7 +49,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 </head>
 <body>
-  <div class="parallax-container-1 login-header" style="background: rgba(0, 0, 0, 0.28);">
+  <div class="parallax-container-1 login-header" style="background: rgba(0, 0, 0, 0.20);">
   <a class="brand-logo" style="padding-top:30px;">Foodie<i class="material-icons" style="float: right; margin-left: 10px; padding-top: 6px;">local_dining</i></a>
   <div class="hide-on-med-and-down" style="float: right; margin: 30px 100px;">
     <div class="col s6">
@@ -61,6 +62,7 @@
   <div class= "heading-layer">
   <div class="row heading">
       <div class="container heading-container">
+       <div class="row">
         <div class="col s4 center-align animated fadeInLeft orange-text text-lighten-2 " style= "width:28%;">
           <h1>Food</h1>
         </div>
@@ -70,13 +72,19 @@
         <div class="col s4 center-align animated fadeInRight orange-text text-lighten-2 ">
           <h1>People</h1>
         </div>
-        <h4 style="text-align: center; color: white;" >The world lacks taste. Go eat some food.</h4>
+        </div>
+        <div class="row">
+          <h4 style="text-align: center; color: white;" >The world lacks taste. Go eat some food.</h4>
+        </div>
       </div>
   </div>
+    <div class ="row" style="text-align: center;">
+      <a class= "getstarted-btn" href = "#mid" style="text-align: center; color: white;"><i class="fa fa-chevron-down"></i></a>
+    </div>
     <div class="row">
       <div class="col s12 m4 offset-m4" id="signInCard" style="display: none;">
-        <div class="card blue-grey darken-1">
-          <div class="card-content white-text" style="text-align:center;">
+        <div class="card login-card">
+          <div class="card-content black-text" style="text-align:center;">
             <span class="card-title">Login</span>
             <br>
             <form style="margin-bottom:-8px;" action="/" method="POST">
@@ -211,7 +219,7 @@
             </ul>
           </li>
           <li class="data-orbit-user">
-            <img src="../images/signup-olive.png">
+            <img src="../images/signup-orange.png">
           </li>
         </ul>
       </div>
@@ -219,8 +227,8 @@
       <div id="signup" class="col s6" style="display: none;">
       <br/>
   <div class="row">
-      <div class="card blue-grey darken-1" style="margin-right: 3rem;">
-        <div class="card-content white-text" style="text-align:center;">
+      <div class="card " style="margin-right: 3rem;">
+        <div class="card-content black-text" style="text-align:center;">
           <span class="card-title">Sign up</span>
           <br>
           <!-- <a class="btn-floating btn-large waves-effect waves-light blue"><i class="material-icons">F</i></a>
@@ -263,7 +271,7 @@
             </div>
             <div class="input-field col s12">
               <div class="file-field">
-                <div class="btn">
+                <div class="btn profile-btn">
                   <span>Profile Picture</span>
                   <input type="file" name="img" id="img">
                 </div>
@@ -309,7 +317,6 @@
             <div class="row">
                 <div class="col s10 offset-l1" style="text-align: center; margin-top:70px;">
                     <img src="../images/logo.png" style="width: 120px; height: 120px">
-                    <h5><strong>ProjectPie</strong></h5>
                     <p style="font-size: 14px;">1 Washington Sq<br>San Jose, CA 95192</p>
                     <ul class="list-unstyled">
                         <li style="font-size: 14px;"><i class="fa fa-phone fa-fw"></i> (123) 456-7890</li>
@@ -325,16 +332,52 @@
                             <a href="#"><i class="fa fa-twitter fa-fw fa-3x"></i></a>
                         </li>
                         <li>
-                            <a href="#"> <i class="fa fa-google fa-fw fa-3x"></i></a>
+                            <a href="#"> <i class="fa fa-google-plus fa-fw fa-3x"></i></a>
                         </li>
                     </ul>
                     <hr class="small">
-                    <p class="text-muted" style="font-size: 14px;">ProjectPie v1.0 &copy; Copyright 2015 </p>
+                    <p class="text-muted" style="font-size: 14px;">Project Pie v1.0 &copy; Copyright 2015 </p>
                 </div>
             </div>
         </div>
   </div>
+    <!-- jQuery -->
+    <script src="lib/startbootstrap-stylish-portfolio-1.0.3/startbootstrap-stylish-portfolio-1.0.3/js/jquery.js"></script>
 
+    <!-- Bootstrap Core JavaScript -->
+    <script src="lib/startbootstrap-stylish-portfolio-1.0.3/startbootstrap-stylish-portfolio-1.0.3/js/bootstrap.min.js"></script>
+
+    <!-- Custom Theme JavaScript -->
+    <script>
+    // Closes the sidebar menu
+    $("#menu-close").click(function(e) {
+        e.preventDefault();
+        $("#sidebar-wrapper").toggleClass("active");
+    });
+
+    // Opens the sidebar menu
+    $("#menu-toggle").click(function(e) {
+        e.preventDefault();
+        $("#sidebar-wrapper").toggleClass("active");
+    });
+
+    // Scrolls to the selected menu item on the page
+    $(function() {
+        $('a[href*=#]:not([href=#])').click(function() {
+            if (location.pathname.replace(/^\//, '') == this.pathname.replace(/^\//, '') || location.hostname == this.hostname) {
+
+                var target = $(this.hash);
+                target = target.length ? target : $('[name=' + this.hash.slice(1) + ']');
+                if (target.length) {
+                    $('html,body').animate({
+                        scrollTop: target.offset().top
+                    }, 1000);
+                    return false;
+                }
+            }
+        });
+    });
+    </script>
 </body>
 <style type="text/css">
   .parallax-container-1 {
