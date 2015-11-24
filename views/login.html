@@ -11,6 +11,7 @@
   <link href="../css/orbit.css" rel="stylesheet">
   <link type="text/css" rel="stylesheet" href="../css/login.css"  media="screen"/>
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
+  <link href='https://fonts.googleapis.com/css?family=Montserrat:700,400' rel='stylesheet' type='text/css'>
   <!--Import jQuery before materialize.js-->
   <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.0/js/materialize.min.js"></script>
@@ -32,6 +33,7 @@
       $('#signInBtn').click(function() {
         $('#signInCard').show();
         $('.getstarted-btn').hide();
+        $('.sub-heading').hide();
         $('#signInCard').addClass('animated bounceInDown');
       });
       $('#login_tab').click(function() {
@@ -49,7 +51,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 </head>
 <body>
-  <div class="parallax-container-1 login-header" style="background: rgba(0, 0, 0, 0.20);">
+  <div class="parallax-container-1 login-header" style="background: rgba(0, 0, 0, 0.18);">
   <a class="brand-logo" style="padding-top:30px;">Foodie<i class="material-icons" style="float: right; margin-left: 10px; padding-top: 6px;">local_dining</i></a>
   <div class="hide-on-med-and-down" style="float: right; margin: 30px 100px;">
     <div class="col s6">
@@ -62,24 +64,24 @@
   <div class= "heading-layer">
   <div class="row heading">
       <div class="container heading-container">
-       <div class="row">
-        <div class="col s4 center-align animated fadeInLeft orange-text text-lighten-2 " style= "width:28%;">
-          <h1>Food</h1>
-        </div>
-        <div class="col s4 center-align animated fadeInDown orange-text text-lighten-2 ">
-          <h1>Unites</h1>
-        </div>
-        <div class="col s4 center-align animated fadeInRight orange-text text-lighten-2 ">
-          <h1>People</h1>
-        </div>
-        </div>
         <div class="row">
+          <div class="col s4 center-align animated fadeInLeft orange-text text-lighten-2 " style= "width:28%;">
+            <h1>Food</h1>
+          </div>
+          <div class="col s4 center-align animated fadeInDown orange-text text-lighten-2 ">
+            <h1>Unites</h1>
+          </div>
+          <div class="col s4 center-align animated fadeInRight orange-text text-lighten-2 ">
+            <h1>People</h1>
+          </div>
+        </div>
+        <div class="row sub-heading">
           <h4 style="text-align: center; color: white;" >The world lacks taste. Go eat some food.</h4>
         </div>
       </div>
   </div>
-    <div class ="row" style="text-align: center;">
-      <a class= "getstarted-btn" href = "#mid" style="text-align: center; color: white;"><i class="fa fa-chevron-down"></i></a>
+    <div class ="row getstarted-btn" style="text-align: center;">
+      <a class= "getstarted-dwn" href = "#mid" style="text-align: center; color: white;"><i class="fa fa-chevron-down"></i></a>
     </div>
     <div class="row">
       <div class="col s12 m4 offset-m4" id="signInCard" style="display: none;">

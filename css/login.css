@@ -6,7 +6,7 @@ body {
 
 h1 {
   font-weight: 600;
-  line-height: 1.38;
+  line-height: 1.0;
     font-family: Ubuntu;
     font-style: inherit;
     font-size: 6.5em;
@@ -17,6 +17,7 @@ h1 {
     word-spacing: inherit;
     color: rgb(255, 255, 255);
     opacity: 1;
+    margin-bottom: 0px;
 }
 .brand-logo, .brand-logo:hover {
     position: absolute;
@@ -100,8 +101,19 @@ margin-top:120px;
     background-color: rgba(255, 255, 255, 0.90)
 }
 .getstarted-btn{
-padding: 20px 20px;
+width:70px;
+height:70px;
 border:2px white solid;
 border-radius: 50%;
 font: 32px;
+}
+
+.getstarted-dwn{
+    text-align: center;
+    color: white;
+    /* padding-top: 50px; */
+    float: left;
+    font-size: 32px;
+    margin-left: 17px;
+    margin-top: 9px;
 }
