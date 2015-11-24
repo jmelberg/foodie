@@ -62,15 +62,15 @@ nav ul {
 nav .nav-wrapper i {
   font-size: 28px;
 }
-#notification-dropdown, #profile-dropdown {
+.dropdown-content {
   margin: 61px 0 0 0;
 }
 
-#notification-dropwdown li, #profile-dropdown li {
+.dropdown-content li {
   line-height: 20px;
 }
 
-#notification-dropwdown li>a, #notification-dropwdown li>span, #profile-dropdown li>a, #profile-dropdown li>span{
+.dropdown-content li>a, .dropdown-content li>span {
   font-size: 16px;
   color: #333333;
   display: block;

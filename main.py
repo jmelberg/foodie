@@ -12,6 +12,7 @@ from foodie_requests import *
 from confirmed_requests import *
 from wepay import *
 from models import User, Profile, Request, Endorsement, Bidder
+from payments import *
 
 client_id = 175855
 client_secret = 'dfb950e7ea'
@@ -45,7 +46,7 @@ class LoginHandler(SessionHandler):
 class FeedHandler(SessionHandler):
   def get(self):
     get_notifications(self.user_model)
-    self.response.out.write(template.render('views/feed.html',{'user': self.user_model}))
+    self.response.out.write(template.render('views/feed.html', {'user': self.user_model}))
 
 class ProfileHandler(SessionHandler):
   """handler to display a profile page"""
@@ -62,7 +63,6 @@ class ProfileHandler(SessionHandler):
       new_profile.put()
 
     current_date = datetime.datetime.now() - datetime.timedelta(hours=8)
-    #get_notifications(self.user_model)
 
     # Get profile history
     history =  Request.query(Request.start_time <= current_date, Request.sender == profile_owner.key).order(Request.start_time)
@@ -265,7 +265,14 @@ class GetWePayUserTokenHandler(SessionHandler):
     acct_id = r["user_id"]
     user.wepay_id = str(acct_id)
     user.put()
-    
+
+class AuthorizePaymentsHandler(SessionHandler):
+    def post(self):
+        user = self.user_model
+        credit = cgi.escape(self.request.get("credit_card_id"))
+        authorize = AuthorizeCreditCard(credit)
+        user.credit_id = credit
+        user.put()    
         
 
 config = {}
@@ -301,12 +308,6 @@ app = webapp2.WSGIApplication([
                              ('/fire/(.w)/(.+)', FireHandler),
                              ('/complete', CompletedRequestHandler), 
                              ('/logout', LogoutHandler),
-                             #payment stuff here!
-                             #('/createpayment', CreatePaymentHandler),
-                             #('/getpayments', GetPaymentHandler),
-                             #('/approvepayment', PaymentApprovedHandler),
-                             #('/completepayment', CompletePaymentHandler),
-                             #('/chargepayment', ChargePaymentHandler),
+                             ('/authorizepayment', AuthorizePaymentsHandler),
                              ('/getwepaytoken', GetWePayUserTokenHandler),
-                             #('/setwepaytoken/', SetWePayUserTokenHandler),
                               ], debug=False, config=config)

@@ -2,6 +2,51 @@
 {% block content %}
 
 <div class="main_picture"></div>
+ {% if user.credit_id == None %}
+  <!-- POP UP MODAL -->
+  <script type="text/javascript" src="https://static.wepay.com/min/js/tokenization.v2.js"></script>
+  <script type="text/javascript" src="../js/creditcard.js"></script>
+  <!-- Modal Structure -->
+
+  <!-- Respond Modal -->
+    <div id="addpayment" name = "addpayment" class="modal modal-fixed-footer">
+      <div class="modal-content">
+        <table>
+          <tr>
+              <td>Name: </td>
+              <td><input id="name" type="text"></td>
+          </tr>
+          <tr>
+              <td>Email: </td>
+              <td><input id="email" type="text"></td>
+          </tr>
+          <tr>
+              <td>Credit Card Number: </td>
+              <td><input id="cc-number" type="text"></td>
+          </tr>
+          <tr>
+              <td>Expiration Month: </td>
+              <td><input id="cc-month" type="text"></td>
+          </tr>
+          <tr>
+              <td>Expiration Year: </td>
+              <td><input id="cc-year" type="text"></td>
+          </tr>
+          <tr>
+              <td>CVV: </td>
+              <td><input id="cc-cvv" type="text"></td>
+          </tr>
+          <tr>
+              <td>Zipcode: </td>
+              <td><input id="zip" type="text"></td>
+          </tr>
+      </table>
+      </div>
+      <div class="modal-footer">
+        <a href="#!" type="submit" id="cc-submit" class=" modal-action modal-close waves-effect waves-green btn-flat">Submit</a>
+      </div>
+    </div>
+  {% else %}
   <div class="layer"></div>
   <div class="header_container">
     <h1 class="header"><span>Good Food, Good Friends, Good Times</span></h1>
@@ -18,6 +63,6 @@
     <div class="img6"></div>
   </div>
   <div class="feed_divider divider-2">  <p class="category">Upcoming</p></div>
-
+  {% endif %}
 
 {% endblock %}

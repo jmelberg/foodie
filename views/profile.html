@@ -1,202 +1,180 @@
 {% extends "base.html" %}
 {% block content %}
-  <link href="../css/food_type_displays.css" rel="stylesheet"></link>
-  <script type="text/javascript" src="../js/flickr_me.js"></script>
-  <script type="text/javascript" src="../js/food_type_displays.js"></script>
-  <div class= "row" >
-      <div class= "col s12 m12 l3 profile-left" style= "padding: 0 0;">
-        <div class = "row user-block">
-          <div class= "profile-img" style= "background: url('/img?user_id={{owner.key.urlsafe}}'); background-size: cover;"></div>
-          <div class="profile-name">{{owner.first_name}}&nbsp;{{owner.last_name}}</div>
-          <div class="profile-aboutme"><p><i class="material-icons" style="transform: scale(-1, 1);">format_quote</i>{{profile.about_me}}<i class="material-icons">format_quote</i></p></div>
-        </div>
-        <div class = "row average-rating-block">
-          <div class="feedback_ratings">
-            <a title="Positive">
-              <div class="score">
-              <i class = "mdi-content-add-circle" style = "position: absolute;display: block; width: 22px; height: 22px; color: #1b5e20"></i>
-                <span style = "position: absolute; top: 0;left: 20px; color: #333; 
-                font-weight: bold;font-size: 14px;">{{owner.positive|floatformat:"0"}}</span>
-                <span style = "position: absolute;top: 25px;left: 0;color: #777;">Positive</span>
-              </div>
-            </a>
-            <a title="Neutral">
-              <div class="score">
-               <i class = "mdi-av-stop" style = "position: absolute;display: block; width: 22px; height: 22px; color: black"></i>
-                <span style = "position: absolute; top: 0;left: 20px; color: #333; 
-                font-weight: bold;font-size: 14px;">{{owner.neutral|floatformat:"0"}}</span>
-                <span class="txt" style = "position: absolute;top: 25px;left: 0;color: #777;">Neutral</span>
-              </div>
-            </a>
-            <a title="Negative">
-              <div class="score">
-              <i class = "mdi-content-remove-circle" style = "position: absolute;display: block; width: 22px; height: 22px; color: #b71c1c"></i>
-                <span style = "position: absolute;  top: 0;left: 20px; color: #333; 
-                font-weight: bold;font-size: 14px;">{{owner.negative|floatformat:"0"}}</span>
-                <span class="txt" style = "position: absolute;top: 25px;left: 0;color: #777;">Negative</span>
-              </div>
-            </a>
-          </div>
-        </div>
-        <div class = "row profile-tabs">
+
+ <!-- Foodie View -->
+ <div class="row">
+  <br/>
+  <div class="col s12 m6 offset-m3">
+   <div class="card hoverable">
+    <div class="card-medium">
+     <div class="center"><img src="/img?user_id={{owner.key.urlsafe}}&height=350&width=350"></div>
+     <span class="card-title">
+      <div style="background-color:#000000; opacity: 0.7">&nbsp;&nbsp;{{owner.first_name}}&nbsp;{{owner.last_name}}</div>
+     </span>
+    </div>
+    <div class="card-content">
+     <div class="col s12" style="margin-bottom: 32px;">
+      <ul class="tabs">
+       <li class="tab col s3"><a href="#about">About Me</a></li>
+       <li class="tab col s3"><a href="#comments">Feedback</a></li>
+       <li class="tab col s3"><a href="#history">History</a></li>
+      </ul>
+     </div>
+    
+     <div id="about" class="col s12">
+      <div class="row">
+       <h5>About Me</h5>
+       <p>{{profile.about_me}}</p>
+       {% if user.key != profile.owner %}
+       <a>Follow</a>
+       {% endif %}
+
+      </div>
+     </div>
+
+     <div id="comments" class="col s12">
+      <div class = "row">
+        <h5>Ratings</h5>
+        <h6>{{owner.percent_positive|floatformat:"0"}}% positive feedback</h6><br>
+        <div id="feedback_ratings" style = "padding-left: 15%;">
+          <a title="Positive">
+            <div class="score" style = "width: 30%; margin-right: 3%; height: 40px; float: left; position: relative;">
+            <i class = "mdi-content-add-circle" style = "position: absolute;display: block; width: 22px; height: 22px; color: #1b5e20"></i>
+              <span style = "position: absolute; top: 0;left: 22px; color: #333; 
+              font-weight: bold;font-size: 14px;">{{owner.positive|floatformat:"0"}}</span>
+              <span style = "position: absolute;top: 25px;left: 0;color: #777;">Positive</span>
+            </div>
+          </a>
+          <a title="Neutral">
+            <div class="score" style = "width: 30%; margin-right: 3%; height: 40px; float: left; position: relative;">
+             <i class = "mdi-av-stop" style = "position: absolute;display: block; width: 22px; height: 22px; color: black"></i>
+              <span style = "position: absolute; top: 0;left: 22px; color: #333; 
+              font-weight: bold;font-size: 14px;">{{owner.neutral|floatformat:"0"}}</span>
+              <span class="txt" style = "position: absolute;top: 25px;left: 0;color: #777;">Neutral</span>
+            </div>
+          </a>
+          <a title="Negative">
+            <div class="score" style = "width: 30%; margin-right: 3%; height: 40px; float: left; position: relative;">
+            <i class = "mdi-content-remove-circle" style = "position: absolute;display: block; width: 22px; height: 22px; color: #b71c1c"></i>
+              <span style = "position: absolute;  top: 0;left: 22px; color: #333; 
+              font-weight: bold;font-size: 14px;">{{owner.negative|floatformat:"0"}}</span>
+              <span class="txt" style = "position: absolute;top: 25px;left: 0;color: #777;">Negative</span>
+            </div>
+          </a>
         </div>
       </div>
-      <!-- timeline start-->
-      <div id="timeline" class="col s9 card" style="height: 85vh; overflow-y: scroll;">
-      <h4 class= "history-title">History</h4>
-      <div id="cd-timeline">
-        {% for request in result %}
-        {% if forloop.counter|divisibleby:2 %}
-        <div class="cd-timeline-block"> <!-- cd-timeline-block start -->
-          <div class="row">
-            <div class="cd-timeline-img cd-picture"><img src="../images/cd-icon-picture.svg" alt="Picture"></div> <!-- cd-timeline-img -->
-            <div class="col s7" style="visibility: hidden;">placeholder</div>
-            <div class="cd-timeline-content col s5">
-              <div class="col s12 food-type-display"><img id="food-type-img-{{request.0.key.urlsafe}}" class="food-type-img"  ></div>
-              <script type="text/javascript">
-                FoodTypeDisplays.displayImg({"imgId":"food-type-img-{{request.0.key.urlsafe}}"}, '{{request.0.food_type}}' );
-              </script>
-              <div class="card-content">
+      <br>
+      <hr>
+      <div class="row">        
+        <h5>Comments</h5>
+        {% if owner.username != user.username %}
+          <!-- Modal Trigger -->
+          <row>
+            <div class= "col s8">&nbsp</div>
+            <div class= "col s4">
+             <a class="modal-trigger waves-effect waves-light btn" href="#comment">Add Comment</a>
+            </div>
+          </row>
+          <br><br>
+          <!-- Modal Structure -->
+          <form action="/comment" method="POST">
+            <div id="comment" class="modal modal-fixed-footer">
+              <div class="modal-content">
+                <input id="recipient" name="recipient" value={{owner.username}} style="display:none;">
+                <h4>Leave an Endorsement for {{owner.username}}</h4>
                 <div class="row">
-                  {% if request.0.sender == profile.owner %}
-                  <div class="col s3"><a href="/foodie/{{request.0.recipient_name}}"><!-- <img src="/img?user_id={{request.0.recipient.urlsafe}}&height=50&width=50"> --></a></div>
-                  {% else %}
-                  <div class="col s3"><a href="/foodie/{{request.0.sender_name}}"><img src="/img?user_id={{request.0.sender.urlsafe}}&height=50&width=50"></a></div>
-                  {% endif %}
-                  <div class="col s9">
-                    {% if request.0.sender == profile.owner %}
-                    <span><b>Expert:</b> {{request.0.recipient_name}} </span><br />
-                    {% else %}
-                    <span><b>Requester:</b> {{request.0.sender_name}}</span><br />
-                    {% endif %}
-                    <span><b>For:</b> {{request.0.start_time.date}} @ {{request.0.start_time.time}}</span><br />
-                    <span><b>Type:</b> {{request.0.food_type}}</span><br />
-                    <span><b>Interest:</b> {{request.0.interest}}</span><br />
-                    <span><b>Status:</b> {{request.0.status}}</span><br />
+                  <div class="input-field">
+                    <label>Rate This Transaction</label><br>    
+                      <p>
+                        <input name="rating" type="radio" id="rate_pos" value= "positive" checked>
+                        <label for="rate_pos">Positive</label>
+                      </p>
+                      <p>
+                        <input name="rating" type="radio" id="rate_neutral" value = "neutral">
+                        <label for="rate_neutral">Neutral</label>
+                      </p> 
+                      <p>
+                        <input name="rating" type="radio" id="rate_neg" value = "negative">
+                        <label for="rate_neg">Negative</label>
+                      </p>        
                   </div>
                 </div>
-
-                {% if request.0.recipient == profile.owner or request.0.sender == profile.owner %}
-                  {% if request.1 != "None" %}
-                  <span><b>Comments</b></span>
-                    <div class="card-action">
-                      {% for c in request.1 %}
-                      <span><b>{{c.sender_name}}:</b> "{{c.text}}"</span><br/>
-                      {% endfor %}
-                    </div>
-                  {% endif %}
-                  {% if request.1 == "None" or request.1.0.sender_name != user.username %}
-                    <div class="card-action">
-                      <span><a class="modal-trigger grey white-text waves-effect waves-light btn" id="comment_button" style="width: 100%;" href="#comment" {% if request.0.recipient_name == user.username %} onclick="getRequest('{{request.0.key.urlsafe}}', '{{request.0.sender_name}}')" {% else %} onclick="getRequest('{{request.0.key.urlsafe}}', '{{request.0.recipient_name}}')" {% endif %} >Share Your Experience</a></span>
-                    </div>                  
-                  {% endif %}
-                {% endif %}
-              </div>
-            </div>
-          </div>
-        </div> <!-- cd-timeline-block end -->        
-        {% else %}
-        <div class="cd-timeline-block"> <!-- cd-timeline-block start -->
-          <div class="row">
-            <div class="cd-timeline-img cd-picture"><img src="../images/cd-icon-picture.svg" alt="Picture"></div> <!-- cd-timeline-img -->
-            <div class="cd-timeline-content col s5">
-              <div class="col s12 food-type-display"><img id="food-type-img-{{request.0.key.urlsafe}}" class="food-type-img"  ></div>
-              <script type="text/javascript">
-                FoodTypeDisplays.displayImg({"imgId":"food-type-img-{{request.0.key.urlsafe}}"}, '{{request.0.food_type}}' );
-              </script>
-              <div class="card-content">
                 <div class="row">
-                  {% if request.0.sender == profile.owner %}
-                  <div class="col s3"><a href="/foodie/{{request.0.recipient_name}}"><img src="/img?user_id={{request.0.recipient.urlsafe}}&height=50&width=50"></a></div>
-                  {% else %}
-                  <div class="col s3"><a href="/foodie/{{request.0.sender_name}}"><img src="/img?user_id={{request.0.sender.urlsafe}}&height=50&width=50"></a></div>
-                  {% endif %}
-                  <div class="col s9">
-                    {% if request.0.sender == profile.owner %}
-                    <span><b>Expert:</b> {{request.0.recipient_name}}</span><br />
-                    {% else %}
-                    <span><b>Requester:</b> {{request.0.sender_name}}</span><br />
-                    {% endif %}
-                    <span><b>For:</b> {{request.0.start_time.date}} @ {{request.0.start_time.time}}</span><br />
-                    <span><b>Type:</b> {{request.0.food_type}}</span><br />
-                    <span><b>Interest:</b> {{request.0.interest}}</span><br />
-                    <span><b>Status:</b> {{request.0.status}}</span><br /><br />
+                  <div class="input-field col s12">
+                    <textarea id="comment" name="comment" class="materialize-textarea"></textarea>
+                    <label for="textarea1">Tell Us More</label>
                   </div>
-                </div> 
-                {% if request.0.recipient == profile.owner or request.0.sender == profile.owner %}
-                  {% if request.1 != "None" %}
-                  <span><b>Comments</b></span>
-                    <div class="card-action">
-                      {% for c in request.1 %}
-                      <span><b>{{c.sender_name}}:</b> "{{c.text}}"</span><br/>
-                      {% endfor %}
-                    </div>
-                  {% endif %}
-                  {% if request.1 == "None" or request.1.0.sender_name != user.username %}
-                    <div class="card-action">
-                      <span><a class="modal-trigger grey white-text waves-effect waves-light btn" id="comment_button" style="width: 100%;" href="#comment" {% if request.0.recipient_name == user.username %} onclick="getRequest('{{request.0.key.urlsafe}}', '{{request.0.sender_name}}')" {% else %} onclick="getRequest('{{request.0.key.urlsafe}}', '{{request.0.recipient_name}}')" {% endif %} >Share Your Experience</a></span>
-                    </div>                  
-                  {% endif %}
-                {% endif %}
+                </div>    
+
+              </div>
+              <div class="modal-footer">
+                <button type="submit" class="modal-action modal-close waves-effect waves-green btn-flat ">Send</button>
+                <a href="#!" type="cancel" class="modal-action modal-close waves-effect waves-red btn-flat">Cancel</a>
               </div>
             </div>
-          </div>
-        </div> <!-- cd-timeline-block end -->
+          </form>
         {% endif %}
-        {% empty %}
-        No Activity Yet!
-        {% endfor %}
-      </div> 
-      <!-- cd-timeline -->
-  </div>
-
-  <script>
-  function getRequest(request, name) {
-    var r = request;
-    document.getElementById('request_comment').value= r;
-    document.getElementById('reviewee').innerHTML = name;
-    document.getElementById('recipient_name').value = name;
-
-};
-  </script>
-
-  <!-- Modal Structure -->
-<form action="/comment" method="POST">
-  <div id="comment" class="modal modal-fixed-footer">
-    <div class="modal-content">
-      <input id="request_comment" name="request_comment" value="" style="display:none;">
-      <input id="recipient_name" name="recipient_name" value="" style="display:none;">
-      <h4>Leave an Endorsement for <span id="reviewee"></span></h4>
-      <div class="row">
-        <div class="input-field">
-          <label>Rate This Transaction</label><br>
-          <div class="col s3">    
-            <input name="rating" type="radio" id="rate_pos" value= "positive" checked>
-            <label for="rate_pos">Positive</label>
+        {% for endorsement in endorsements %}
+        <br>
+          <div class="row">
+            <div class="col s1">
+            {% if endorsement.rating == "positive" %}
+             <i class = "mdi-content-add-circle" style = "display: block; width: 22px; height: 22px; color: #1b5e20; font-size: 20px" ></i>
+            {% endif %}
+            {% if endorsement.rating == "neutral" %}
+             <i class = "mdi-av-stop" style = "display: block; width: 22px; height: 22px; color: black; font-size: 20px"></i>
+            {% endif %}
+            {% if endorsement.rating == "negative" %}
+             <i class = "mdi-content-remove-circle" style = "display: block; width: 22px; height: 22px; color: #b71c1c; font-size: 20px"></i>
+            {% endif %}
+            </div>
+            <div class="col s2">
+              <!-- <img class="responsive-img" src="/img?user_id={{endorsement.sender.urlsafe}}&height=350&width=350"> -->
+              <i class="material-icons" style="float: right; margin-left: 10px;">local_dining</i>
+            </div>
+            <div class="col s9">
+              <p>{{endorsement.text}}</p>
+              <p class="right">{{endorsement.creation_time}}</p><br>
+              <p class="right">{{endorsement.sender}}</p>
+            </div>
           </div>
-          <div class="col s3">
-            <input name="rating" type="radio" id="rate_neutral" value = "neutral">
-            <label for="rate_neutral">Neutral</label>
+          {% empty %}
+          <div class="row">
+            <div class="col s12">
+              <p> No endorsements...</p>
+            </div>
           </div>
-          <div class="col s3">
-            <input name="rating" type="radio" id="rate_neg" value = "negative">
-            <label for="rate_neg">Negative</label>
-          </div>       
+          {% endfor %}
+       </div>
+     </div>
+
+     <div id="history" class="col s12">
+      <div class="row"><h5>History!</h5>
+        <div class="row">
+          {% for item in history %}
+            <div class="row">
+              <div class="col s9">
+                {% if item.sender == owner.key %}
+                  <p>{{item.location}}</p>
+                  <p>with {{item.recipient_name}}</p>
+                {% else %}
+                  <p>{{item.location}}</p>
+                  <p>with {{item.sender}}</p>
+                {% endif %}
+              </div>
+              <div class="col s3">
+                {{item.start_time}}
+              </div>
+            </div>
+          {% empty %}
+          {{owner.username}} has no activity yet
+          {% endfor %}
         </div>
       </div>
-      <br />
-      <div class="row">
-        <div class="input-field col s12">
-          <textarea id="comment" name="comment" class="materialize-textarea"></textarea>
-          <label for="textarea1">Tell Us More</label>
-        </div>
-      </div>    
     </div>
-    <div class="modal-footer">
-      <button type="submit" class="modal-action modal-close waves-effect waves-green btn-flat ">Send</button>
-      <a href="#!" type="cancel" class="modal-action modal-close waves-effect waves-red btn-flat">Cancel</a>
+     </div>
     </div>
+   </div>
   </div>
-</form>
 
 {% endblock %}
