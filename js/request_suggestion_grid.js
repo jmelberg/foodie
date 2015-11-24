@@ -108,7 +108,7 @@ var RequestSuggestionGrid = (function($,FM){
 		.on('click',function() {
 			var foodType = $(this).children('.'+textSelector).html();
 
-			$("#"+foodTypeInputId).val(foodType).change();
+			$("#"+foodTypeInputId).val(foodType);
 		});
 	}
 

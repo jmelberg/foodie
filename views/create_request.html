@@ -11,7 +11,7 @@
 <div class = "container">
   <div class="row">
     <div class="col s12 m6 l6">
-      <div id="create-request-form" class="form-container">
+      <div class= "form-container">
           <h5>Request a Service</h5></br>
           <div class="row">
             <div class="input-field col s6">
@@ -49,8 +49,8 @@
                   url: "/getlocation",
                   data: {'longitude' : longitude, 'latitude': latitude},
                   success: function(result){
-                  $("#location").val(result).change();
-                    checkLocation( $("#location").val() );
+                  $("#location").val(result);
+                    checkLocation($("#location").val());
                   }
                 });
               }
@@ -71,22 +71,13 @@
 
             <div class="row">
               <div class="input-field col s12">
-                <label>Preferred Price</label> <br /><br />
-                <div>
-                  <input id="price-input" type="number" name="price">
-                </div>
-              </div>
-            </div>
-
-            <!-- <div class="row">
-              <div class="input-field col s12">
                 <label>Price Range</label> <br /><br />
                 <div id="range-input">
                   <input type="number" id="min_price" name="min_price" style="display:none;" >
                   <input type="number" id="max_price" name="max_price" style="display:none;">
                 </div>
               </div>
-            </div> -->
+            </div>
             <div class="row">
               <div class="input-field col s5">
                 <label>Interest</label><br>    
