@@ -64,7 +64,6 @@ class ProfileHandler(SessionHandler):
     current_date = datetime.datetime.now() - datetime.timedelta(hours=8)
     #get_notifications(self.user_model)
 
-
     # Get profile history
     history =  Request.query(Request.start_time <= current_date, Request.sender == profile_owner.key).order(Request.start_time)
 
@@ -75,37 +74,22 @@ class ProfileHandler(SessionHandler):
     accepted_reqs = []
     alloted_time = current_date + datetime.timedelta(hours=2)
 
-    my_reqs = Request.query().order(Request.start_time).fetch()
+    # Get all requests where profile owner is foodie and expert
+    my_reqs = Request.query(ndb.OR(Request.sender==profile_owner.key, Request.recipient == profile_owner.key)).order(Request.start_time).fetch()
+    my_reqs = [x for x in my_reqs if x.status != "pending"]
+    my_reqs = [x for x in my_reqs if x.status != "waiting for a bid"]
 
-    for request in my_reqs:
-      if request.sender != profile_owner.key:
-        if request.recipient == None:
-          for bid in request.bidders:
-            bid = bid.get()
-            if bid.name == profile_owner.username:
-              pending_reqs.append(request)
-              my_reqs.remove(request)
-        else:
-          if request.recipient == profile_owner.key:
-            accepted_reqs.append(request)
-            my_reqs.remove(request)
+    result = sorted(my_reqs, key=lambda x: x.start_time)
 
-    for request in my_reqs:
-      if request.sender != profile_owner.key:
-        my_reqs.remove(request)
-
-    result = my_reqs + pending_reqs + accepted_reqs
     comments = []
     for r in result:
       c = Endorsement.query(Endorsement.request == r.key).fetch()
       if c:
-        # Both have reviewed
         comments.append(c)
       else:
         comments.append("None")
 
     result = zip(result, comments)
-
 
     self.response.out.write(template.render('views/profile.html',
                              {'owner':profile_owner, 'profile':profile, 'endorsements': comments,

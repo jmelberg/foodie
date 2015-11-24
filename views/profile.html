@@ -205,30 +205,49 @@
             {% endif %}
             {% endif %}
           </div>
-        </div>
-      </div>
-    </div> <!-- cd-timeline-block end -->        
-    {% else %}
-    <div class="cd-timeline-block"> <!-- cd-timeline-block start -->
-      <div class="row">
-        <div class="cd-timeline-img cd-picture"><img src="../images/cd-icon-picture.svg" alt="Picture"></div> <!-- cd-timeline-img -->
-        <div class="cd-timeline-content col s5">
-          <div class="col s12 food-type-display"><img class="food-type-img"  ></div>
-          <script type="text/javascript">
-            FoodTypeDisplays.init({"imgId":"food-type-img"}, '{{request.0.food_type}}' );
-          </script>
-          <div class="card-content">
-            <div class="row">
-              {% if request.0.sender == profile.owner %}
-
-              {% else %}
-              <div class="col s3"><a href="/foodie/{{request.0.sender_name}}"><img src="/img?user_id={{request.0.sender.urlsafe}}&height=50&width=50"></a></div>
-              {% endif %}
-              <div class="col s9">
-                {% if request.0.sender == profile.owner %}
-                <!-- <span><b>Expert:</b> {{request.0.recipient_name}}</span><br /> -->
-                {% else %}
-                <span><b>Requester:</b> {{request.0.sender_name}}</span><br />
+        </div> <!-- cd-timeline-block end -->        
+        {% else %}
+        <div class="cd-timeline-block"> <!-- cd-timeline-block start -->
+          <div class="row">
+            <div class="cd-timeline-img cd-picture"><img src="../images/cd-icon-picture.svg" alt="Picture"></div> <!-- cd-timeline-img -->
+            <div class="cd-timeline-content col s5">
+              <div class="col s12 food-type-display"><img class="food-type-img"  ></div>
+              <script type="text/javascript">
+                FoodTypeDisplays.init({"imgId":"food-type-img"}, '{{request.0.food_type}}' );
+              </script>
+              <div class="card-content">
+                <div class="row">
+                  {% if request.0.sender == profile.owner %}
+                  <div class="col s3"><a href="/foodie/{{request.0.recipient_name}}"><img src="/img?user_id={{request.0.recipient.urlsafe}}&height=50&width=50"></a></div>
+                  {% else %}
+                  <div class="col s3"><a href="/foodie/{{request.0.sender_name}}"><img src="/img?user_id={{request.0.sender.urlsafe}}&height=50&width=50"></a></div>
+                  {% endif %}
+                  <div class="col s9">
+                    {% if request.0.sender == profile.owner %}
+                    <span><b>Expert:</b> {{request.0.recipient_name}}</span><br />
+                    {% else %}
+                    <span><b>Requester:</b> {{request.0.sender_name}}</span><br />
+                    {% endif %}
+                    <span><b>For:</b> {{request.0.start_time.date}} @ {{request.0.start_time.time}}</span><br />
+                    <span><b>Type:</b> {{request.0.food_type}}</span><br />
+                    <span><b>Interest:</b> {{request.0.interest}}</span><br />
+                    <span><b>Status:</b> {{request.0.status}}</span><br /><br />
+                  </div>
+                </div> 
+                {% if request.0.recipient == profile.owner or request.0.sender == profile.owner %}
+                  {% if request.1 != "None" %}
+                  <span><b>Comments</b></span>
+                    <div class="card-action">
+                      {% for c in request.1 %}
+                      <span><b>{{c.sender_name}}:</b> "{{c.text}}"</span><br/>
+                      {% endfor %}
+                    </div>
+                  {% endif %}
+                  {% if request.1 == "None" or request.1.0.sender_name != user.username %}
+                    <div class="card-action">
+                      <span><a class="modal-trigger grey white-text waves-effect waves-light btn" id="comment_button" style="width: 100%;" href="#comment" {% if request.0.recipient_name == user.username %} onclick="getRequest('{{request.0.key.urlsafe}}', '{{request.0.sender_name}}')" {% else %} onclick="getRequest('{{request.0.key.urlsafe}}', '{{request.0.recipient_name}}')" {% endif %} >Share Your Experience</a></span>
+                    </div>                  
+                  {% endif %}
                 {% endif %}
                 <span><b>For:</b> {{request.0.start_time.date}} @ {{request.0.start_time.time}}</span><br />
                 <span><b>Type:</b> {{request.0.food_type}}</span><br />
