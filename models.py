@@ -103,13 +103,3 @@ class PendingReview(ndb.Model):
     sender = ndb.KeyProperty(kind="User")
     recipient = ndb.KeyProperty(kind="User")
     date = ndb.DateTimeProperty(auto_now_add=True)
-
-class PaymentLinks(ndb.Model):
-    link = ndb.StringProperty()
-
-class PaymentModel(ndb.Model):
-    confirm = ndb.BooleanProperty()
-    link = ndb.StringProperty()
-    foodie = ndb.KeyProperty(kind="User")
-    expert = ndb.KeyProperty(kind="User")
-    amount = ndb.FloatProperty()
