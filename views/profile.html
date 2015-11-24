@@ -107,13 +107,13 @@
               <div class="card-content">
                 <div class="row">
                   {% if request.0.sender == profile.owner %}
-                  
+                  <div class="col s3"><a href="/foodie/{{request.0.recipient_name}}"><img src="/img?user_id={{request.0.recipient.urlsafe}}&height=50&width=50"></a></div>
                   {% else %}
                   <div class="col s3"><a href="/foodie/{{request.0.sender_name}}"><img src="/img?user_id={{request.0.sender.urlsafe}}&height=50&width=50"></a></div>
                   {% endif %}
                   <div class="col s9">
                     {% if request.0.sender == profile.owner %}
-                    <!-- <span><b>Expert:</b> {{request.0.recipient_name}}</span><br /> -->
+                    <span><b>Expert:</b> {{request.0.recipient_name}}</span><br />
                     {% else %}
                     <span><b>Requester:</b> {{request.0.sender_name}}</span><br />
                     {% endif %}
