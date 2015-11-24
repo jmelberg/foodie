@@ -1,6 +1,8 @@
 {% extends "base.html" %}
 {% block content %}
-
+  <link href="../css/food_type_displays.css" rel="stylesheet"></link>
+  <script type="text/javascript" src="../js/flickr_me.js"></script>
+  <script type="text/javascript" src="../js/food_type_displays.js"></script>
   <div class= "row" >
       <div class= "col s12 m12 l3 profile-left" style= "padding: 0 0;">
         <div class = "row user-block">
@@ -50,6 +52,10 @@
             <div class="cd-timeline-img cd-picture"><img src="../images/cd-icon-picture.svg" alt="Picture"></div> <!-- cd-timeline-img -->
             <div class="col s7" style="visibility: hidden;">placeholder</div>
             <div class="cd-timeline-content col s5">
+              <div class="col s12 food-type-display"><img class="food-type-img"  ></div>
+              <script type="text/javascript">
+                FoodTypeDisplays.init({"imgId":"food-type-img"}, '{{request.0.food_type}}' );
+              </script>
               <div class="card-content">
                 <div class="row">
                   {% if request.0.sender == profile.owner %}
@@ -94,16 +100,20 @@
           <div class="row">
             <div class="cd-timeline-img cd-picture"><img src="../images/cd-icon-picture.svg" alt="Picture"></div> <!-- cd-timeline-img -->
             <div class="cd-timeline-content col s5">
+              <div class="col s12 food-type-display"><img class="food-type-img"  ></div>
+              <script type="text/javascript">
+                FoodTypeDisplays.init({"imgId":"food-type-img"}, '{{request.0.food_type}}' );
+              </script>
               <div class="card-content">
                 <div class="row">
                   {% if request.0.sender == profile.owner %}
-                  <div class="col s3"><a href="/foodie/{{request.0.recipient_name}}"><img src="/img?user_id={{request.0.recipient.urlsafe}}&height=50&width=50"></a></div>
+                  
                   {% else %}
                   <div class="col s3"><a href="/foodie/{{request.0.sender_name}}"><img src="/img?user_id={{request.0.sender.urlsafe}}&height=50&width=50"></a></div>
                   {% endif %}
                   <div class="col s9">
                     {% if request.0.sender == profile.owner %}
-                    <span><b>Expert:</b> {{request.0.recipient_name}}</span><br />
+                    <!-- <span><b>Expert:</b> {{request.0.recipient_name}}</span><br /> -->
                     {% else %}
                     <span><b>Requester:</b> {{request.0.sender_name}}</span><br />
                     {% endif %}
