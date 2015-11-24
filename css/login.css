@@ -1,0 +1,83 @@
+body {
+  background-color: #fff;
+  font: 100 1em/1.38 Ubuntu;
+  color: rgb(0, 0, 0);
+}
+
+h1 {
+  font-weight: 600;
+  line-height: 1.38;
+    font-family: Ubuntu;
+    font-style: inherit;
+    font-size: 6.5em;
+    font-weight: inherit;
+    text-transform: inherit;
+    text-decoration: inherit;
+    letter-spacing: inherit;
+    word-spacing: inherit;
+    color: rgb(255, 255, 255);
+    opacity: 1;
+}
+.brand-logo, .brand-logo:hover {
+    position: absolute;
+    color: #fff;
+    display: inline-block;
+    font-size: 1.75em;
+    font-weight: 500;
+    padding: 0;
+    white-space: nowrap;
+    padding-left: 100px;
+}
+.heading{
+	margin-top:100px;
+}
+
+.btn:hover, .btn {
+	background: rgba(0, 0, 0, 0.2);
+	border: solid 2px white;
+}
+.heading-container{
+	width:65%;
+}
+
+.login-header{
+	display: table;
+    position: relative;
+    width: 100%;
+    height: 100%;
+    background: url(../img/bg.jpg) no-repeat center center scroll;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    background-size: cover;
+}
+
+hr.small {
+    max-width: 100px;
+}
+
+.text-muted {
+    color: #777;
+    margin: 0 0 10px;
+}
+
+a {
+    color: #D55828;
+    text-decoration: none;
+}
+
+a:hover {
+    color: #CC3800;
+    text-decoration: none;
+}
+
+.text-primary {
+    color: #D55828;
+}
+
+.solution{
+margin-top:120px;
+}
+
+.blue-grey.darken-1 {
+    background-color: white !important;
+}

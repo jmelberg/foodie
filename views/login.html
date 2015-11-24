@@ -2,11 +2,15 @@
 <!DOCTYPE html>
 <html>
 <head>
+  <link href="http://fonts.googleapis.com/css?family=Ubuntu:300,400,500,400|Roboto:300,400" rel="stylesheet" type="text/css">
   <!--Import materialize.css-->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" integrity="sha512-dTfge/zgoMYpP7QbHy4gWMEGsbsdZeCXz7irItjcC3sPUFtf0kuFbDz/ixG7ArTxmDjLXDmezHubeNikyKGVyQ==" crossorigin="anonymous">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.0/css/materialize.min.css">
   <link type="text/css" rel="stylesheet" href="../animations/animate.css"  media="screen,projection"/>
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
   <link href="../css/orbit.css" rel="stylesheet">
+  <link type="text/css" rel="stylesheet" href="../css/login.css"  media="screen"/>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
   <!--Import jQuery before materialize.js-->
   <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.0/js/materialize.min.js"></script>
@@ -44,49 +48,37 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 </head>
 <body>
-  <div class="navbar-fixed">
-  <nav class="white">
-      <div class="container">
-        <a href="/" class="brand-logo orange-text text-lighten-1">Foodie<i class="material-icons" style="float: right; margin-top: 20px; margin-left: 10px;">local_dining</i></a>
-        <a href="#" data-activates="mobile-demo" class="button-collapse"><i class="material-icons">menu</i></a>
-        <div class="row">
-          <div class="right hide-on-med-and-down">
-            <div class="col s6">
-              <a class="orange lighten-1 white-text waves-effect waves-light btn" id="signInBtn">Login</a>
-            </div>
-            <!-- <div class="col s6">
-              <a class="teal lighten-1 waves-effect waves-light btn" id="registerBtn"><span class="white-text">Register</span></a>
-            </div> -->
-          </div>
-        </div>
-      </div>
-  </nav>
+  <div class="parallax-container-1 login-header" style="background: rgba(0, 0, 0, 0.28);">
+  <a class="brand-logo" style="padding-top:30px;">Foodie<i class="material-icons" style="float: right; margin-left: 10px; padding-top: 6px;">local_dining</i></a>
+  <div class="hide-on-med-and-down" style="float: right; margin: 30px 100px;">
+    <div class="col s6">
+      <a class="white-text waves-effect waves-light btn" id="signInBtn">Login</a>
+    </div>
+    <!-- <div class="col s6">
+      <a class="teal lighten-1 waves-effect waves-light btn" id="registerBtn"><span class="white-text">Register</span></a>
+    </div> -->
   </div>
-  <div class="parallax-container">
-
-  <div class="row">
-      <div class="container">
-        <div class="col s4 center-align animated fadeInLeft orange-text text-lighten-2">
+  <div class= "heading-layer">
+  <div class="row heading">
+      <div class="container heading-container">
+        <div class="col s4 center-align animated fadeInLeft orange-text text-lighten-2 " style= "width:28%;">
           <h1>Food</h1>
         </div>
-        <div class="col s4 center-align animated fadeInDown orange-text text-lighten-2">
+        <div class="col s4 center-align animated fadeInDown orange-text text-lighten-2 ">
           <h1>Unites</h1>
         </div>
-        <div class="col s4 center-align animated fadeInRight orange-text text-lighten-2">
+        <div class="col s4 center-align animated fadeInRight orange-text text-lighten-2 ">
           <h1>People</h1>
         </div>
+        <h4 style="text-align: center; color: white;" >The world lacks taste. Go eat some food.</h4>
       </div>
-    </div>
+  </div>
     <div class="row">
       <div class="col s12 m4 offset-m4" id="signInCard" style="display: none;">
         <div class="card blue-grey darken-1">
           <div class="card-content white-text" style="text-align:center;">
             <span class="card-title">Login</span>
             <br>
-            <!-- <a class="btn-floating btn-large waves-effect waves-light blue"><i class="material-icons">F</i></a>
-            <a class="btn-floating btn-large waves-effect waves-light red"><i class="material-icons">G</i></a>
-            <a class="btn-floating btn-large waves-effect waves-light blue"><i class="material-icons">T</i></a> -->
-
             <form style="margin-bottom:-8px;" action="/" method="POST">
               <div class="input-field col s12">
                 <input id="login_email" name="login_email" type="text" class="validate">
@@ -106,30 +98,78 @@
         </div>
       </div>
     </div>
+  </div>
     
     <div class="parallax">
 
-    <div id="video-wrap" class="video-wrap">
-            <video preload="metadata" autoplay loop id="my-video">
-                <source src="../videos/hifood.webm" type="video/webm">
+      <div id="video-wrap" class="video-wrap">
+            <video preload="metadata" autoplay loop id="my-video" controls muted>
+                <source src="../videos/summer_dining.webm" type="video/webm">
             </video>
-        </div>
+      </div>
 
     </div>
   </div>
-  <div class="section orange lighten-1 white-text" id="mid">
+  <div class="section white" style="padding: 70px 0; text-align: center; color: #333;">
+    <h4>People are forgetting about their culture and traditions</h4>
+    <p>people lack a service provider that deepens our understanding of all cultures.</p>
+    <p>Soon enough the only place that anyone can learn about these are in books.</p>
+  </div>
+  <div class="section deep-orange darken-2 white-text" id="mid">
   <div class="row">
 
-    <div class="col s6">
-      <h2>The world lacks taste.</h2>
-      <h3>Go eat some food.</h3>
-      <br />
-      <h4>Problem:</h4> <h5>People are forgetting about their culture and traditions, soon enough the only place that anyone can learn about these are in books.</h5>
-      <br />
-      <h4>Solution:</h4> <h5>People eat food.<br /> People talk over food.<br /> People laugh over food.<br /> People cry over food.<br /> Food unites people.</h5>
+    <div class="col s6 solution" style= "padding: 0 3rem;">
+      <div class="row">
+        <div class="col-md-3 col-sm-6">
+            <div class="service-item">
+                <span class="fa-stack fa-4x">
+                <i class="fa fa-circle fa-stack-2x"></i>
+                <i class="fa fa-cutlery fa-stack-1x text-primary"></i>
+            </span>
+                <h5>
+                    <strong>People eat food</strong>
+                </h5>              
+            </div>
+        </div>
+        <div class="col-md-3 col-sm-6">
+            <div class="service-item">
+                <span class="fa-stack fa-4x">
+                <i class="fa fa-circle fa-stack-2x"></i>
+                <i class="fa fa-comments fa-stack-1x text-primary"></i>
+            </span>
+                <h5>
+                    <strong>People talk over food</strong>
+                </h5>       
+            </div>
+        </div>
+        <div class="col-md-3 col-sm-6">
+            <div class="service-item">
+                <span class="fa-stack fa-4x">
+                <i class="fa fa-circle fa-stack-2x"></i>
+                <i class="fa fa-smile-o fa-stack-1x text-primary"></i>
+            </span>
+                <h5>
+                    <strong>People laugh over food</strong>
+                </h5>         
+            </div>
+        </div>
+        <div class="col-md-3 col-sm-6">
+            <div class="service-item">
+                <span class="fa-stack fa-4x">
+                <i class="fa fa-circle fa-stack-2x"></i>
+                <i class="fa fa-frown-o fa-stack-1x text-primary"></i>
+            </span>
+                <h5>
+                    <strong>People cry over food</strong>
+                </h5>       
+            </div>
+        </div>
+      </div>
+      <h4>Food unites people</h4>
+      <p>Foodie will inspire people to examine all foods with the same complexity that Americans bestow to the American burger</p>
     </div>
 
-    <div class="col s6" id="data-orbit-section">
+    <div class="col s6" id="data-orbit-section" style= "padding: 0 5rem;">
         <ul class="data-orbit-wrap row">
           <li class="data-strap">
           <a href="" id="registerBtn">
@@ -171,7 +211,7 @@
             </ul>
           </li>
           <li class="data-orbit-user">
-            <img src="http://www.clker.com/cliparts/2/I/Y/q/j/n/sign-up-button-md.png">
+            <img src="../images/signup-olive.png">
           </li>
         </ul>
       </div>
@@ -179,7 +219,7 @@
       <div id="signup" class="col s6" style="display: none;">
       <br/>
   <div class="row">
-      <div class="card blue-grey darken-1">
+      <div class="card blue-grey darken-1" style="margin-right: 3rem;">
         <div class="card-content white-text" style="text-align:center;">
           <span class="card-title">Sign up</span>
           <br>
@@ -253,10 +293,10 @@
       <img src="../images/veg2.jpg">
     </div>
   </div>
-  <div class="orange lighten-1 section" id="footer">
-    <div class="row container">
+  <div class="section" id="footer" style="background: white;">
+    <!--<div class="row container">
       <div class="col s6 left-align">
-        <h2 class="header white-text">Food</h2>
+        <a class="brand-logo" style="padding-top:30px;">Foodie<i class="material-icons" style="float: right; margin-left: 10px; padding-top: 6px;">local_dining</i></a>
         <a class="btn-floating btn-large waves-effect waves-light blue"><i class="material-icons">F</i></a>
         <a class="btn-floating btn-large waves-effect waves-light red"><i class="material-icons">G</i></a>
         <a class="btn-floating btn-large waves-effect waves-light blue"><i class="material-icons">T</i></a>
@@ -264,18 +304,48 @@
       <div class="col s6 right-align">
         <img src="../images/logo.png" style="width: 40%; height: 40%;">
       </div>
-    </div>
+    </div>-->
+      <div class="container">
+            <div class="row">
+                <div class="col s10 offset-l1" style="text-align: center; margin-top:70px;">
+                    <img src="../images/logo.png" style="width: 120px; height: 120px">
+                    <h5><strong>ProjectPie</strong></h5>
+                    <p style="font-size: 14px;">1 Washington Sq<br>San Jose, CA 95192</p>
+                    <ul class="list-unstyled">
+                        <li style="font-size: 14px;"><i class="fa fa-phone fa-fw"></i> (123) 456-7890</li>
+                        <li style="font-size: 14px;"><i class="fa fa-envelope-o fa-fw"></i>  <a href="mailto:contact@ProConnect.com">contact@ProjectPie.com</a>
+                        </li>
+                    </ul>
+                    <br>
+                    <ul class="list-inline">
+                        <li>
+                            <a href="#"><i class="fa fa-facebook fa-fw fa-3x"></i></a>
+                        </li>
+                        <li>
+                            <a href="#"><i class="fa fa-twitter fa-fw fa-3x"></i></a>
+                        </li>
+                        <li>
+                            <a href="#"> <i class="fa fa-google fa-fw fa-3x"></i></a>
+                        </li>
+                    </ul>
+                    <hr class="small">
+                    <p class="text-muted" style="font-size: 14px;">ProjectPie v1.0 &copy; Copyright 2015 </p>
+                </div>
+            </div>
+        </div>
   </div>
 
 </body>
 <style type="text/css">
-  .parallax-container {
-    height: 510px;
+  .parallax-container-1 {
+    height: 750px;
   }
-
+  .parallax-container {
+    height: 410px;
+  }
   #mid {
-    background: -webkit-gradient(linear, left top, right bottom, from(#ffa726), to(#ffe082));
-    background: -webkit-linear-gradient(left, #ffa726, #ffe082);
+    background: -webkit-gradient(linear, left top, right bottom, from(#D55828), to(#D8693E));
+    background: -webkit-linear-gradient(left, #D55828, #D8693E);
   }
 </style>
 </html>
