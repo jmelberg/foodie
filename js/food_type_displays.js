@@ -1,8 +1,11 @@
 "use strict"
-var FoodTypeDisplays = (function($,FM) {
-	var imgEle;
+var FoodTypeDisplays = (function(FM) {
 
-	function displayImage(foodType) {
+	/*
+	* Display image 
+	*/
+	function displayImage(obj,foodType) {
+		var imgEle = document.getElementById(obj.imgId);
 		FM.searchKey(foodType,'n',function(data){
 			// var index = Math.floor( Math.random() * data.length );
 			var index = 1;
@@ -16,12 +19,27 @@ var FoodTypeDisplays = (function($,FM) {
 		});
 	}
 
-	return {
-		init: function(classes,foodType) {
-			imgEle = document.getElementsByClassName(classes.imgId)[0];
+	/*
+	* Display background image
+	*/
+	function displayBackground(obj,foodType) {
+		var backgroundEle = document.getElementById(obj.backgroundId);
+		FM.searchKey(foodType,'q',function(data){
+			// var index = Math.floor( Math.random() * data.length );
+			var index = 1;
 
-			displayImage(foodType);
-		}
+			//prefetch image
+			var newImage = new Image();
+			newImage.src = data[index].url;
+			newImage.onload = function() {
+				backgroundEle.style.backgroundImage = "url("+this.src+")";
+			};
+		});
 	}
-})(jQuery,FlickrMe);
+
+	return {
+		displayImg: displayImage,
+		displayBackground: displayBackground
+	}
+})(FlickrMe);
 

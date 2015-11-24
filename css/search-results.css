@@ -46,8 +46,8 @@ background-color: rgb(140, 28, 27);
 }
 
 .food-img{
-  width:120px;
-  height:120px;
+  width:135px;
+  height:135px;
   background: url('../images/default_food.jpg');
   background-repeat: no-repeat;
   background-position: center center;

@@ -52,14 +52,14 @@
             <div class="cd-timeline-img cd-picture"><img src="../images/cd-icon-picture.svg" alt="Picture"></div> <!-- cd-timeline-img -->
             <div class="col s7" style="visibility: hidden;">placeholder</div>
             <div class="cd-timeline-content col s5">
-              <div class="col s12 food-type-display"><img class="food-type-img"  ></div>
+              <div class="col s12 food-type-display"><img id="food-type-img-{{request.0.key.urlsafe}}" class="food-type-img"  ></div>
               <script type="text/javascript">
-                FoodTypeDisplays.init({"imgId":"food-type-img"}, '{{request.0.food_type}}' );
+                FoodTypeDisplays.displayImg({"imgId":"food-type-img-{{request.0.key.urlsafe}}"}, '{{request.0.food_type}}' );
               </script>
               <div class="card-content">
                 <div class="row">
                   {% if request.0.sender == profile.owner %}
-                  <div class="col s3"><a href="/foodie/{{request.0.recipient_name}}"><img src="/img?user_id={{request.0.recipient.urlsafe}}&height=50&width=50"></a></div>
+                  <div class="col s3"><a href="/foodie/{{request.0.recipient_name}}"><!-- <img src="/img?user_id={{request.0.recipient.urlsafe}}&height=50&width=50"> --></a></div>
                   {% else %}
                   <div class="col s3"><a href="/foodie/{{request.0.sender_name}}"><img src="/img?user_id={{request.0.sender.urlsafe}}&height=50&width=50"></a></div>
                   {% endif %}
@@ -100,9 +100,9 @@
           <div class="row">
             <div class="cd-timeline-img cd-picture"><img src="../images/cd-icon-picture.svg" alt="Picture"></div> <!-- cd-timeline-img -->
             <div class="cd-timeline-content col s5">
-              <div class="col s12 food-type-display"><img class="food-type-img"  ></div>
+              <div class="col s12 food-type-display"><img id="food-type-img-{{request.0.key.urlsafe}}" class="food-type-img"  ></div>
               <script type="text/javascript">
-                FoodTypeDisplays.init({"imgId":"food-type-img"}, '{{request.0.food_type}}' );
+                FoodTypeDisplays.displayImg({"imgId":"food-type-img-{{request.0.key.urlsafe}}"}, '{{request.0.food_type}}' );
               </script>
               <div class="card-content">
                 <div class="row">
