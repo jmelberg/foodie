@@ -267,12 +267,12 @@ class GetWePayUserTokenHandler(SessionHandler):
     user.put()
 
 class AuthorizePaymentsHandler(SessionHandler):
-    def post(self):
-        user = self.user_model
-        credit = cgi.escape(self.request.get("credit_card_id"))
-        authorize = AuthorizeCreditCard(credit)
-        user.credit_id = credit
-        user.put()    
+  def post(self):
+    user = self.user_model
+    credit = cgi.escape(self.request.get("credit_card_id"))
+    authorize = AuthorizeCreditCard(credit)
+    user.credit_id = credit
+    user.put()    
         
 
 config = {}
