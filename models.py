@@ -13,6 +13,7 @@ class User(auth_models.User):
   wepay_id = ndb.StringProperty()
   avatar = ndb.BlobProperty()
   telephone = ndb.StringProperty()
+  credit_id = ndb.StringProperty()
 
   # Notifications
   available_requests = ndb.IntegerProperty(default=0)
@@ -45,8 +46,7 @@ class Request(ndb.Model):
   creation_time = ndb.DateTimeProperty(auto_now_add=True)
   start_time = ndb.DateTimeProperty()
   accept_time = ndb.DateTimeProperty()
-  min_price = ndb.IntegerProperty(default = 0)
-  max_price = ndb.IntegerProperty(default = 0)
+  price = ndb.IntegerProperty(default = 0)
   food_type = ndb.StringProperty()
   interest = ndb.StringProperty()
   bidders = ndb.KeyProperty(kind="Bidder", repeated=True)
