@@ -104,15 +104,8 @@ $(document).ready(function(){
         $.ajax({
           type: "POST",
           url: '/request',
-<<<<<<< HEAD
-          data: {'date':date, 'time':time, 'location':location,
-          // 'max_price': mx_price, 'min_price':m_price,
-          'price' : price,
-           'food_type': food_type, 'interest': interest}
-=======
           data: {'date':date, 'time':time, 'location':location, 'price': price,
           'food_type': food_type, 'interest': interest}
->>>>>>> update
         });
         setTimeout(function(){ // Refresh after 1 second
         window.location.href = '/requests';
