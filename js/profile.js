@@ -1,9 +1,34 @@
 $(document).ready(function() {
   var tab = getUrlParameter('q');
-  console.log(tab);
+
+  if(tab == 'table/all') {
+    $('#timeline-dropdown').hide();
+    $('#table-dropdown').show();
+    $('#table').show();
+    $('#timeline').hide();
+    $('#tableViewBtn').hide();
+    $('#timelineViewBtn').show();
+  } 
+  else if(tab == 'table/pending') {
+    $('#timeline-dropdown').hide();
+    $('#table-dropdown').show();
+
+  }
+  else if(tab == 'table/accepted') {
+    $('#timeline-dropdown').hide();
+    $('#table-dropdown').show();
+
+  }
+  else if(tab == 'table/completed') {
+    $('#timeline-dropdown').hide();
+    $('#table-dropdown').show();
+    
+  }
+  
+
 
   // For sorted results
-  if(tab == 'mine'){
+  if(tab == 'time'){
     $('ul.tabs').tabs('select_tab', 'mine');
   }
   else if(tab=='all'){

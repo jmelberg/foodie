@@ -41,45 +41,46 @@
     </div>
     <div class = "row profile-tabs">
       <ul>
-        <li><a href="/foodie/{{user.username}}?q=table/all" class="btn" style="width: 100%;"> Table </a></li>
-        <li><a class="btn" style="display: none; width: 100%;"> Timeline </a></li>
+        <li><a href="/foodie/{{owner.username}}?q=table/all" class="btn" id="tableViewBtn" style="width: 100%;"> Table </a></li>
+        <li><a href="/foodie/{{owner.username}}?q=timeline/all" class="btn" id="timelineViewBtn" style="display: none; width: 100%;"> Timeline </a></li>
         <li><a class='dropdown-button btn' href='#' data-activates='timeline-dropdown' style="width: 100%;">Drop Me!</a></li>
         <li><a class='dropdown-button btn' href='#' data-activates='table-dropdown' style="display: none; width: 100%;">Drop Me!</a></li>
       </ul>
-      
-      
-      
-
-      <ul id='timeline-dropdown' class='dropdown-content'>
-        <li><a href="/foodie/{{user.username}}?q=timeline/pending" class="sort-history">Pending</a></li>
-        <li><a href="/foodie/{{user.username}}?q=timeline/accepted" class="sort-history">Accepted</a></li>
-        <li class="divider"></li>
-        <li><a href="/foodie/{{user.username}}?q=timeline/completed" class="sort-history">Completed</a></li>
-      </ul>
-      <ul id='table-dropdown' class='dropdown-content' style="display: none;">
-        <li><a href="/foodie/{{user.username}}?q=table/pending" class="sort-history">Pending</a></li>
-        <li><a href="/foodie/{{user.username}}?q=table/accepted" class="sort-history">Accepted</a></li>
-        <li class="divider"></li>
-        <li><a href="/foodie/{{user.username}}?q=table/completed" class="sort-history">Completed</a></li>
-      </ul>
+      <div id="timeline-dropdown">
+        <ul class="dropdown-content" style="margin: 34px 0 0 0;">
+          <li><a href="/foodie/{{owner.username}}?q=timeline/pending" class="sort-history">Pending</a></li>
+          <li><a href="/foodie/{{owner.username}}?q=timeline/accepted" class="sort-history">Accepted</a></li>
+          <li class="divider"></li>
+          <li><a href="/foodie/{{owner.username}}?q=timeline/completed" class="sort-history">Completed</a></li>
+        </ul>
+      </div>
+      <div id="table-dropdown" style="display: none;">
+        <ul class="dropdown-content">
+          <li><a href="/foodie/{{user.username}}?q=table/pending" class="sort-history">Pending</a></li>
+          <li><a href="/foodie/{{user.username}}?q=table/accepted" class="sort-history">Accepted</a></li>
+          <li class="divider"></li>
+          <li><a href="/foodie/{{user.username}}?q=table/completed" class="sort-history">Completed</a></li>
+        </ul>
+      </div>
     </div>
   </div>
   <div id="history-view">
 
 
-    <!-- My Requests -->
-    <div id="mine" class="col s9"> 
+    <!-- table start -->
+    <div id="table" class="col s9" style="display: none;"> 
       <div class="row">
         <ul class="collection with-header col s12 m12">
           <br />
-          {% for request in result %}
+          {% for request in table_reqs %}
           <li class="collection-item avatar">
             <img src ="/img?user_id={{request.0.sender.urlsafe}}" class="circle">
             <span class="title"><b>Requestor:</b><a href="/foodie/{{request.0.sender_name}}"> {{request.0.sender_name}}</a></span>
+
             <p>
               <b>Type:</b> {{request.0.food_type}}</p>
               <b>Location:</b> {{request.0.location}} <br />
-              <b>For:</b> {{request.0.start_time.date}} <b> @ </b> {{request.0.start_time.time}}</p>
+              <b>For:</b> {{request.0.start_time.date}} <b> @ </b> {{request.start_time.time}}</p>
               {% if request.recipient_name|length > 0 %}
               <p> <b>Attendees:</b> 
                 <a href="/foodie/{{request.0.recipient_name}}">{{request.0.recipient_name}}</a>  
@@ -113,6 +114,7 @@
                 <button id="delete{{forloop.counter}}" style="border:none; background:none; color:red" value={{request.key.urlsafe}}><i class="material-icons">clear</i>Delete</button>
               </div>
               {% endif %}
+              {% endif %}
             </li>
             {% empty %}
             <li class="collection-header">
@@ -125,91 +127,30 @@
         </ul>
       </div>
     </div>
+    <!-- table end -->
 
 
-
-
-  </div>
-</div>
-
-<!-- table start -->
-<div id="table" style="display:none;">
-
-  <h4 class="history-title">History</h4>
-  
-  <div id="cd-timeline">
-
-
-
-  </div>
-</div>
-<!-- table end -->
-
-<!-- timeline start-->
-<div id="timeline" class="col s9 card" style="display: none; height: 85vh; overflow-y: scroll;">
-  <h4 class= "history-title">History</h4>
-  {% if result|length == 0 %}
-  <li class="collection-header">
-    <center>
-      <h5>No Requests</h5>
-      <p>Find someone now!</p>
-    </center>
-  </li>
-  {% else %}
-  <!-- cd-timeline start -->
-  <div id="cd-timeline">
-    {% for request in result %}
-    {% if forloop.counter|divisibleby:2 %}
-    <div class="cd-timeline-block"> <!-- cd-timeline-block start -->
-      <div class="row">
-        <div class="cd-timeline-img cd-picture"><img src="../images/cd-icon-picture.svg" alt="Picture"></div> <!-- cd-timeline-img -->
-        <div class="col s7" style="visibility: hidden;">placeholder</div>
-        <div class="cd-timeline-content col s5">
-          <div class="col s12 food-type-display"><img class="food-type-img"  ></div>
-          <script type="text/javascript">
-            FoodTypeDisplays.init({"imgId":"food-type-img"}, '{{request.0.food_type}}' );
-          </script>
-          <div class="card-content">
-            <div class="row">
-              {% if request.0.sender == profile.owner %}
-              <div class="col s3"><a href="/foodie/{{request.0.recipient_name}}"><img src="/img?user_id={{request.0.recipient.urlsafe}}&height=50&width=50"></a></div>
-              {% else %}
-              <div class="col s3"><a href="/foodie/{{request.0.sender_name}}"><img src="/img?user_id={{request.0.sender.urlsafe}}&height=50&width=50"></a></div>
-              {% endif %}
-              <div class="col s9">
-                {% if request.0.sender == profile.owner %}
-                <span><b>Expert:</b> {{request.0.recipient_name}} </span><br />
-                {% else %}
-                <span><b>Requester:</b> {{request.0.sender_name}}</span><br />
-                {% endif %}
-                <span><b>For:</b> {{request.0.start_time.date}} @ {{request.0.start_time.time}}</span><br />
-                <span><b>Type:</b> {{request.0.food_type}}</span><br />
-                <span><b>Interest:</b> {{request.0.interest}}</span><br />
-                <span><b>Status:</b> {{request.0.status}}</span><br />
-              </div>
-            </div>
-
-            {% if request.0.recipient == profile.owner or request.0.sender == profile.owner %}
-            {% if request.1 != "None" %}
-            <span><b>Comments</b></span>
-            <div class="card-action">
-              {% for c in request.1 %}
-              <span><b>{{c.sender_name}}:</b> "{{c.text}}"</span><br/>
-              {% endfor %}
-            </div>
-            {% endif %}
-            {% if request.1 == "None" or request.1.0.sender_name != user.username %}
-            <div class="card-action">
-              <span><a class="modal-trigger grey white-text waves-effect waves-light btn" id="comment_button" style="width: 100%;" href="#comment" {% if request.0.recipient_name == user.username %} onclick="getRequest('{{request.0.key.urlsafe}}', '{{request.0.sender_name}}')" {% else %} onclick="getRequest('{{request.0.key.urlsafe}}', '{{request.0.recipient_name}}')" {% endif %} >Share Your Experience</a></span>
-            </div>                  
-            {% endif %}
-            {% endif %}
-          </div>
-        </div> <!-- cd-timeline-block end -->        
-        {% else %}
+    <!-- timeline start-->
+    <div id="timeline" class="col s9 card" style="height: 85vh; overflow-y: scroll;">
+      <h4 class= "history-title">History</h4>
+      {% if result|length == 0 %}
+      <li class="collection-header">
+        <center>
+          <h5>No Requests</h5>
+          <p>Find someone now!</p>
+        </center>
+      </li>
+      {% else %}
+      <!-- cd-timeline start -->
+      <div id="cd-timeline">
+        {% for request in result %}
+        {% if forloop.counter|divisibleby:2 %}
         <div class="cd-timeline-block"> <!-- cd-timeline-block start -->
           <div class="row">
-            <div class="cd-timeline-img cd-picture"><img src="../images/cd-icon-picture.svg" alt="Picture"></div> <!-- cd-timeline-img -->
+            <div class="cd-timeline-img cd-picture">
+            <img src="../images/cd-icon-picture.svg" alt="Picture">
+            </div> <!-- cd-timeline-img -->
+            <div class="col s7" style="visibility: hidden;">placeholder</div>
             <div class="cd-timeline-content col s5">
               <div class="col s12 food-type-display"><img class="food-type-img"  ></div>
               <script type="text/javascript">
@@ -224,112 +165,159 @@
                   {% endif %}
                   <div class="col s9">
                     {% if request.0.sender == profile.owner %}
-                    <span><b>Expert:</b> {{request.0.recipient_name}}</span><br />
+                    <span><b>Expert:</b> {{request.0.recipient_name}} </span><br />
                     {% else %}
                     <span><b>Requester:</b> {{request.0.sender_name}}</span><br />
                     {% endif %}
                     <span><b>For:</b> {{request.0.start_time.date}} @ {{request.0.start_time.time}}</span><br />
                     <span><b>Type:</b> {{request.0.food_type}}</span><br />
                     <span><b>Interest:</b> {{request.0.interest}}</span><br />
-                    <span><b>Status:</b> {{request.0.status}}</span><br /><br />
+                    <span><b>Status:</b> {{request.0.status}}</span><br />
                   </div>
-                </div> 
+                </div>
+
                 {% if request.0.recipient == profile.owner or request.0.sender == profile.owner %}
-                  {% if request.1 != "None" %}
-                  <span><b>Comments</b></span>
+                {% if request.1 != "None" %}
+                <span><b>Comments</b></span>
+                <div class="card-action">
+                  {% for c in request.1 %}
+                  <span><b>{{c.sender_name}}:</b> "{{c.text}}"</span><br/>
+                  {% endfor %}
+                </div>
+                {% endif %}
+                {% if request.1 == "None" or request.1.0.sender_name != user.username %}
+                <div class="card-action">
+                  <span><a class="modal-trigger grey white-text waves-effect waves-light btn" id="comment_button" style="width: 100%;" href="#comment" {% if request.0.recipient_name == user.username %} onclick="getRequest('{{request.0.key.urlsafe}}', '{{request.0.sender_name}}')" {% else %} onclick="getRequest('{{request.0.key.urlsafe}}', '{{request.0.recipient_name}}')" {% endif %} >Share Your Experience</a></span>
+                </div>                  
+                {% endif %}
+                {% endif %}
+              </div>
+            </div> <!-- cd-timeline-block end -->        
+            {% else %}
+            <div class="cd-timeline-block"> <!-- cd-timeline-block start -->
+              <div class="row">
+                <div class="cd-timeline-img cd-picture"><img src="../images/cd-icon-picture.svg" alt="Picture"></div> <!-- cd-timeline-img -->
+                <div class="cd-timeline-content col s5">
+                  <div class="col s12 food-type-display"><img class="food-type-img"  ></div>
+                  <script type="text/javascript">
+                    FoodTypeDisplays.init({"imgId":"food-type-img"}, '{{request.0.food_type}}' );
+                  </script>
+                  <div class="card-content">
+                    <div class="row">
+                      {% if request.0.sender == profile.owner %}
+                      <div class="col s3"><a href="/foodie/{{request.0.recipient_name}}"><img src="/img?user_id={{request.0.recipient.urlsafe}}&height=50&width=50"></a></div>
+                      {% else %}
+                      <div class="col s3"><a href="/foodie/{{request.0.sender_name}}"><img src="/img?user_id={{request.0.sender.urlsafe}}&height=50&width=50"></a></div>
+                      {% endif %}
+                      <div class="col s9">
+                        {% if request.0.sender == profile.owner %}
+                        <span><b>Expert:</b> {{request.0.recipient_name}}</span><br />
+                        {% else %}
+                        <span><b>Requester:</b> {{request.0.sender_name}}</span><br />
+                        {% endif %}
+                        <span><b>For:</b> {{request.0.start_time.date}} @ {{request.0.start_time.time}}</span><br />
+                        <span><b>Type:</b> {{request.0.food_type}}</span><br />
+                        <span><b>Interest:</b> {{request.0.interest}}</span><br />
+                        <span><b>Status:</b> {{request.0.status}}</span><br /><br />
+                      </div>
+                    </div> 
+                    {% if request.0.recipient == profile.owner or request.0.sender == profile.owner %}
+                    {% if request.1 != "None" %}
+                    <span><b>Comments</b></span>
                     <div class="card-action">
                       {% for c in request.1 %}
                       <span><b>{{c.sender_name}}:</b> "{{c.text}}"</span><br/>
                       {% endfor %}
                     </div>
-                  {% endif %}
-                  {% if request.1 == "None" or request.1.0.sender_name != user.username %}
+                    {% endif %}
+                    {% if request.1 == "None" or request.1.0.sender_name != user.username %}
                     <div class="card-action">
                       <span><a class="modal-trigger grey white-text waves-effect waves-light btn" id="comment_button" style="width: 100%;" href="#comment" {% if request.0.recipient_name == user.username %} onclick="getRequest('{{request.0.key.urlsafe}}', '{{request.0.sender_name}}')" {% else %} onclick="getRequest('{{request.0.key.urlsafe}}', '{{request.0.recipient_name}}')" {% endif %} >Share Your Experience</a></span>
                     </div>                  
-                  {% endif %}
-                {% endif %}
-                <span><b>For:</b> {{request.0.start_time.date}} @ {{request.0.start_time.time}}</span><br />
-                <span><b>Type:</b> {{request.0.food_type}}</span><br />
-                <span><b>Interest:</b> {{request.0.interest}}</span><br />
-                <span><b>Status:</b> {{request.0.status}}</span><br /><br />
+                    {% endif %}
+                    {% endif %}
+                  </div>
+                </div> 
               </div>
-            </div> 
-            {% if request.0.recipient == profile.owner or request.0.sender == profile.owner %}
-            {% if request.1 != "None" %}
-            <span><b>Comments</b></span>
-            <div class="card-action">
-              {% for c in request.1 %}
-              <span><b>{{c.sender_name}}:</b> "{{c.text}}"</span><br/>
-              {% endfor %}
             </div>
-            {% endif %}
-            {% if request.1 == "None" or request.1.0.sender_name != user.username %}
-            <div class="card-action">
-              <span><a class="modal-trigger grey white-text waves-effect waves-light btn" id="comment_button" style="width: 100%;" href="#comment" {% if request.0.recipient_name == user.username %} onclick="getRequest('{{request.0.key.urlsafe}}', '{{request.0.sender_name}}')" {% else %} onclick="getRequest('{{request.0.key.urlsafe}}', '{{request.0.recipient_name}}')" {% endif %} >Share Your Experience</a></span>
-            </div>                  
-            {% endif %}
-            {% endif %}
           </div>
-        </div>
-      </div>
-    </div> 
-    <!-- cd-timeline-block end -->
-    {% endif %}
-    {% endfor %}
-  </div> 
-  {% endif %}
-  <!-- cd-timeline -->
-</div>
-<!-- timeline div in -->
-
-  <script>
-    function getRequest(request, name) {
-      var r = request;
-      document.getElementById('request_comment').value= r;
-      document.getElementById('reviewee').innerHTML = name;
-      document.getElementById('recipient_name').value = name;
-
-    };
-  </script>
-
-  <!-- Modal Structure -->
-  <form action="/comment" method="POST">
-    <div id="comment" class="modal modal-fixed-footer">
-      <div class="modal-content">
-        <input id="request_comment" name="request_comment" value="" style="display:none;">
-        <input id="recipient_name" name="recipient_name" value="" style="display:none;">
-        <h4>Leave an Endorsement for <span id="reviewee"></span></h4>
-        <div class="row">
-          <div class="input-field">
-            <label>Rate This Transaction</label><br>
-            <div class="col s3">    
-              <input name="rating" type="radio" id="rate_pos" value= "positive" checked>
-              <label for="rate_pos">Positive</label>
-            </div>
-            <div class="col s3">
-              <input name="rating" type="radio" id="rate_neutral" value = "neutral">
-              <label for="rate_neutral">Neutral</label>
-            </div>
-            <div class="col s3">
-              <input name="rating" type="radio" id="rate_neg" value = "negative">
-              <label for="rate_neg">Negative</label>
-            </div>       
-          </div>
-        </div>
-        <br />
-        <div class="row">
-          <div class="input-field col s12">
-            <textarea id="comment" name="comment" class="materialize-textarea"></textarea>
-            <label for="textarea1">Tell Us More</label>
-          </div>
-        </div>    
-      </div>
-      <div class="modal-footer">
-        <button type="submit" class="modal-action modal-close waves-effect waves-green btn-flat ">Send</button>
-        <a href="#!" type="cancel" class="modal-action modal-close waves-effect waves-red btn-flat">Cancel</a>
-      </div>
+        </div> 
+        <!-- cd-timeline-block end -->
+        {% endif %}
+        {% endfor %}
+      </div> 
+      {% endif %}
+      <!-- cd-timeline -->
     </div>
-  </form>
+    <!-- timeline div in -->
+
+
+
+
+  </div>
+</div>
+
+<!-- table start -->
+<!-- <div id="table" style="display:none;">
+
+  <h4 class="history-title">History</h4>
+  
+  <div id="cd-timeline">
+
+
+
+  </div>
+</div> -->
+<!-- table end -->
+
+<script>
+  function getRequest(request, name) {
+    var r = request;
+    document.getElementById('request_comment').value= r;
+    document.getElementById('reviewee').innerHTML = name;
+    document.getElementById('recipient_name').value = name;
+
+  };
+</script>
+
+<!-- Modal Structure -->
+<form action="/comment" method="POST">
+  <div id="comment" class="modal modal-fixed-footer">
+    <div class="modal-content">
+      <input id="request_comment" name="request_comment" value="" style="display:none;">
+      <input id="recipient_name" name="recipient_name" value="" style="display:none;">
+      <h4>Leave an Endorsement for <span id="reviewee"></span></h4>
+      <div class="row">
+        <div class="input-field">
+          <label>Rate This Transaction</label><br>
+          <div class="col s3">    
+            <input name="rating" type="radio" id="rate_pos" value= "positive" checked>
+            <label for="rate_pos">Positive</label>
+          </div>
+          <div class="col s3">
+            <input name="rating" type="radio" id="rate_neutral" value = "neutral">
+            <label for="rate_neutral">Neutral</label>
+          </div>
+          <div class="col s3">
+            <input name="rating" type="radio" id="rate_neg" value = "negative">
+            <label for="rate_neg">Negative</label>
+          </div>       
+        </div>
+      </div>
+      <br />
+      <div class="row">
+        <div class="input-field col s12">
+          <textarea id="comment" name="comment" class="materialize-textarea"></textarea>
+          <label for="textarea1">Tell Us More</label>
+        </div>
+      </div>    
+    </div>
+    <div class="modal-footer">
+      <button type="submit" class="modal-action modal-close waves-effect waves-green btn-flat ">Send</button>
+      <a href="#!" type="cancel" class="modal-action modal-close waves-effect waves-red btn-flat">Cancel</a>
+    </div>
+  </div>
+</form>
 
   {% endblock %}
+
