@@ -70,12 +70,14 @@ class ProfileHandler(SessionHandler):
     # Get Request regarding the user
     reqs = []
     my_reqs = []
+    table_reqs = []
     pending_reqs = []
     accepted_reqs = []
     alloted_time = current_date + datetime.timedelta(hours=2)
 
     # Get all requests where profile owner is foodie and expert
     my_reqs = Request.query(ndb.OR(Request.sender==profile_owner.key, Request.recipient == profile_owner.key)).order(Request.start_time).fetch()
+    
     my_reqs = [x for x in my_reqs if x.status != "pending"]
     my_reqs = [x for x in my_reqs if x.status != "waiting for a bid"]
 
@@ -93,7 +95,7 @@ class ProfileHandler(SessionHandler):
 
     self.response.out.write(template.render('views/profile.html',
                              {'owner':profile_owner, 'profile':profile, 'endorsements': comments,
-                            'history': history, 'user': viewer, 'result': result}))
+                            'history': history, 'user': viewer, 'result': result, 'table_reqs': table_reqs}))
 
 class Image(SessionHandler):
   """Serves the image associated with an avatar"""
