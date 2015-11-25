@@ -97,13 +97,14 @@ $(document).ready(function(){
         var m_price = $('#min_price').val();
         var mx_price = $('#max_price').val();
         var food_type = $('#food_type').val();
+        var price = $('#price').val();
         var interest = $('input[type="radio"]:checked').val();
       
         $.ajax({
           type: "POST",
           url: '/request',
-          data: {'date':date, 'time':time, 'location':location,
-          'max_price': mx_price, 'min_price':m_price, 'food_type': food_type, 'interest': interest}
+          data: {'date':date, 'time':time, 'location':location, 'price': price,
+          'food_type': food_type, 'interest': interest}
         });
         setTimeout(function(){ // Refresh after 1 second
         window.location.href = '/requests';
