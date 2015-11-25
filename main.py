@@ -308,7 +308,7 @@ app = webapp2.WSGIApplication([
                              ('/notify_fire', SMSFireHandler),
                              ('/thanks', ThanksHandler),
                              ('/verify/(.+)/(.+)', VerifyHandler),
-                             ('/fire/(.w)/(.+)', FireHandler),
+                             ('/fire/(.+)/(.+)', FireHandler),
                              ('/complete', CompletedRequestHandler), 
                              ('/logout', LogoutHandler),
                              ('/authorizepayment', AuthorizePaymentsHandler),
