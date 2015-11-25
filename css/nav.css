@@ -62,15 +62,15 @@ nav ul {
 nav .nav-wrapper i {
   font-size: 28px;
 }
-#notification-dropdown, #profile-dropdown {
+#notification-dropdown, #dropdown2, #profile-dropdown {
   margin: 61px 0 0 0;
 }
 
-#notification-dropwdown li, #profile-dropdown li {
+#notification-dropwdown li, #dropdown2 li, #profile-dropdown li {
   line-height: 20px;
 }
 
-#notification-dropwdown li>a, #notification-dropwdown li>span, #profile-dropdown li>a, #profile-dropdown li>span{
+#profile-dropdown li>a, #profile-dropdown li>span{
   font-size: 16px;
   color: #333333;
   display: block;
@@ -292,4 +292,3 @@ input[type=search]{
    width: 400px !important;
    margin-left: 175px;
 }
-

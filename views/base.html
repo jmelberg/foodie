@@ -57,7 +57,7 @@
     <div class="navbar-fixed">
   <nav>
     <div class="nav-wrapper">
-      <a href="/feed" class="brand-logo" >Foodie<i class="material-icons" style="float: right; margin-left: 10px;">local_dining</i></a>
+      <a href="/feed" class="brand-logo" >Hangry<i class="material-icons" style="float: right; margin-left: 10px;">local_dining</i></a>
       <a href="#" data-activates="mobile-demo" class="button-collapse"><i class="material-icons">menu</i></a>
       <ul class="right hide-on-med-and-down">
        <li>
@@ -71,8 +71,8 @@
         <li><a href="/requests?q=mine" title="My Request"><i class="material-icons">event_note</i></a></li>
         <li><a href="/request" title="Request a Service"><i class="material-icons">add</i></a></li>
         <li>
-        {% if user.pending_requests > 0 or user.approved_requests > 0 %}
-          <a class="notification dropdown-button" title="Notification" href="#" data-activates="dropdown2"></a>
+        {% if user.pending_requests > 0 or user.approved_requests > 0 or user.available_requests > 0 %}
+          <a class="notification dropdown-button" title="Notification" href="#" data-activates="notification-dropdown"></a>
         {% else %}
           <a class="dropdown-button" title="Notification" href="#" data-activates="notification-dropdown" ><i class="material-icons">notifications_none</i></a>
         {% endif %}
@@ -87,7 +87,7 @@
          {% if user.available_requests > 0 %}
           <li><a href="/requests"> {{user.available_requests}} new request(s)</a></li>
          {% endif %}
-         {% if user.pending_requests == 0 and user.approved_requests == 0 and user.available_request == 0 %}   
+         {% if user.pending_requests == 0 and user.approved_requests == 0 and user.available_requests == 0 %}   
           <li ><a>No new notifications</a></li>
          {% endif %}
         </ul>
