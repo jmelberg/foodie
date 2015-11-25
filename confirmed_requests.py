@@ -25,9 +25,9 @@ class SMSHandler(SessionHandler):
     current_time = datetime.datetime.now() - datetime.timedelta(hours=8)
     max_time = current_time - datetime.timedelta(minutes=30)
     # Get all requests in accepted state
-    completed_requests = Request.query(Request.status == "accepted").fetch()
-    #completed_requests = Request.query(Request.start_time >= current_time, Request.start_time < max_time).fetch()
-    #completed_requests = [x for x in completed_requests if x.recipient != None and x.status == "accepted"]
+    #completed_requests = Request.query(Request.status == "accepted").fetch()
+    completed_requests = Request.query(Request.start_time >= current_time, Request.start_time < max_time).fetch()
+    completed_requests = [x for x in completed_requests if x.recipient != None and x.status == "accepted"]
     for request in completed_requests:
       send_sms(request)
 
