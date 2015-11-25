@@ -83,13 +83,14 @@
               <b>For:</b> {{request.0.start_time.date}} <b> @ </b> {{request.start_time.time}}</p>
               {% if request.recipient_name|length > 0 %}
               <p> <b>Attendees:</b> 
-                <a href="/foodie/{{request.0.recipient_name}}">{{request.0.recipient_name}}</a>  
+                <a href="/foodie/{{request.recipient_name}}">{{request.recipient_name}}</a>  
               </p>
               {% endif %}
-              <b>Price:</b> ${{request.0.price}}</p>
-              <b>Interest:</b> {{request.0.interest}}</p>
-              <b>Bidders:</b> {{request.0.bidders|length}}</p>
-              <b>Status:</b> {{request.0.status}}
+              <b>Price Range:</b> ${{request.min_price}} to ${{request.max_price}}</p>
+              <b>Interest:</b> {{request.interest}}</p>
+              <b>Bidders:</b> {{request.bidders|length}}</p>
+              <b>Status:</b> {{request.status}}
+              {% if request.sender == user.key %}
               {% if request.status != "accepted" %}
               <div class="secondary-content">
                 <table>
