@@ -2,10 +2,27 @@ $(document).ready(function() {
   var tab = getUrlParameter('q');
 
   if(tab == 'table/all') {
+    $('#timeline-dropdown').hide();
+    $('#table-dropdown').show();
     $('#table').show();
     $('#timeline').hide();
     $('#tableViewBtn').hide();
     $('#timelineViewBtn').show();
+  } 
+  else if(tab == 'table/pending') {
+    $('#timeline-dropdown').hide();
+    $('#table-dropdown').show();
+
+  }
+  else if(tab == 'table/accepted') {
+    $('#timeline-dropdown').hide();
+    $('#table-dropdown').show();
+
+  }
+  else if(tab == 'table/completed') {
+    $('#timeline-dropdown').hide();
+    $('#table-dropdown').show();
+    
   }
   
 
@@ -53,20 +70,6 @@ function getUrlParameter(sParam)
     for (var i = 0; i < sURLVariables.length; i++) 
     {
         var sParameterName = sURLVariables[i].split('=');
-        if (sParameterName[0] == sParam) 
-        {
-            return sParameterName[1];
-        }
-    }
-}
-
-function findViewType(sParam)
-{
-    var sPageURL = window.location.search.substring(1);
-    var sURLVariables = sPageURL.split('&');
-    for (var i = 0; i < sURLVariables.length; i++) 
-    {
-        var sParameterName = sURLVariables[i].split('/');
         if (sParameterName[0] == sParam) 
         {
             return sParameterName[1];
