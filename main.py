@@ -77,11 +77,12 @@ class ProfileHandler(SessionHandler):
 
     # Get all requests where profile owner is foodie and expert
     my_reqs = Request.query(ndb.OR(Request.sender==profile_owner.key, Request.recipient == profile_owner.key)).order(Request.start_time).fetch()
+    result = my_reqs
     
     my_reqs = [x for x in my_reqs if x.status != "pending"]
     my_reqs = [x for x in my_reqs if x.status != "waiting for a bid"]
 
-    result = sorted(my_reqs, key=lambda x: x.start_time)
+    # result = sorted(my_reqs, key=lambda x: x.start_time)
 
     comments = []
     for r in result:
