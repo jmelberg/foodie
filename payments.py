@@ -1,5 +1,6 @@
 import requests
 import json
+<<<<<<< HEAD
 # from models import PaymentLinks, PaymentModel
 
 # class CreatePaymentExample:
@@ -24,6 +25,8 @@ import json
 #     def __init__(self, future_id, price, accountID, desc):
 #         charge = requests.post('http://107.170.240.130:3000/chargepayment', data={"future_id":future_id, "price":price, "account_id":accountID, "desc":desc})
 #         print charge.json()
+=======
+>>>>>>> update
 
 def AddCreditCard(name, email, creditcard, expmonth, expyear, address, city, state, cvv, zipcode):
     add = requests.post('http://107.170.240.130:3000/addcreditcard', data={"user_name": name, "email":email, "cc_number":creditcard, "cvv":cvv, "expiration_month":expmonth, "expiration_year":expyear, "address1":address, "city":city, "state":state, "country":"US", "zip":zipcode})

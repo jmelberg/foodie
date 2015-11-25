@@ -46,7 +46,7 @@ class Request(ndb.Model):
   creation_time = ndb.DateTimeProperty(auto_now_add=True)
   start_time = ndb.DateTimeProperty()
   accept_time = ndb.DateTimeProperty()
-  price = ndb.IntegerProperty(default = 0)
+  price = ndb.IntegerProperty(default=0)
   food_type = ndb.StringProperty()
   interest = ndb.StringProperty()
   bidders = ndb.KeyProperty(kind="Bidder", repeated=True)

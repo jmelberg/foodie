@@ -76,7 +76,7 @@ class RequestsHandler(SessionHandler):
     location_requests = [r for r in l_requests if r.start_time >= alloted_time ]
     location_requests = [r for r in location_requests if r.recipient == None]
 
-    p_requests = Request.query().order(Request.min_price).fetch()
+    p_requests = Request.query().order(Request.price).fetch()
     price_requests = [r for r in p_requests if r.start_time >= alloted_time]
     price_requests = [r for r in price_requests if r.recipient == None]
 
