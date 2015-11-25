@@ -168,7 +168,8 @@ class CreateRequestHandler(SessionHandler):
     location = cgi.escape(self.request.get("location")).strip().lower()
     date = cgi.escape(self.request.get("date"))
     r_time = cgi.escape(self.request.get("time"))
-    price = int(cgi.escape(self.request.get("price")))
+    min_price = int(cgi.escape(self.request.get("min_price")))
+    max_price = int(cgi.escape(self.request.get("max_price")))
     food_type = cgi.escape(self.request.get("food_type")).strip().lower()
     interest = cgi.escape(self.request.get("interest")).strip().lower()
 
@@ -183,7 +184,8 @@ class CreateRequestHandler(SessionHandler):
     request.location = location
     request.start_time = start_time
     request.creation_time = datetime.datetime.now() - datetime.timedelta(hours=8) #PST
-    request.price = price
+    request.min_price = min_price
+    request.max_price = max_price
     request.food_type = food_type
     request.interest = interest
     request.status = "waiting for a bid"
@@ -199,7 +201,8 @@ class EditRequestHandler(SessionHandler):
     request = ndb.Key(urlsafe=request_id).get()
     edit_date = request.start_time.strftime("%Y-%m-%d")
     edit_time = request.start_time.strftime("%H:%M:%S")
-    price = request.price
+    min_price = request.min_price
+    max_price = request.max_price
     food_type = request.food_type
     interest = request.interest
 
@@ -211,12 +214,13 @@ class EditRequestHandler(SessionHandler):
     location = cgi.escape(self.request.get("location"))
     date = cgi.escape(self.request.get("date"))
     time = cgi.escape(self.request.get("time"))
-    price = int(cgi.escape(self.request.get("price")))
+    min_price = int(cgi.escape(self.request.get("min_price")))
+    max_price = int(cgi.escape(self.request.get("max_price")))
     food_type = cgi.escape(self.request.get("food_type"))
     interest = cgi.escape(self.request.get("interest"))
 
     previous_request = ndb.Key(urlsafe=request_id).get()
-    print location, "date: ", date, "time: ", time, price, food_type, interest
+    print location, "date: ", date, "time: ", time, min_price, max_price, food_type, interest
     # Convert date and time to datetime
     if previous_request.start_time.strftime("%H:%M:%S") == time:
       format_date = str(date+ " " + time+ ".0")
@@ -229,7 +233,8 @@ class EditRequestHandler(SessionHandler):
       previous_request.start_time = start_time
       previous_request.food_type = food_type
       previous_request.interest = interest
-      previous_request.price = price
+      previous_request.min_price = min_price
+      previous_request.max_price = max_price
       previous_request.put()
       print "Added request to queue"
     else:
