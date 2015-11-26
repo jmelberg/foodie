@@ -51,3 +51,8 @@ indexes:
   - name: sender
   - name: start_time
     direction: desc
+
+- kind: Request
+  properties:
+  - name: status
+  - name: start_time

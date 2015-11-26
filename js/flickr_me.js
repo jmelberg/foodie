@@ -82,10 +82,11 @@ var FlickrMe = (function($){
 		* @return {title:sometime,url:someurl}	
 		*/
 		searchKey: function(searchKey,size,doneCB) {
+			var foodKey = searchKey;
 			$.ajax({
 				url: rootAPIUrl,
 				data: {
-					text: searchKey,
+					text: foodKey,
 					api_key: apiKey,
 					format: returnFormat,
 					sort: sort,
