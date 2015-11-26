@@ -6,7 +6,7 @@ var FoodTypeDisplays = (function(FM) {
 	*/
 	function displayImage(obj,foodType) {
 		var imgEle = document.getElementById(obj.imgId);
-		FM.searchKey(foodType,'n',function(data){
+		FM.searchKey(foodType" food",'n',function(data){
 			// var index = Math.floor( Math.random() * data.length );
 			var index = 1;
 
@@ -24,7 +24,7 @@ var FoodTypeDisplays = (function(FM) {
 	*/
 	function displayBackground(obj,foodType) {
 		var backgroundEle = document.getElementById(obj.backgroundId);
-		FM.searchKey(foodType,'q',function(data){
+		FM.searchKey(foodType+" food",'q',function(data){
 			// var index = Math.floor( Math.random() * data.length );
 			var index = 1;
 

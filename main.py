@@ -45,8 +45,24 @@ class LoginHandler(SessionHandler):
 
 class FeedHandler(SessionHandler):
   def get(self):
-    get_notifications(self.user_model)
-    self.response.out.write(template.render('views/feed.html', {'user': self.user_model}))
+    user = self.user_model
+    get_notifications(user)
+    current_date = datetime.datetime.now() - datetime.timedelta(hours=8)
+    # Return only those two hours or more in future
+    alloted_time = current_date + datetime.timedelta(hours=2)
+    
+    all_requests = Request.query(Request.start_time >= alloted_time).order(Request.start_time)
+    pending_requests = Request.query(Request.status == 'pending').order(Request.start_time)
+    pending_requests = [r for r in pending_requests if r.start_time < current_time]
+    
+    # Get only requests not posted by user
+    all_requests = [r for r in all_requests if r.sender != user.key]
+    
+    print all_requests
+
+
+    self.response.out.write(template.render('views/feed.html', {'user': self.user_model,
+      'pending_requests': pending_requests, 'all_requests': all_requests}))
 
 class ProfileHandler(SessionHandler):
   """handler to display a profile page"""
@@ -69,34 +85,65 @@ class ProfileHandler(SessionHandler):
 
     # Get Request regarding the user
     reqs = []
+    allTimeline_reqs = []
     my_reqs = []
     table_reqs = []
     pending_reqs = []
     accepted_reqs = []
+    completed_reqs = []
     alloted_time = current_date + datetime.timedelta(hours=2)
 
     # Get all requests where profile owner is foodie and expert
     my_reqs = Request.query(ndb.OR(Request.sender==profile_owner.key, Request.recipient == profile_owner.key)).order(Request.start_time).fetch()
-    result = my_reqs
-    
-    my_reqs = [x for x in my_reqs if x.status != "pending"]
-    my_reqs = [x for x in my_reqs if x.status != "waiting for a bid"]
+    allTimeline_reqs = my_reqs
+    pending_reqs = [x for x in my_reqs if x.status == "pending"]
+    accepted_reqs = [x for x in my_reqs if x.status == "accepted"]
+    completed_reqs = [x for x in my_reqs if x.status == "completed"]
 
-    # result = sorted(my_reqs, key=lambda x: x.start_time)
-
-    comments = []
-    for r in result:
+    allTimeline_comments = []
+    for r in allTimeline_reqs:
       c = Endorsement.query(Endorsement.request == r.key).fetch()
       if c:
-        comments.append(c)
+        allTimeline_comments.append(c)
       else:
-        comments.append("None")
+        allTimeline_comments.append("None")
 
-    result = zip(result, comments)
+    allTimeline_reqs = zip(allTimeline_reqs, allTimeline_comments)
+
+    pending_comments = []
+    for r in pending_reqs:
+      c = Endorsement.query(Endorsement.request == r.key).fetch()
+      if c:
+        pending_comments.append(c)
+      else:
+        pending_comments.append("None")
+
+    pending_reqs = zip(pending_reqs, pending_comments)
+
+    accepted_comments = []
+    for r in accepted_reqs:
+      c = Endorsement.query(Endorsement.request == r.key).fetch()
+      if c:
+        accepted_comments.append(c)
+      else:
+        accepted_comments.append("None")
+
+    accepted_reqs = zip(accepted_reqs, accepted_comments)
+
+    completed_comments = []
+    for r in completed_reqs:
+      c = Endorsement.query(Endorsement.request == r.key).fetch()
+      if c:
+        completed_comments.append(c)
+      else:
+        completed_comments.append("None")
+
+    completed_reqs = zip(completed_reqs, completed_comments)
 
     self.response.out.write(template.render('views/profile.html',
-                             {'owner':profile_owner, 'profile':profile, 'endorsements': comments,
-                            'history': history, 'user': viewer, 'result': result, 'table_reqs': table_reqs}))
+                             {'owner':profile_owner, 'profile':profile, #'endorsements': comments,
+                            'history': history, 'user': viewer, 'allTimeline_reqs': allTimeline_reqs, 'pending_reqs': pending_reqs,
+                            'accepted_reqs': accepted_reqs, 'completed_reqs': completed_reqs}))
 
 class Image(SessionHandler):
   """Serves the image associated with an avatar"""
