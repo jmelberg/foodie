@@ -19,15 +19,14 @@ import json
 from twilio.rest import TwilioRestClient
 api_key = 'AIzaSyBAO3qaYH4LGQky8vAA07gCVex1LBhUdbE'
 
-
 class SMSHandler(SessionHandler):
   def get(self):
     current_time = datetime.datetime.now() - datetime.timedelta(hours=8)
     max_time = current_time - datetime.timedelta(minutes=30)
     # Get all requests in accepted state
-    completed_requests = Request.query(Request.status == "accepted").fetch()
-    #completed_requests = Request.query(Request.start_time >= current_time, Request.start_time < max_time).fetch()
-    #completed_requests = [x for x in completed_requests if x.recipient != None and x.status == "accepted"]
+    #completed_requests = Request.query(Request.status == "accepted").fetch()
+    completed_requests = Request.query(Request.start_time >= current_time, Request.start_time < max_time).fetch()
+    completed_requests = [x for x in completed_requests if x.recipient != None and x.status == "accepted"]
     for request in completed_requests:
       send_sms(request)
 
@@ -37,6 +36,7 @@ class SMSFireHandler(SessionHandler):
     current_time = datetime.datetime.now() - datetime.timedelta(hours=8)
     max_time = current_time + datetime.timedelta(minutes=10)
     # Get all requests in accepted state
+    #completed_requests = Request.query(Request.status == "foodie").fetch()
     completed_requests = Request.query(Request.start_time >= max_time, Request.start_time < current_time).fetch()
     completed_requests = [x for x in completed_requests if x.recipient != None and x.status == "foodie"]
     for request in completed_requests:
@@ -68,8 +68,8 @@ class VerifyHandler(SessionHandler):
 
 class CompletedRequestHandler(SessionHandler):
   def get(self):
-    latitude = cgi.escape(self.request.get("latitude"))
-    longitude = cgi.escape(self.request.get("longitude"))
+    longitude = cgi.escape(self.request.get("latitude"))
+    latitude = cgi.escape(self.request.get("longitude"))
     message_id = cgi.escape(self.request.get("message"))
     request_id = cgi.escape(self.request.get("request"))
     user_key = ndb.Key(urlsafe=message_id).get()
@@ -78,13 +78,15 @@ class CompletedRequestHandler(SessionHandler):
     print "Actual:", longitude, latitude
 
     if request.recipient == user_key:
-      if latitude <= (request.latitude - 0.01) or latitude >= (request.latitude + 0.01):
-        if longitude <= (request.longitude - 0.01) or longitude >= (request.longitude + 0.01):
+      if latitude <= (request.latitude - 0.1) or latitude >= (request.latitude + 0.1):
+      #if latitude <= (request.latitude - 0.01) or latitude >= (request.latitude + 0.01):
+        if longitude <= (request.longitude - 0.1) or longitude >= (request.longitude + 0.1):
+        #if longitude <= (request.longitude - 0.01) or longitude >= (request.longitude + 0.01):
           print "Expert approved!"
           if request.status == "foodie":
             #Foodie checked in already
             request.status = "complete"
-          elif request.status == "approved":
+          elif request.status == "accepted":
             #Expert is first to check in
             request.status = "expert"
           else:
@@ -97,12 +99,14 @@ class CompletedRequestHandler(SessionHandler):
       else:
         print "YOU ARE NOT THERE!"
     else:
-      if latitude <= (request.latitude - 0.01) or latitude >= (request.latitude + 0.01):
-        if longitude <= (request.longitude - 0.01) or longitude >= (request.longitude + 0.01):
+      if latitude <= (request.latitude - 0.1) or latitude >= (request.latitude + 0.1):
+      #if latitude <= (request.latitude - 0.01) or latitude >= (request.latitude + 0.01):
+        if longitude <= (request.longitude - 0.1) or longitude >= (request.longitude + 0.1):
+        #if longitude <= (request.longitude - 0.01) or longitude >= (request.longitude + 0.01):
           print "Requestor approved"
           if request.status == "expert":
             request.status = "complete"
-          elif request.status =="approved":
+          elif request.status =="accepted":
             request.status = "foodie"
           else:
             # Request has experied / fired
@@ -160,7 +164,7 @@ def send_sms(request):
     body = acceptor_body
   )
 
-def send_fire_notifiation(request):
+def send_fire_notification(request):
   AUTH_TOKEN = '3d55c9d85ab388eacc42e8cfb1ad06e4'
   ACCOUNT_SID = 'AC8d1e55b2a96dde764f3b6df1313bc3d1'
   twilio_number = '+16503992009'
@@ -205,6 +209,6 @@ def send_fire(request):
   client.messages.create(
     to = acceptor.telephone,
     from_ = twilio_number,
-    body = accepter_body
+    body = acceptor_body
   )
 

@@ -5,7 +5,7 @@ $(document).ready(function() {
     $('#timeline-dropdown').hide();
     $('#table-dropdown').show();
     $('#table').show();
-    $('#timeline').hide();
+    $('#timeline-all').hide();
     $('#tableViewBtn').hide();
     $('#timelineViewBtn').show();
   } 
@@ -22,7 +22,16 @@ $(document).ready(function() {
   else if(tab == 'table/completed') {
     $('#timeline-dropdown').hide();
     $('#table-dropdown').show();
-    
+  }
+  else if(tab == 'timeline/pending') {
+    $('#timeline-all').hide();
+    $('#timeline-pending').show();
+  }
+  else if(tab == 'timeline/accepted') {
+
+  }
+  else if(tab == 'timeline/completed') {
+
   }
   
 
@@ -57,24 +66,24 @@ $(document).ready(function() {
   }
 
   if($('#pending').click(function(){ 
-      $('#price_requests').hide();
-      $('#location_requests').hide();
-    }));
+    $('#price_requests').hide();
+    $('#location_requests').hide();
+  }));
 });
 
 // Returns string from appended url
 function getUrlParameter(sParam)
 {
-    var sPageURL = window.location.search.substring(1);
-    var sURLVariables = sPageURL.split('&');
-    for (var i = 0; i < sURLVariables.length; i++) 
+  var sPageURL = window.location.search.substring(1);
+  var sURLVariables = sPageURL.split('&');
+  for (var i = 0; i < sURLVariables.length; i++) 
+  {
+    var sParameterName = sURLVariables[i].split('=');
+    if (sParameterName[0] == sParam) 
     {
-        var sParameterName = sURLVariables[i].split('=');
-        if (sParameterName[0] == sParam) 
-        {
-            return sParameterName[1];
-        }
+      return sParameterName[1];
     }
+  }
 }
 
 function changeElements(){
