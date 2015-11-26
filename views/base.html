@@ -23,6 +23,10 @@
   <link rel="stylesheet" media="screen" href="../css/request.css" type="text/css" />
   <link rel="stylesheet" media="screen" href="../css/search-results.css" type="text/css" />
   <link rel="stylesheet" media="screen" href="../css/profile.css" type="text/css" />
+  <link rel="stylesheet" href="../owl-carousel/owl.carousel.css">
+<link rel="stylesheet" href="../owl-carousel/owl.theme.css">
+<script src="../owl-carousel/owl.carousel.js"></script>
+<script type="text/javascript" src="../js/feed.js"></script>
  <!--Let browser know website is optimized for mobile-->
  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
  <script>
@@ -77,17 +81,17 @@
           <a class="dropdown-button" title="Notification" href="#" data-activates="notification-dropdown" ><i class="material-icons">notifications_none</i></a>
         {% endif %}
         </li>
-        <ul id="notification-dropdown" class="dropdown-content dropdown2-content">     
-         {% if user.pending_requests > 0 %}     
+        <ul id="notification-dropdown" class="dropdown-content dropdown2-content">
+         {% if user.pending_requests > 0 %}
           <li><a href="/requests#pending">You have {{user.pending_requests}} new pending request(s)</a></li>
          {% endif %}
-         {% if user.approved_requests > 0 %}   
+         {% if user.approved_requests > 0 %}
           <li><a href="/requests#accepted">You have {{user.approved_requests}} new accepted request(s)</a></li>
          {% endif %}
          {% if user.available_requests > 0 %}
           <li><a href="/requests"> {{user.available_requests}} new request(s)</a></li>
          {% endif %}
-         {% if user.pending_requests == 0 and user.approved_requests == 0 and user.available_request == 0 %}   
+         {% if user.pending_requests == 0 and user.approved_requests == 0 and user.available_request == 0 %}
           <li ><a>No new notifications</a></li>
          {% endif %}
         </ul>
@@ -96,7 +100,7 @@
            <img src ="/img?user_id={{user.key.urlsafe}}" class="circle_nav">
         {{user.first_name}}&nbsp;{{user.last_name}}
         <i class="material-icons right">arrow_drop_down</i></a></li>
-        <ul id="profile-dropdown" class="dropdown-content">          
+        <ul id="profile-dropdown" class="dropdown-content">
           <li><a href="/foodie/{{user.username}}?q=timeline/all">My Profile</a></li>
           <li class="divider"></li>
           <li><a href="/logout">Log Out</a></li>
@@ -108,7 +112,7 @@
         <li>
           <a href="/requests?q=mine"><i class="material-icons left">event_note</i>
           My Requests
-          {% if user.pending_requests > 0 %} 
+          {% if user.pending_requests > 0 %}
           <span class="new badge">{{user.pending_requests}}</span>
           {% endif %}
           </a>

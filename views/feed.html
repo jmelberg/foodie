@@ -6,6 +6,8 @@
   <!-- POP UP MODAL -->
   <script type="text/javascript" src="https://static.wepay.com/min/js/tokenization.v2.js"></script>
   <script type="text/javascript" src="../js/creditcard.js"></script>
+  <script type="text/javascript" src= "../js/request_suggestion_grid.js"></script>
+
   <!-- Modal Structure -->
 
   <!-- Respond Modal -->
@@ -52,17 +54,47 @@
     <h1 class="header"><span>Good Food, Good Friends, Good Times</span></h1>
     <button onClick="window.location='/request';" class="request">Make A Request</button>
   </div>
-  <div class="feed_divider divider-1"><p class="category">Near By</p></div>
-  
-  <div class="img_tray clearfix">
-    <div class="img1"></div>
-    <div class="img2"></div>
-    <div class="img3"></div>
-    <div class="img4"></div>
-    <div class="img5"></div>
-    <div class="img6"></div>
+  <div class="feed_divider divider-1"><p class="category">All</p></div>
+
+  <div class="row">
+        <div id="slider" class="owl-carousel">
+          {% for item in everything %}
+          <div class="one">
+            <a>{{item.food_type}}</a>
+          </div>
+          {% endfor %}
+        </div>
   </div>
-  <div class="feed_divider divider-2">  <p class="category">Upcoming</p></div>
+
+  <div class="feed_divider">  <p class="category">Pending</p></div>
+
+  <div class="row">
+        <div id="slider1" class="owl-carousel">
+          {% for pend in pending %}
+          <div class="one">
+            <a>{{pend.food_type}}</a>
+          </div>
+          {% endfor %}
+        </div>
+  </div>
+
+  <div class="feed_divider">  <p class="category">Food Type</p></div>
+
+  <div class="row">
+        <div id="slider2" class="owl-carousel">
+          {% for food in foodtype|dictsort:"food_type" %}
+          <div id="{{food.food_type}}" onload="getImage({{food.}},{{food.food_type}})">
+            <label for="{{food.food_type}}">{{food.food_type}}</label>
+            <a href="#{{food.key.urlsafe}}">
+              {{food.food_type}}
+            </a>
+          </div>
+          {% endfor %}
+        </div>
+  </div>
+
+
+
   {% endif %}
 
 {% endblock %}

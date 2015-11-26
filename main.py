@@ -45,8 +45,11 @@ class LoginHandler(SessionHandler):
 
 class FeedHandler(SessionHandler):
   def get(self):
+    foodtype = Request.query()
+    everything = Request.query()
+    pending = Request.query(Request.status == 'pending')
     get_notifications(self.user_model)
-    self.response.out.write(template.render('views/feed.html', {'user': self.user_model}))
+    self.response.out.write(template.render('views/feed.html', {'user': self.user_model, 'everything':everything, 'pending':pending,'foodtype':foodtype}))
 
 class ProfileHandler(SessionHandler):
   """handler to display a profile page"""
@@ -77,7 +80,7 @@ class ProfileHandler(SessionHandler):
 
     # Get all requests where profile owner is foodie and expert
     my_reqs = Request.query(ndb.OR(Request.sender==profile_owner.key, Request.recipient == profile_owner.key)).order(Request.start_time).fetch()
-    
+
     my_reqs = [x for x in my_reqs if x.status != "pending"]
     my_reqs = [x for x in my_reqs if x.status != "waiting for a bid"]
 
@@ -122,7 +125,7 @@ class CommentHandler(SessionHandler):
     request = ndb.Key(urlsafe=request_key).get()
     rating = cgi.escape(self.request.get('rating'))
     comment = cgi.escape(self.request.get('comment'))
-    
+
     if comment != None:
       endorsement = Endorsement()
       endorsement.request = request.key
@@ -148,8 +151,8 @@ class CommentHandler(SessionHandler):
     recipient_user = User.query(User.username == recipient).get()
     recipient_key = recipient_user.key
 
-      
-    # modify rating 
+
+    # modify rating
     if rating == "positive":
       recipient_user.positive = recipient_user.positive + 1
     elif rating == "neutral":
@@ -164,7 +167,7 @@ class CommentHandler(SessionHandler):
 class SearchHandler(SessionHandler):
   ''' Search for users by the following criteria:
         Username
-        First Name 
+        First Name
         Last Name
         First & Last Name
         Food Type
@@ -174,11 +177,11 @@ class SearchHandler(SessionHandler):
     user = self.user_model
     search = self.request.get('search').lower().strip()
     print "Search Term: ", search
-    
+
     #Seach for people
     results = []
     profiles = []
-    
+
     # Search for requests
     available_requests = []
     available_users = []
@@ -186,7 +189,7 @@ class SearchHandler(SessionHandler):
     completed_requests = []
     completed_users = []
     current_time = datetime.datetime.now() - datetime.timedelta(hours=8)
-    
+
     # Check for type
     food_type_requests = Request.query(Request.food_type == search).fetch()
     food_type = [x for x in food_type_requests if x.start_time > current_time]
@@ -274,8 +277,8 @@ class AuthorizePaymentsHandler(SessionHandler):
     credit = cgi.escape(self.request.get("credit_card_id"))
     authorize = AuthorizeCreditCard(credit)
     user.credit_id = credit
-    user.put()    
-        
+    user.put()
+
 
 config = {}
 config['webapp2_extras.sessions'] = {
@@ -308,7 +311,7 @@ app = webapp2.WSGIApplication([
                              ('/thanks', ThanksHandler),
                              ('/verify/(.+)/(.+)', VerifyHandler),
                              ('/fire/(.w)/(.+)', FireHandler),
-                             ('/complete', CompletedRequestHandler), 
+                             ('/complete', CompletedRequestHandler),
                              ('/logout', LogoutHandler),
                              ('/authorizepayment', AuthorizePaymentsHandler),
                              ('/getwepaytoken', GetWePayUserTokenHandler),
