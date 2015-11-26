@@ -46,7 +46,7 @@
         <li>
           <a id="timelineDDBtn" class="dropdown-button btn" href="#" data-activates="timeline-dropdown" style="width: 100%;">Timeline - Sort</a>
           <ul id="timeline-dropdown" class="dropdown-content" style="margin: 34px 0 0 0;">
-            <li><a href="/foodie/{{owner.username}}?q=timeline/pending" class="sort-history">Pending</a></li>
+            <li><a id="timelineP" href="/foodie/{{owner.username}}?q=timeline/pending" class="sort-history">Pending</a></li>
             <li><a href="/foodie/{{owner.username}}?q=timeline/accepted" class="sort-history">Accepted</a></li>
             <li class="divider"></li>
             <li><a href="/foodie/{{owner.username}}?q=timeline/completed" class="sort-history">Completed</a></li>
@@ -68,8 +68,8 @@
   <div id="history-view">
 
 
-    <!-- timeline start-->
-    <div id="timeline" class="col s9 card" style="height: 85vh; overflow-y: scroll;">
+    <!-- timeline/all start-->
+    <div id="timeline-all" class="col s9 card" style="height: 85vh; overflow-y: scroll;">
       <h4 class= "history-title">History</h4>
       {% if result|length == 0 %}
       <li class="collection-header">
@@ -81,7 +81,7 @@
       {% else %}
       <!-- cd-timeline start -->
       <div id="cd-timeline">
-        {% for request in result %}
+        {% for request in allTimeline_reqs %}
         <div class="cd-timeline-block"> <!-- cd-timeline-block start -->
           <div class="row">
             <div class="cd-timeline-img cd-picture">
@@ -141,7 +141,229 @@
       {% endif %}
       <!-- cd-timeline -->
     </div>
-    <!-- timeline div in -->
+    <!-- timeline/all end -->
+    <!-- timeline/pending start-->
+    <div id="timeline-pending" class="col s9 card" style="display: none; height: 85vh; overflow-y: scroll;">
+      <h4 class= "history-title">History</h4>
+      {% if result|length == 0 %}
+      <li class="collection-header">
+        <center>
+          <h5>No Requests</h5>
+          <p>Find someone now!</p>
+        </center>
+      </li>
+      {% else %}
+      <!-- cd-timeline start -->
+      <div id="cd-timeline">
+        {% for request in pending_reqs %}
+        <div class="cd-timeline-block"> <!-- cd-timeline-block start -->
+          <div class="row">
+            <div class="cd-timeline-img cd-picture">
+            <img src="../images/cd-icon-picture.svg" alt="Picture">
+            </div> <!-- cd-timeline-img -->
+            {% if forloop.counter|divisibleby:2 %}
+            <div class="col s7" style="visibility: hidden;">placeholder</div>
+            {% endif %}
+            <div class="cd-timeline-content col s5">
+              <div class="col s12 food-type-display"><img id="food-type-img-{{request.0.key.urlsafe}}" class="food-type-img"></div>
+              <script type="text/javascript">
+                FoodTypeDisplays.displayImg({"imgId":"food-type-img-{{request.0.key.urlsafe}}"}, '{{request.0.food_type}}' );
+              </script>
+              <div class="card-content">
+                <div class="row"><!-- 
+                  {% if request.0.sender == profile.owner %}
+                  <div class="col s3"><a href="/foodie/{{request.0.recipient_name}}"><img src="/img?user_id={{request.0.recipient.urlsafe}}&height=50&width=50"></a></div>
+                  {% else %}
+                  <div class="col s3"><a href="/foodie/{{request.0.sender_name}}"><img src="/img?user_id={{request.0.sender.urlsafe}}&height=50&width=50"></a></div>
+                  {% endif %} -->
+                  <div class="col s9">
+                    {% if request.0.sender == profile.owner %}
+                    <span><b>Expert:</b> {{request.0.recipient_name}} </span><br />
+                    {% else %}
+                    <span><b>Requester:</b> {{request.0.sender_name}}</span><br />
+                    {% endif %}
+                    <span><b>For:</b> {{request.0.start_time.date}} @ {{request.0.start_time.time}}</span><br />
+                    <span><b>Type:</b> {{request.0.food_type}}</span><br />
+                    <span><b>Interest:</b> {{request.0.interest}}</span><br />
+                    <span><b>Status:</b> {{request.0.status}}</span><br />
+                  </div>
+                </div>
+
+                {% if request.0.recipient == profile.owner or request.0.sender == profile.owner %}
+                {% if request.1 != "None" %}
+                <span><b>Comments</b></span>
+                <div class="card-action">
+                  {% for c in request.1 %}
+                  <span><b>{{c.sender_name}}:</b> "{{c.text}}"</span><br/>
+                  {% endfor %}
+                </div>
+                {% endif %}
+                {% if request.1 == "None" or request.1.0.sender_name != user.username %}
+                <div class="card-action">
+                  <span><a class="modal-trigger grey white-text waves-effect waves-light btn" id="comment_button" style="width: 100%;" href="#comment" {% if request.0.recipient_name == user.username %} onclick="getRequest('{{request.0.key.urlsafe}}', '{{request.0.sender_name}}')" {% else %} onclick="getRequest('{{request.0.key.urlsafe}}', '{{request.0.recipient_name}}')" {% endif %}>Share Your Experience</a>
+                  </span>
+                </div>                  
+                {% endif %}
+                {% endif %}
+              </div>
+            </div> <!-- cd-timeline-block end -->
+          </div>
+        </div> 
+        <!-- cd-timeline-block end -->
+        {% endfor %}
+      </div> 
+      {% endif %}
+      <!-- cd-timeline -->
+    </div>
+    <!-- timeline/pending end -->
+    <!-- timeline/accepted start-->
+    <div id="timeline-accepted" class="col s9 card" style="display: none; height: 85vh; overflow-y: scroll;">
+      <h4 class= "history-title">History</h4>
+      {% if result|length == 0 %}
+      <li class="collection-header">
+        <center>
+          <h5>No Requests</h5>
+          <p>Find someone now!</p>
+        </center>
+      </li>
+      {% else %}
+      <!-- cd-timeline start -->
+      <div id="cd-timeline">
+        {% for request in accepted_reqs %}
+        <div class="cd-timeline-block"> <!-- cd-timeline-block start -->
+          <div class="row">
+            <div class="cd-timeline-img cd-picture">
+            <img src="../images/cd-icon-picture.svg" alt="Picture">
+            </div> <!-- cd-timeline-img -->
+            {% if forloop.counter|divisibleby:2 %}
+            <div class="col s7" style="visibility: hidden;">placeholder</div>
+            {% endif %}
+            <div class="cd-timeline-content col s5">
+              <div class="col s12 food-type-display"><img id="food-type-img-{{request.0.key.urlsafe}}" class="food-type-img"></div>
+              <script type="text/javascript">
+                FoodTypeDisplays.displayImg({"imgId":"food-type-img-{{request.0.key.urlsafe}}"}, '{{request.0.food_type}}' );
+              </script>
+              <div class="card-content">
+                <div class="row"><!-- 
+                  {% if request.0.sender == profile.owner %}
+                  <div class="col s3"><a href="/foodie/{{request.0.recipient_name}}"><img src="/img?user_id={{request.0.recipient.urlsafe}}&height=50&width=50"></a></div>
+                  {% else %}
+                  <div class="col s3"><a href="/foodie/{{request.0.sender_name}}"><img src="/img?user_id={{request.0.sender.urlsafe}}&height=50&width=50"></a></div>
+                  {% endif %} -->
+                  <div class="col s9">
+                    {% if request.0.sender == profile.owner %}
+                    <span><b>Expert:</b> {{request.0.recipient_name}} </span><br />
+                    {% else %}
+                    <span><b>Requester:</b> {{request.0.sender_name}}</span><br />
+                    {% endif %}
+                    <span><b>For:</b> {{request.0.start_time.date}} @ {{request.0.start_time.time}}</span><br />
+                    <span><b>Type:</b> {{request.0.food_type}}</span><br />
+                    <span><b>Interest:</b> {{request.0.interest}}</span><br />
+                    <span><b>Status:</b> {{request.0.status}}</span><br />
+                  </div>
+                </div>
+
+                {% if request.0.recipient == profile.owner or request.0.sender == profile.owner %}
+                {% if request.1 != "None" %}
+                <span><b>Comments</b></span>
+                <div class="card-action">
+                  {% for c in request.1 %}
+                  <span><b>{{c.sender_name}}:</b> "{{c.text}}"</span><br/>
+                  {% endfor %}
+                </div>
+                {% endif %}
+                {% if request.1 == "None" or request.1.0.sender_name != user.username %}
+                <div class="card-action">
+                  <span><a class="modal-trigger grey white-text waves-effect waves-light btn" id="comment_button" style="width: 100%;" href="#comment" {% if request.0.recipient_name == user.username %} onclick="getRequest('{{request.0.key.urlsafe}}', '{{request.0.sender_name}}')" {% else %} onclick="getRequest('{{request.0.key.urlsafe}}', '{{request.0.recipient_name}}')" {% endif %}>Share Your Experience</a>
+                  </span>
+                </div>                  
+                {% endif %}
+                {% endif %}
+              </div>
+            </div> <!-- cd-timeline-block end -->
+          </div>
+        </div> 
+        <!-- cd-timeline-block end -->
+        {% endfor %}
+      </div> 
+      {% endif %}
+      <!-- cd-timeline -->
+    </div>
+    <!-- timeline/accepted end -->
+    <!-- timeline/completed start-->
+    <div id="timeline-completed" class="col s9 card" style="display: none; height: 85vh; overflow-y: scroll;">
+      <h4 class= "history-title">History</h4>
+      {% if result|length == 0 %}
+      <li class="collection-header">
+        <center>
+          <h5>No Requests</h5>
+          <p>Find someone now!</p>
+        </center>
+      </li>
+      {% else %}
+      <!-- cd-timeline start -->
+      <div id="cd-timeline">
+        {% for request in completed_reqs %}
+        <div class="cd-timeline-block"> <!-- cd-timeline-block start -->
+          <div class="row">
+            <div class="cd-timeline-img cd-picture">
+            <img src="../images/cd-icon-picture.svg" alt="Picture">
+            </div> <!-- cd-timeline-img -->
+            {% if forloop.counter|divisibleby:2 %}
+            <div class="col s7" style="visibility: hidden;">placeholder</div>
+            {% endif %}
+            <div class="cd-timeline-content col s5">
+              <div class="col s12 food-type-display"><img id="food-type-img-{{request.0.key.urlsafe}}" class="food-type-img"></div>
+              <script type="text/javascript">
+                FoodTypeDisplays.displayImg({"imgId":"food-type-img-{{request.0.key.urlsafe}}"}, '{{request.0.food_type}}' );
+              </script>
+              <div class="card-content">
+                <div class="row"><!-- 
+                  {% if request.0.sender == profile.owner %}
+                  <div class="col s3"><a href="/foodie/{{request.0.recipient_name}}"><img src="/img?user_id={{request.0.recipient.urlsafe}}&height=50&width=50"></a></div>
+                  {% else %}
+                  <div class="col s3"><a href="/foodie/{{request.0.sender_name}}"><img src="/img?user_id={{request.0.sender.urlsafe}}&height=50&width=50"></a></div>
+                  {% endif %} -->
+                  <div class="col s9">
+                    {% if request.0.sender == profile.owner %}
+                    <span><b>Expert:</b> {{request.0.recipient_name}} </span><br />
+                    {% else %}
+                    <span><b>Requester:</b> {{request.0.sender_name}}</span><br />
+                    {% endif %}
+                    <span><b>For:</b> {{request.0.start_time.date}} @ {{request.0.start_time.time}}</span><br />
+                    <span><b>Type:</b> {{request.0.food_type}}</span><br />
+                    <span><b>Interest:</b> {{request.0.interest}}</span><br />
+                    <span><b>Status:</b> {{request.0.status}}</span><br />
+                  </div>
+                </div>
+
+                {% if request.0.recipient == profile.owner or request.0.sender == profile.owner %}
+                {% if request.1 != "None" %}
+                <span><b>Comments</b></span>
+                <div class="card-action">
+                  {% for c in request.1 %}
+                  <span><b>{{c.sender_name}}:</b> "{{c.text}}"</span><br/>
+                  {% endfor %}
+                </div>
+                {% endif %}
+                {% if request.1 == "None" or request.1.0.sender_name != user.username %}
+                <div class="card-action">
+                  <span><a class="modal-trigger grey white-text waves-effect waves-light btn" id="comment_button" style="width: 100%;" href="#comment" {% if request.0.recipient_name == user.username %} onclick="getRequest('{{request.0.key.urlsafe}}', '{{request.0.sender_name}}')" {% else %} onclick="getRequest('{{request.0.key.urlsafe}}', '{{request.0.recipient_name}}')" {% endif %}>Share Your Experience</a>
+                  </span>
+                </div>                  
+                {% endif %}
+                {% endif %}
+              </div>
+            </div> <!-- cd-timeline-block end -->
+          </div>
+        </div> 
+        <!-- cd-timeline-block end -->
+        {% endfor %}
+      </div> 
+      {% endif %}
+      <!-- cd-timeline -->
+    </div>
+    <!-- timeline/completed end -->
 
 
 

@@ -13,7 +13,7 @@ $(document).ready(function() {
     $('#timeline-dropdown').hide();
     $('#table-dropdown').show();
     $('#table').show();
-    $('#timeline').hide();
+    $('#timeline-all').hide();
     $('#tableViewBtn').hide();
     $('#timelineViewBtn').show();
   } 
@@ -30,7 +30,16 @@ $(document).ready(function() {
   else if(tab == 'table/completed') {
     $('#timeline-dropdown').hide();
     $('#table-dropdown').show();
-    
+  }
+  else if(tab == 'timeline/pending') {
+    $('#timeline-all').hide();
+    $('#timeline-pending').show();
+  }
+  else if(tab == 'timeline/accepted') {
+
+  }
+  else if(tab == 'timeline/completed') {
+
   }
   
 
