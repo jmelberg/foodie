@@ -1,6 +1,5 @@
 var filled_location = false;
 var filled_time = false;
-
 $(document).ready(function(){
   // Variables
   var slider = document.getElementById('range-input');
