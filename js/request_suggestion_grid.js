@@ -79,7 +79,7 @@ var RequestSuggestionGrid = (function($,FM){
 	  return array;
 	}
 
-	function attachHoverEvent() {
+	function attachActionEvents() {
 		wrappers.hover(function(e){
 			$(this).children('.'+textSelector).fadeIn();
 			var itemEle = $(this).children('.'+itemSelector)[0];
@@ -108,7 +108,7 @@ var RequestSuggestionGrid = (function($,FM){
 		.on('click',function() {
 			var foodType = $(this).children('.'+textSelector).html();
 
-			$("#"+foodTypeInputId).val(foodType);
+			$("#"+foodTypeInputId).val(foodType).change();
 		});
 	}
 
@@ -119,7 +119,7 @@ var RequestSuggestionGrid = (function($,FM){
 			textSelector = classes.textSelector;
 			foodTypeInputId = classes.foodTypeInputId;
 
-			attachHoverEvent();
+			attachActionEvents();
 			displaySuggestionImages(suggestionList);
 		}
 

@@ -12,13 +12,14 @@ $(document).ready(function(){
   var status = false;
 
   $(function () {
+
     // Check for empty fields
     // Location
-    $('#location').keyup(function() {
+    $('#location').on("keypress change",function(e) {
       var location = $(this).val();
       if(location.length > 0){
         filled_location = true;
-      status = finalAgreement(filled_time, filled_food_type, filled_location, confirmed_aggreement);
+        status = finalAgreement(filled_time, filled_food_type, filled_location, confirmed_aggreement);
         /*submit_button.style.visibility = "visible";*/
       }
       else{
@@ -33,11 +34,11 @@ $(document).ready(function(){
       }
     });
 
-    $('#food_type').keyup(function() {
+    $('#food_type').on("keypress change",function(){
       var food_type = $(this).val();
       if(food_type.length > 0){
         filled_food_type = true;
-      status = finalAgreement(filled_time, filled_food_type, filled_location, confirmed_aggreement);
+        status = finalAgreement(filled_time, filled_food_type, filled_location, confirmed_aggreement);
         /*submit_button.style.visibility = "visible";*/
       }
       else{
@@ -50,9 +51,9 @@ $(document).ready(function(){
         }
         /*submit_button.style.visibility = "hidden";*/
       }
-    });
+    })
 
-    $('#time').keyup(function () {
+    $('#time').on("change keypress",function () {
       var date = $('#date');
       var time = $('#time');
       if($(this).val().length != 0) {
@@ -65,28 +66,6 @@ $(document).ready(function(){
     $('#agreement').click(function(){
       confirmed_aggreement = !confirmed_aggreement;
       status = finalAgreement(filled_time, filled_food_type, filled_location, confirmed_aggreement);
-    });
-
-    noUiSlider.create(slider, {
-      start: [20, 80],
-      connect: true,
-      step: 1,
-      range: {
-        'min': 0,
-        'max': 100
-      },
-      format: wNumb({
-        decimals: 0
-      })
-    });
-
-    slider.noUiSlider.on('update', function( values, handle ) {
-      var value = values[handle];
-      if ( handle ) {
-        max_price.value = value;
-      } else {
-        min_price.value = value;
-      }
     });
 
     $('#send_request').click(function() {
@@ -110,6 +89,28 @@ $(document).ready(function(){
         setTimeout(function(){ // Refresh after 1 second
         window.location.href = '/requests';
         }, 100);
+      }
+    });
+
+    noUiSlider.create(slider, {
+      start: [20, 80],
+      connect: true,
+      step: 1,
+      range: {
+        'min': 0,
+        'max': 100
+      },
+      format: wNumb({
+        decimals: 0
+      })
+    });
+
+    slider.noUiSlider.on('update', function( values, handle ) {
+      var value = values[handle];
+      if ( handle ) {
+        max_price.value = value;
+      } else {
+        min_price.value = value;
       }
     });
   });
