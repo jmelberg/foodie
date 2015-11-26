@@ -67,7 +67,7 @@ $(document).ready(function(){
       status = finalAgreement(filled_time, filled_food_type, filled_location, confirmed_aggreement);
     });
 
-    /*noUiSlider.create(slider, {
+    noUiSlider.create(slider, {
       start: [20, 80],
       connect: true,
       step: 1,
@@ -87,7 +87,7 @@ $(document).ready(function(){
       } else {
         min_price.value = value;
       }
-    });*/
+    });
 
     $('#send_request').click(function() {
       if ($('#agreement:checked').length>0 && status === true){
