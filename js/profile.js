@@ -1,13 +1,5 @@
 $(document).ready(function() {
   var tab = getUrlParameter('q');
-  var dir = window.location.pathname;
-  console.log(dir);
-
-  $.ajax({
-    type: "POST",
-    url: dir,
-    data: {'tab': tab}
-  });
 
   if(tab == 'table/all') {
     $('#timeline-dropdown').hide();
