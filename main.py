@@ -152,6 +152,7 @@ class ProfileHandler(SessionHandler):
         timeline_comments.append("None")
 
     timeline_requests = zip(timeline_requests, timeline_comments)
+    print timeline_requests
 
     accepted_requests = [x for x in timeline_requests if x[0].status == "accepted"]
     completed_reqs = [x for x in timeline_requests if x[0].status == "completed"]
