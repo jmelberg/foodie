@@ -44,6 +44,7 @@ class LoginHandler(SessionHandler):
       self.response.out.write(template.render('views/login.html', {'error': error}))
 
 class FeedHandler(SessionHandler):
+  @login_required
   def get(self):
     user = self.user_model
     get_notifications(user)
@@ -52,7 +53,7 @@ class FeedHandler(SessionHandler):
     all_requests = Request.query(Request.start_time >= current_date).order(Request.start_time)
     all_requests = [r for r in all_requests if r.sender != user.key]
     pending_requests = Request.query(Request.status == 'pending').order(Request.start_time)
-    pending_requests = [r for r in pending_requests if r.start_time < current_time]
+    pending_requests = [r for r in pending_requests if r.start_time < current_date]
 
     # Sort by food type
     type_sort = sorted(all_requests, key=lambda x:x.food_type)
@@ -180,6 +181,7 @@ class Image(SessionHandler):
 
 class CommentHandler(SessionHandler):
   ''' Leave a comment for another user '''
+  @login_required
   def post(self):
     user = self.user_model
     request_key = cgi.escape(self.request.get('request_comment'))
@@ -234,6 +236,7 @@ class SearchHandler(SessionHandler):
         Food Type
         Location given City, State
   '''
+  @login_required
   def get(self):
     user = self.user_model
     search = self.request.get('search').lower().strip()

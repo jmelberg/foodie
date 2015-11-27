@@ -194,6 +194,7 @@ class CreateRequestHandler(SessionHandler):
 
 class EditRequestHandler(SessionHandler):
   ''' Edit current request '''
+  @login_required
   def get(self, request_id):
     user = self.user_model
     request = ndb.Key(urlsafe=request_id).get()
@@ -238,6 +239,7 @@ class EditRequestHandler(SessionHandler):
     self.redirect('/requests')
 
 class ChooseRequestHandler(SessionHandler):
+  @login_required
   def get(self, request_id):
     user = self.user_model
     request = ndb.Key(urlsafe = request_id).get()
@@ -265,6 +267,7 @@ class ChooseRequestHandler(SessionHandler):
 
 class JoinRequestHandler(SessionHandler):
   ''' Processes current requests and removes from database '''
+  @login_required
   def get(self, request_id):
     user = self.user_model
     request = ndb.Key(urlsafe=request_id).get()
@@ -351,6 +354,7 @@ class JoinRequestHandler(SessionHandler):
 
 class DeleteRequestHandler(SessionHandler):
   ''' Removes request entirely '''
+  @login_required
   def post(self):
     user = self.user_model
     request_key = self.request.get('request')
@@ -364,6 +368,7 @@ class DeleteRequestHandler(SessionHandler):
       print "Not permitted to delete"
 
 class CancelRequestHandler(SessionHandler):
+  @login_required
   def post(self):
     user = self.user_model
     request_key = self.request.get('request')
