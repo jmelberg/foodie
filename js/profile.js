@@ -3,34 +3,34 @@ $(document).ready(function() {
 
   if(tab == 'table/all') {
     $('#table-all').show();
-    $('#tableViewBtn').hide();
     $('#timelineViewBtn').show();
+    $('#tableViewBtn').hide();
+    $('#tableDDBtn').show();
+    $('#timelineDDBtn').hide();
   } 
   else if(tab == 'table/pending') {
-    $('#timeline-dropdown').hide();
-    $('#table-dropdown').show();
-
+    $('#table-all').show();
+    $('#tableViewBtn').hide();
+    $('#timelineViewBtn').show();
   }
   else if(tab == 'table/accepted') {
-    $('#timeline-dropdown').hide();
-    $('#table-dropdown').show();
-
+    $('#table-all').show();
+    $('#tableViewBtn').hide();
+    $('#timelineViewBtn').show();
   }
   else if(tab == 'table/completed') {
-    $('#timeline-dropdown').hide();
-    $('#table-dropdown').show();
+    $('#table-all').show();
+    $('#tableViewBtn').hide();
+    $('#timelineViewBtn').show();
   }
   else if(tab == 'timeline/all') {
-    $('timeline-all').show();
-  }
-  else if(tab == 'timeline/pending') {
-    $('#timeline-pending').show();
+    $('#timeline-all').show();
   }
   else if(tab == 'timeline/accepted') {
-
+    $('#timeline-accepted').show();
   }
   else if(tab == 'timeline/completed') {
-
+    $('#timeline-completed').show();
   }
   
 

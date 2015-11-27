@@ -89,8 +89,8 @@ class ProfileHandler(SessionHandler):
     my_reqs = []
     table_reqs = []
     pending_reqs = []
-    accepted_reqs = []
-    completed_reqs = []
+    acceptedTimeline_reqs = []
+    completedTimeline_reqs = []
     alloted_time = current_date + datetime.timedelta(hours=2)
 
     # Get all requests where profile owner is foodie and expert
@@ -99,11 +99,13 @@ class ProfileHandler(SessionHandler):
     for r in dead_reqs:
       r.status = "dead"
 
-    allTimeline_reqs = dead_reqs + my_reqs
+    allTimeline_reqs = dead_reqs[:] + my_reqs[:]
     allTimeline_reqs = sorted(allTimeline_reqs, key=lambda x: x.start_time, reverse=True)
-    pending_reqs = [x for x in allTimeline_reqs if x.status == "pending"]
-    accepted_reqs = [x for x in allTimeline_reqs if x.status == "accepted"]
-    completed_reqs = [x for x in allTimeline_reqs if x.status == "completed"]
+    allTimeline_reqs = [x for x in allTimeline_reqs if x.status != "pending"]
+    acceptedTimeline_reqs = [x for x in allTimeline_reqs if x.status == "accepted"]
+    completedTimeline_reqs = [x for x in allTimeline_reqs if x.status == "completed"]
+    allTable_reqs = [x for x in allTimeline_reqs if x.status != "dead"]
+
 
     allTimeline_comments = []
     for r in allTimeline_reqs:
@@ -115,40 +117,30 @@ class ProfileHandler(SessionHandler):
 
     allTimeline_reqs = zip(allTimeline_reqs, allTimeline_comments)
 
-    pending_comments = []
-    for r in pending_reqs:
-      c = Endorsement.query(Endorsement.request == r.key).fetch()
-      if c:
-        pending_comments.append(c)
-      else:
-        pending_comments.append("None")
-
-    pending_reqs = zip(pending_reqs, pending_comments)
-
     accepted_comments = []
-    for r in accepted_reqs:
+    for r in acceptedTimeline_reqs:
       c = Endorsement.query(Endorsement.request == r.key).fetch()
       if c:
         accepted_comments.append(c)
       else:
         accepted_comments.append("None")
 
-    accepted_reqs = zip(accepted_reqs, accepted_comments)
+    acceptedTimeline_reqs = zip(acceptedTimeline_reqs, accepted_comments)
 
     completed_comments = []
-    for r in completed_reqs:
+    for r in completedTimeline_reqs:
       c = Endorsement.query(Endorsement.request == r.key).fetch()
       if c:
         completed_comments.append(c)
       else:
         completed_comments.append("None")
 
-    completed_reqs = zip(completed_reqs, completed_comments)
+    completedTimeline_reqs = zip(completedTimeline_reqs, completed_comments)
 
     self.response.out.write(template.render('views/profile.html',
                              {'owner':profile_owner, 'profile':profile, #'endorsements': comments,
                             'history': history, 'user': viewer, 'allTimeline_reqs': allTimeline_reqs, 'pending_reqs': pending_reqs,
-                            'accepted_reqs': accepted_reqs, 'completed_reqs': completed_reqs}))
+                            'acceptedTimeline_reqs': acceptedTimeline_reqs, 'completedTimeline_reqs': completedTimeline_reqs}))
 
 class Image(SessionHandler):
   """Serves the image associated with an avatar"""
@@ -175,7 +167,7 @@ class CommentHandler(SessionHandler):
     request = ndb.Key(urlsafe=request_key).get()
     rating = cgi.escape(self.request.get('rating'))
     comment = cgi.escape(self.request.get('comment'))
-    
+
     if comment != None:
       endorsement = Endorsement()
       endorsement.request = request.key
@@ -201,8 +193,8 @@ class CommentHandler(SessionHandler):
     recipient_user = User.query(User.username == recipient).get()
     recipient_key = recipient_user.key
 
-      
-    # modify rating 
+
+    # modify rating
     if rating == "positive":
       recipient_user.positive = recipient_user.positive + 1
     elif rating == "neutral":
@@ -217,7 +209,7 @@ class CommentHandler(SessionHandler):
 class SearchHandler(SessionHandler):
   ''' Search for users by the following criteria:
         Username
-        First Name 
+        First Name
         Last Name
         First & Last Name
         Food Type
@@ -227,11 +219,11 @@ class SearchHandler(SessionHandler):
     user = self.user_model
     search = self.request.get('search').lower().strip()
     print "Search Term: ", search
-    
+
     #Seach for people
     results = []
     profiles = []
-    
+
     # Search for requests
     available_requests = []
     available_users = []
@@ -239,7 +231,7 @@ class SearchHandler(SessionHandler):
     completed_requests = []
     completed_users = []
     current_time = datetime.datetime.now() - datetime.timedelta(hours=8)
-    
+
     # Check for type
     food_type_requests = Request.query(Request.food_type == search).fetch()
     food_type = [x for x in food_type_requests if x.start_time > current_time]
@@ -327,8 +319,8 @@ class AuthorizePaymentsHandler(SessionHandler):
     credit = cgi.escape(self.request.get("credit_card_id"))
     authorize = AuthorizeCreditCard(credit)
     user.credit_id = credit
-    user.put()    
-        
+    user.put()
+
 
 config = {}
 config['webapp2_extras.sessions'] = {

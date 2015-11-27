@@ -4,9 +4,8 @@ var filled_time = false;
 $(document).ready(function(){
   // Variables
   var slider = document.getElementById('range-input');
-  var min_price = document.getElementById('min_price');
-  var max_price = document.getElementById('max_price');
   var submit_button = $('#send_request');
+  var confirmed_price = false;
   var filled_food_type = false;
   var confirmed_aggreement = false;
   var status = false;
@@ -19,7 +18,7 @@ $(document).ready(function(){
       var location = $(this).val();
       if(location.length > 0){
         filled_location = true;
-        status = finalAgreement(filled_time, filled_food_type, filled_location, confirmed_aggreement);
+        status = finalAgreement(filled_time, filled_food_type, filled_location, confirmed_price, confirmed_aggreement);
         /*submit_button.style.visibility = "visible";*/
       }
       else{
@@ -38,7 +37,7 @@ $(document).ready(function(){
       var food_type = $(this).val();
       if(food_type.length > 0){
         filled_food_type = true;
-        status = finalAgreement(filled_time, filled_food_type, filled_location, confirmed_aggreement);
+        status = finalAgreement(filled_time, filled_food_type, filled_location, confirmed_price, confirmed_aggreement);
         /*submit_button.style.visibility = "visible";*/
       }
       else{
@@ -63,9 +62,29 @@ $(document).ready(function(){
       }
     });
 
+    $('#price').on("change keypress", function() {
+      var price = $(this).val();
+      if(price > 0 && price.length > 0){
+        confirmed_price = true;
+        status = finalAgreement(filled_time, filled_food_type, filled_location, confirmed_price, confirmed_aggreement);
+        /*submit_button.style.visibility = "visible";*/
+      }
+      else{
+        confirmed_price = false;
+        if(submit_button.attr('class') === 'btn-flat disabled' && price <= 0 && price.length != 0) {
+          submit_button.removeClass('disabled');
+        }
+        else {
+          submit_button.addClass('disabled');
+        }
+        /*submit_button.style.visibility = "hidden";*/
+      }
+      
+    });
+
     $('#agreement').click(function(){
       confirmed_aggreement = !confirmed_aggreement;
-      status = finalAgreement(filled_time, filled_food_type, filled_location, confirmed_aggreement);
+      status = finalAgreement(filled_time, filled_food_type, filled_location, confirmed_price, confirmed_aggreement);
     });
 
     $('#send_request').click(function() {
@@ -74,7 +93,7 @@ $(document).ready(function(){
         var date = $('#date').val();
         var time = $('#time').val();
         var location = $('#location').val();
-        var price = $("#price-input");
+        /*var price = $("#price-input");*/
         /*var m_price = $('#min_price').val();
         var mx_price = $('#max_price').val();*/
         var food_type = $('#food_type').val();
@@ -123,8 +142,8 @@ function checkLocation(location) {
   }
 }
 
-function finalAgreement(time, food_type, location, confirmed_aggreement) {
-  if(time === true && location === true && food_type === true && confirmed_aggreement === true) {
+function finalAgreement(time, food_type, location, confirmed_price, confirmed_aggreement) {
+  if(time === true && location === true && food_type === true && confirmed_price === true && confirmed_aggreement === true) {
     $('#send_request').removeClass('disabled');
     return true;
   }
