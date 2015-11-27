@@ -341,12 +341,15 @@
                   {% endfor %}
                 </div>
                 {% endif %}
-                {% if request.1 == "None" or request.1.0.sender_name != user.username %}
-                <div class="card-action">
-                  <span><a class="modal-trigger grey white-text waves-effect waves-light btn" id="comment_button" style="width: 100%;" href="#comment" {% if request.0.recipient_name == user.username %} onclick="getRequest('{{request.0.key.urlsafe}}', '{{request.0.sender_name}}')" {% else %} onclick="getRequest('{{request.0.key.urlsafe}}', '{{request.0.recipient_name}}')" {% endif %}>Share Your Experience</a>
-                  </span>
-                </div>                  
-                {% endif %}
+                {% if request.1 == "None" or request.1.sender_name != user.username %}
+                 {% if request.1|length < 2 %}
+                    <div class="card-action">
+                      <span><a class="modal-trigger grey white-text waves-effect waves-light btn" id="comment_button" style="width: 100%;" href="#comment" {% if request.0.recipient_name == user.username %} onclick="getRequest('{{request.0.key.urlsafe}}', '{{request.0.sender_name}}')" {% else %} onclick="getRequest('{{request.0.key.urlsafe}}', '{{request.0.recipient_name}}')" {% endif %}>Share Your Experience</a>
+                      </span>
+                    </div>
+                  {% endif %}
+                {% endif %}  
+
                 {% endif %}
               </div>
             </div> <!-- cd-timeline-block end -->
@@ -519,7 +522,6 @@
     document.getElementById('request_comment').value= r;
     document.getElementById('reviewee').innerHTML = name;
     document.getElementById('recipient_name').value = name;
-
   };
 </script>
 
