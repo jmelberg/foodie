@@ -2,10 +2,7 @@ $(document).ready(function() {
   var tab = getUrlParameter('q');
 
   if(tab == 'table/all') {
-    $('#timeline-dropdown').hide();
-    $('#table-dropdown').show();
-    $('#table').show();
-    $('#timeline-all').hide();
+    $('#table-all').show();
     $('#tableViewBtn').hide();
     $('#timelineViewBtn').show();
   } 
@@ -23,8 +20,10 @@ $(document).ready(function() {
     $('#timeline-dropdown').hide();
     $('#table-dropdown').show();
   }
+  else if(tab == 'timeline/all') {
+    $('timeline-all').show();
+  }
   else if(tab == 'timeline/pending') {
-    $('#timeline-all').hide();
     $('#timeline-pending').show();
   }
   else if(tab == 'timeline/accepted') {

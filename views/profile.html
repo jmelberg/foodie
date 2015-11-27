@@ -60,16 +60,80 @@
           </ul>
         </li>
         <li>
-          
+
         </li>
       </ul>
     </div>
   </div>
   <div id="history-view">
 
+    <!-- table/all start -->
+    <div id="table-all" class="col s9" style="display:none; height: 85vh; overflow-y: scroll;"> 
+      <div class="row">
+        <ul class="collection with-header col s12 m12">
+          <br />
+          {% for request in allTimeline_reqs %}
+          <li class="collection-item avatar">
+            <img src ="/img?user_id={{request.0.sender.urlsafe}}" class="circle">
+            <span class="title"><b>Requestor:</b><a href="/foodie/{{request.sender_name}}"> {{request.0.sender_name}}</a></span>
+            <p>
+              <b>Type:</b> {{request.0.food_type}}</p>
+              <b>Location:</b> {{request.0.location}} <br />
+              <b>For:</b> {{request.0.start_time.date}} <b> @ </b> {{request.0.start_time.time}}</p>
+              {% if request.0.recipient_name|length > 0 %}
+              <p> <b>Attendees:</b> 
+                <a href="/foodie/{{request.0.recipient_name}}">{{request.0.recipient_name}}</a>  
+              </p>
+              {% endif %}
+              <b>Interest:</b> {{request.0.interest}}</p>
+              <b>Bidders:</b> {{request.0.bidders|length}}</p>
+              <b>Status:</b> {{request.0.status}}
+              {% if request.0.status != "accepted" %}
+              <div class="secondary-content">
+                <table>
+                  <tr>
+                    <button id="delete{{forloop.counter}}" style="border:none; background:none; color:red" value={{request.key.urlsafe}}><i class="material-icons">clear</i>Delete</button>
+                  </tr>
+                  <tr>
+                    <td>
+                      <a href="/editrequest/{{request.key.urlsafe}}" style="border:none; background:none;" ><i class="material-icons" =>mode_edit</i> Edit</a>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <a href="/choose/{{request.key.urlsafe}}" style="border:none; background:none; color:green "><i class="material-icons">chat_bubble</i> Choose</a>
+                    </td>
+                  </tr>
+                  <tr></tr>
+                </table>
+              </div>
+              {% else %}
+              <div class="secondary-content">
+                <button id="delete{{forloop.counter}}" style="border:none; background:none; color:red" value={{request.key.urlsafe}}><i class="material-icons">clear</i>Delete</button>
+              </div>
+              {% endif %}
+            </li>
+            {% empty %}
+            <li class="collection-header">
+             <center>
+              <h5>No Requests</h5>
+              <p>Find someone now!</p>
+            </center>
+          </li>
+          {% endfor %}
+        </ul>
+      </div>
+    </div>
+    <!-- table/all end -->
+    <!-- table/pending start -->
+    <!-- table/pending end -->
+    <!-- table/accepted start -->
+    <!-- table/accepted end -->
+    <!-- table/complated start -->
+    <!-- table/completed end -->
 
     <!-- timeline/all start-->
-    <div id="timeline-all" class="col s9 card" style="height: 85vh; overflow-y: scroll;">
+    <div id="timeline-all" class="col s9 card" style="display:none; height: 85vh; overflow-y: scroll;">
       <h4 class= "history-title">History</h4>
       {% if result|length == 0 %}
       <li class="collection-header">
@@ -85,15 +149,15 @@
         <div class="cd-timeline-block"> <!-- cd-timeline-block start -->
           <div class="row">
             <div class="cd-timeline-img cd-picture">
-            <img src="../images/cd-icon-picture.svg" alt="Picture">
+              <img src="../images/cd-icon-picture.svg" alt="Picture">
             </div> <!-- cd-timeline-img -->
             {% if forloop.counter|divisibleby:2 %}
             <div class="col s7" style="visibility: hidden;">placeholder</div>
             {% endif %}
             <div class="cd-timeline-content col s5">
-              <div class="col s12 food-type-display"><img id="food-type-img-{{request.0.key.urlsafe}}" class="food-type-img"></div>
+              <div class="col s12 food-type-display"><img id="1-food-type-img-{{request.0.key.urlsafe}}" class="food-type-img"></div>
               <script type="text/javascript">
-                FoodTypeDisplays.displayImg({"imgId":"food-type-img-{{request.0.key.urlsafe}}"}, '{{request.0.food_type}}' );
+                FoodTypeDisplays.displayImg({"imgId":"1-food-type-img-{{request.0.key.urlsafe}}"}, '{{request.0.food_type}}' );
               </script>
               <div class="card-content">
                 <div class="row"><!-- 
@@ -159,7 +223,7 @@
         <div class="cd-timeline-block"> <!-- cd-timeline-block start -->
           <div class="row">
             <div class="cd-timeline-img cd-picture">
-            <img src="../images/cd-icon-picture.svg" alt="Picture">
+              <img src="../images/cd-icon-picture.svg" alt="Picture">
             </div> <!-- cd-timeline-img -->
             {% if forloop.counter|divisibleby:2 %}
             <div class="col s7" style="visibility: hidden;">placeholder</div>
@@ -233,7 +297,7 @@
         <div class="cd-timeline-block"> <!-- cd-timeline-block start -->
           <div class="row">
             <div class="cd-timeline-img cd-picture">
-            <img src="../images/cd-icon-picture.svg" alt="Picture">
+              <img src="../images/cd-icon-picture.svg" alt="Picture">
             </div> <!-- cd-timeline-img -->
             {% if forloop.counter|divisibleby:2 %}
             <div class="col s7" style="visibility: hidden;">placeholder</div>
@@ -307,7 +371,7 @@
         <div class="cd-timeline-block"> <!-- cd-timeline-block start -->
           <div class="row">
             <div class="cd-timeline-img cd-picture">
-            <img src="../images/cd-icon-picture.svg" alt="Picture">
+              <img src="../images/cd-icon-picture.svg" alt="Picture">
             </div> <!-- cd-timeline-img -->
             {% if forloop.counter|divisibleby:2 %}
             <div class="col s7" style="visibility: hidden;">placeholder</div>
@@ -369,19 +433,6 @@
 
   </div>
 </div>
-
-<!-- table start -->
-<!-- <div id="table" style="display:none;">
-
-  <h4 class="history-title">History</h4>
-  
-  <div id="cd-timeline">
-
-
-
-  </div>
-</div> -->
-<!-- table end -->
 
 <script>
   function getRequest(request, name) {

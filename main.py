@@ -94,11 +94,16 @@ class ProfileHandler(SessionHandler):
     alloted_time = current_date + datetime.timedelta(hours=2)
 
     # Get all requests where profile owner is foodie and expert
-    my_reqs = Request.query(ndb.OR(Request.sender==profile_owner.key, Request.recipient == profile_owner.key)).order(Request.start_time).fetch()
-    allTimeline_reqs = my_reqs
-    pending_reqs = [x for x in my_reqs if x.status == "pending"]
-    accepted_reqs = [x for x in my_reqs if x.status == "accepted"]
-    completed_reqs = [x for x in my_reqs if x.status == "completed"]
+    my_reqs = Request.query(ndb.OR(Request.sender==profile_owner.key, Request.recipient == profile_owner.key), Request.start_time >= alloted_time).order(Request.start_time).fetch()
+    dead_reqs = Request.query(ndb.OR(Request.sender==profile_owner.key, Request.recipient == profile_owner.key), Request.start_time <= alloted_time).order(Request.start_time).fetch()
+    for r in dead_reqs:
+      r.status = "dead"
+
+    allTimeline_reqs = dead_reqs + my_reqs
+    allTimeline_reqs = sorted(allTimeline_reqs, key=lambda x: x.start_time, reverse=True)
+    pending_reqs = [x for x in allTimeline_reqs if x.status == "pending"]
+    accepted_reqs = [x for x in allTimeline_reqs if x.status == "accepted"]
+    completed_reqs = [x for x in allTimeline_reqs if x.status == "completed"]
 
     allTimeline_comments = []
     for r in allTimeline_reqs:
