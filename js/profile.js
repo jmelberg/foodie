@@ -2,36 +2,35 @@ $(document).ready(function() {
   var tab = getUrlParameter('q');
 
   if(tab == 'table/all') {
-    $('#timeline-dropdown').hide();
-    $('#table-dropdown').show();
-    $('#table').show();
-    $('#timeline-all').hide();
-    $('#tableViewBtn').hide();
+    $('#table-all').show();
     $('#timelineViewBtn').show();
+    $('#tableViewBtn').hide();
+    $('#tableDDBtn').show();
+    $('#timelineDDBtn').hide();
   } 
   else if(tab == 'table/pending') {
-    $('#timeline-dropdown').hide();
-    $('#table-dropdown').show();
-
+    $('#table-all').show();
+    $('#tableViewBtn').hide();
+    $('#timelineViewBtn').show();
   }
   else if(tab == 'table/accepted') {
-    $('#timeline-dropdown').hide();
-    $('#table-dropdown').show();
-
+    $('#table-all').show();
+    $('#tableViewBtn').hide();
+    $('#timelineViewBtn').show();
   }
   else if(tab == 'table/completed') {
-    $('#timeline-dropdown').hide();
-    $('#table-dropdown').show();
+    $('#table-all').show();
+    $('#tableViewBtn').hide();
+    $('#timelineViewBtn').show();
   }
-  else if(tab == 'timeline/pending') {
-    $('#timeline-all').hide();
-    $('#timeline-pending').show();
+  else if(tab == 'timeline/all') {
+    $('#timeline-all').show();
   }
   else if(tab == 'timeline/accepted') {
-
+    $('#timeline-accepted').show();
   }
   else if(tab == 'timeline/completed') {
-
+    $('#timeline-completed').show();
   }
   
 
