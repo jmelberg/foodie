@@ -41,12 +41,14 @@ $(document).ready(function(){
           } else {
               // call your own app's API to save the token inside the data;
               // show a success page
-              alert(JSON.stringify(data.credit_card_id));
               $.ajax({
                 type: "POST",
                 url: '/authorizepayment',
-                  data: {'credit_card_id': JSON.stringify(data.credit_card_id)}
+                data: {'credit_card_id': JSON.stringify(data.credit_card_id)},
               });
+              setTimeout(function(){ // Refresh after 1 second
+                window.location.href = '/feed';
+              }, 100);
           }
       });
   });

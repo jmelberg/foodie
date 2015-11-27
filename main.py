@@ -50,19 +50,37 @@ class FeedHandler(SessionHandler):
     current_date = datetime.datetime.now() - datetime.timedelta(hours=8)
     
     all_requests = Request.query(Request.start_time >= current_date).order(Request.start_time)
+    all_requests = [r for r in all_requests if r.sender != user.key]
     pending_requests = Request.query(Request.status == 'pending').order(Request.start_time)
     pending_requests = [r for r in pending_requests if r.start_time < current_time]
 
+    # Sort by food type
     type_sort = sorted(all_requests, key=lambda x:x.food_type)
+    types = {}
+
+    for r in type_sort:
+      # Get all types
+      if r.food_type not in types:
+        types[r.food_type] = []
+
+    for r in type_sort:
+      for t in types:
+        print "Type: " + t
+        if r.food_type == t:
+          types[t].append(r)
+          type_sort.remove(r)
+          print "Appended: " + r.sender_name + " requesting " + r.food_type +" to list"
+
     
     # Get only requests not posted by user
     all_requests = [r for r in all_requests if r.sender != user.key]
     
-    print all_requests
-
+    print "*****"
+    print types
+    print "****"
 
     self.response.out.write(template.render('views/feed.html', {'user': user,
-      'pending_requests': pending_requests, 'all_requests': all_requests, 'food_type':type_sort}))
+      'pending_requests': pending_requests, 'all_requests': all_requests, 'food_type':types}))
 
 class ProfileHandler(SessionHandler):
   """handler to display a profile page"""
