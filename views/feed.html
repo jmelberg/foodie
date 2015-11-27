@@ -79,20 +79,20 @@
         </div>
   </div>
 
-  <div class="feed_divider">  <p class="category">Food Type</p></div>
-
+  {% for food, requests in food_type.items %}
+  <div class="feed_divider"> <p class="category">{{food|capfirst}}</p></div>
   <div class="row">
-        <div id="slider2" class="owl-carousel">
-          {% for food in food_type %}
-          <div id="{{food.food_type}}" onload="getImage({{food.}},{{food.food_type}})">
-            <label for="{{food.food_type}}">{{food.food_type}}</label>
-            <a href="#{{food.key.urlsafe}}">
-              {{food.food_type}}
-            </a>
-          </div>
-          {% endfor %}
-        </div>
+    <div id="slider{{forloop.counter|add:1}}" class="owl-carousel">
+      {% for r in requests %}
+      <div id="{{r.food_type}}" onload="getImage({{food}},{{r.food_type}})">
+        <a href="/confirm/{{r.key.urlsafe}}">
+          {{r.sender_name}} requests {{r.food_type}} in {{r.location}}
+        </a>
+      </div>
+      {% endfor %}
+    </div>
   </div>
+  {% endfor %}
   {% endif %}
 
 {% endblock %}
