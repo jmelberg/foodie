@@ -85,62 +85,63 @@ class ProfileHandler(SessionHandler):
 
     # Get Request regarding the user
     reqs = []
-    allTimeline_reqs = []
+    timeline_requests = []
     my_reqs = []
     table_reqs = []
-    pending_reqs = []
-    acceptedTimeline_reqs = []
-    completedTimeline_reqs = []
+    pending_requests = []
+    accepted_requests = []
+    completed_reqs = []
     alloted_time = current_date + datetime.timedelta(hours=2)
 
     # Get all requests where profile owner is foodie and expert
+    available_requests = Request.query(Request.start_time >= alloted_time).order(Request.start_time)
     my_reqs = Request.query(ndb.OR(Request.sender==profile_owner.key, Request.recipient == profile_owner.key), Request.start_time >= alloted_time).order(Request.start_time).fetch()
     dead_reqs = Request.query(ndb.OR(Request.sender==profile_owner.key, Request.recipient == profile_owner.key), Request.start_time <= alloted_time).order(Request.start_time).fetch()
     for r in dead_reqs:
-      r.status = "dead"
+      if(r.status != "completed"):
+        r.status = "accepted"
 
-    allTimeline_reqs = dead_reqs[:] + my_reqs[:]
-    allTimeline_reqs = sorted(allTimeline_reqs, key=lambda x: x.start_time, reverse=True)
-    allTimeline_reqs = [x for x in allTimeline_reqs if x.status != "pending"]
-    acceptedTimeline_reqs = [x for x in allTimeline_reqs if x.status == "accepted"]
-    completedTimeline_reqs = [x for x in allTimeline_reqs if x.status == "completed"]
-    allTable_reqs = [x for x in allTimeline_reqs if x.status != "dead"]
+    # Get all pending request that user has bid on
+    for request in available_requests:
+      # Get all requests you didn't send
+      if request.sender != profile_owner.key:
+        # Request not accepted yet
+        if request.recipient == None:
+          # Check for bidders
+          for bid in request.bidders:
+            bid = bid.get()
+            if bid.name == profile_owner.username:
+              # Bid by user
+              pending_requests.append(request)
+
+    table_requests = dead_reqs[:] + my_reqs[:]
+    table_requests = sorted(table_requests, key=lambda x: x.start_time, reverse=True)
+    pending_requests = pending_requests + table_requests
+    pending_requests = [x for x in pending_requests if x.status == "pending"]
+    pending_requests = sorted(pending_requests, key = lambda x: x.start_time, reverse=True)
+    timeline_requests = table_requests
+    timeline_requests = [x for x in timeline_requests if x.status != "waiting for a bid"]
+    timeline_requests = [x for x in timeline_requests if x.status != "pending"]
+    timeline_requests = [x for x in timeline_requests if x.status != "dead"]
 
 
-    allTimeline_comments = []
-    for r in allTimeline_reqs:
+    timeline_comments = []
+    for r in timeline_requests:
       c = Endorsement.query(Endorsement.request == r.key).fetch()
       if c:
-        allTimeline_comments.append(c)
+        timeline_comments.append(c)
       else:
-        allTimeline_comments.append("None")
+        timeline_comments.append("None")
 
-    allTimeline_reqs = zip(allTimeline_reqs, allTimeline_comments)
+    timeline_requests = zip(timeline_requests, timeline_comments)
 
-    accepted_comments = []
-    for r in acceptedTimeline_reqs:
-      c = Endorsement.query(Endorsement.request == r.key).fetch()
-      if c:
-        accepted_comments.append(c)
-      else:
-        accepted_comments.append("None")
-
-    acceptedTimeline_reqs = zip(acceptedTimeline_reqs, accepted_comments)
-
-    completed_comments = []
-    for r in completedTimeline_reqs:
-      c = Endorsement.query(Endorsement.request == r.key).fetch()
-      if c:
-        completed_comments.append(c)
-      else:
-        completed_comments.append("None")
-
-    completedTimeline_reqs = zip(completedTimeline_reqs, completed_comments)
+    accepted_requests = [x for x in timeline_requests if x[0].status == "accepted"]
+    completed_reqs = [x for x in timeline_requests if x[0].status == "completed"]
 
     self.response.out.write(template.render('views/profile.html',
                              {'owner':profile_owner, 'profile':profile, #'endorsements': comments,
-                            'history': history, 'user': viewer, 'allTimeline_reqs': allTimeline_reqs, 'pending_reqs': pending_reqs,
-                            'acceptedTimeline_reqs': acceptedTimeline_reqs, 'completedTimeline_reqs': completedTimeline_reqs}))
+                            'history': history, 'user': viewer, 'timeline_requests': timeline_requests, 'pending_requests': pending_requests,
+                            'accepted_requests': accepted_requests, 'completed_reqs': completed_reqs, 'table_requests': table_requests}))
 
 class Image(SessionHandler):
   """Serves the image associated with an avatar"""

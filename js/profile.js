@@ -9,19 +9,25 @@ $(document).ready(function() {
     $('#timelineDDBtn').hide();
   } 
   else if(tab == 'table/pending') {
-    $('#table-all').show();
-    $('#tableViewBtn').hide();
+    $('#table-pending').show();
     $('#timelineViewBtn').show();
+    $('#tableViewBtn').hide();
+    $('#tableDDBtn').show();
+    $('#timelineDDBtn').hide();
   }
   else if(tab == 'table/accepted') {
-    $('#table-all').show();
-    $('#tableViewBtn').hide();
+    $('#table-accepted').show();
     $('#timelineViewBtn').show();
+    $('#tableViewBtn').hide();
+    $('#tableDDBtn').show();
+    $('#timelineDDBtn').hide();
   }
   else if(tab == 'table/completed') {
-    $('#table-all').show();
-    $('#tableViewBtn').hide();
+    $('#table-completed').show();
     $('#timelineViewBtn').show();
+    $('#tableViewBtn').hide();
+    $('#tableDDBtn').show();
+    $('#timelineDDBtn').hide();
   }
   else if(tab == 'timeline/all') {
     $('#timeline-all').show();
