@@ -45,10 +45,12 @@ $(document).ready(function(){
                 type: "POST",
                 url: '/authorizepayment',
                 data: {'credit_card_id': JSON.stringify(data.credit_card_id)},
+                success: function(){
+                  setTimeout(function(){
+                    window.location.href = '/feed';
+                  }, 200);
+                }
               });
-              setTimeout(function(){ // Refresh after 1 second
-                window.location.href = '/feed';
-              }, 100);
           }
       });
   });
