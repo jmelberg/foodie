@@ -83,7 +83,7 @@
 
   <div class="row">
         <div id="slider2" class="owl-carousel">
-          {% for food in foodtype|dictsort:"food_type" %}
+          {% for food in food_type %}
           <div id="{{food.food_type}}" onload="getImage({{food.}},{{food.food_type}})">
             <label for="{{food.food_type}}">{{food.food_type}}</label>
             <a href="#{{food.key.urlsafe}}">

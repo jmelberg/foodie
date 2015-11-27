@@ -48,12 +48,12 @@ class FeedHandler(SessionHandler):
     user = self.user_model
     get_notifications(user)
     current_date = datetime.datetime.now() - datetime.timedelta(hours=8)
-    # Return only those two hours or more in future
-    alloted_time = current_date + datetime.timedelta(hours=2)
     
-    all_requests = Request.query(Request.start_time >= alloted_time).order(Request.start_time)
+    all_requests = Request.query(Request.start_time >= current_date).order(Request.start_time)
     pending_requests = Request.query(Request.status == 'pending').order(Request.start_time)
     pending_requests = [r for r in pending_requests if r.start_time < current_time]
+
+    type_sort = sorted(all_requests, key=lambda x:x.food_type)
     
     # Get only requests not posted by user
     all_requests = [r for r in all_requests if r.sender != user.key]
@@ -61,8 +61,8 @@ class FeedHandler(SessionHandler):
     print all_requests
 
 
-    self.response.out.write(template.render('views/feed.html', {'user': self.user_model,
-      'pending_requests': pending_requests, 'all_requests': all_requests}))
+    self.response.out.write(template.render('views/feed.html', {'user': user,
+      'pending_requests': pending_requests, 'all_requests': all_requests, 'food_type':type_sort}))
 
 class ProfileHandler(SessionHandler):
   """handler to display a profile page"""
