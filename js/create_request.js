@@ -108,11 +108,13 @@ $(document).ready(function(){
           type: "POST",
           url: '/request',
           data: {'date':date, 'time':time, 'location':location, 'price': price,
-          'food_type': food_type, 'interest': interest}
+          'food_type': food_type, 'interest': interest},
+          success: function(){
+            setTimeout(function(){ // Refresh after 1 second
+            window.location.href = '/requests';
+            }, 100);
+          }
         });
-        setTimeout(function(){ // Refresh after 1 second
-        window.location.href = '/requests';
-        }, 100);
       }
     });
 

@@ -33,9 +33,9 @@ $(document).ready(function(){
     }
   });
 
-  var slider = document.getElementById('edit_slider');
-  var price = $('#edit_price').val();
-  var interest = $('#edit_interest').val();
+  // var slider = document.getElementById('edit_slider');
+  // var price = $('#edit_price').val();
+  // var interest = $('#edit_interest').val();
 
   // Create slider
   // var slider = document.getElementById('edit_slider');
