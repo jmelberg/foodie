@@ -6,6 +6,7 @@
 <script type="text/javascript" src="../js/profile.js"></script>
 <div class= "row" >
   <div class= "col s12 m12 l3 profile-left" style= "padding: 0 0;">
+    <div id='username' value='{{owner.username}}'></div>
     <div class = "row user-block">
       <div class= "profile-img" style= "background: url('/img?user_id={{owner.key.urlsafe}}'); background-size: cover;"></div>
       <div class="profile-name">{{owner.first_name}}&nbsp;{{owner.last_name}}</div>
@@ -90,7 +91,8 @@
               <b>Bidders:</b> {{request.bidders|length}}</p>
               <b>Status:</b> {{request.status}}
               {% if profile.owner == user.key %}
-              {% if request.status != "accepted" and request.status != "dead" %}
+              {% if request.status == "pending" %}
+              {% if request.sender == user.key %}
               <div class="secondary-content">
                 <table>
                   <tr>
@@ -111,8 +113,18 @@
               </div>
               {% else %}
               <div class="secondary-content">
-                <button id="delete{{forloop.counter}}" style="border:none; background:none; color:red" value={{request.key.urlsafe}}><i class="material-icons">clear</i>Delete</button>
+                <button id="pending_cancel{{forloop.counter}}" style="border:none; background:none;" value={{request.key.urlsafe}}><i class="material-icons" style="color:red;">cancel</i></button>
+
+                {% include "cancel_request_modal.html" %}
+
               </div>
+              {% endif %}
+              {% endif %}
+              {% if request.status == "accepted" %}
+              <div class="secondary-content">
+                <button id="accepted_cancel{{forloop.counter}}" style="border:none; background:none;" value={{request.0.key.urlsafe}}><i class="material-icons" style="color:red;">cancel</i></button>
+              </div>
+              {% include "cancel_request_modal.html" %}
               {% endif %}
               {% endif %}
             </li>
@@ -129,182 +141,198 @@
     </div>
     <!-- table/all end -->
     <!-- table/pending start -->
-    <div id="table-pending" class="col s9" style="display:none; height: 85vh; overflow-y: scroll;"> 
-      <h4 class= "history-title">History</h4>
-      <div class="row">
-        <ul class="collection with-header col s12 m12">
-          <br />
-          {% for request in pending_requests %}
+    <div id="table-pending" class="col s9" style="display:none;">
+     <div class="row">
+      <ul class="collection with-header col s12 m12">
+        <br />
+        {% for request in pending_requests %}
+        {% if request.sender != profile.owner %}
+        <li class="collection-item avatar">
+          <img src ="/img?user_id={{request.sender.urlsafe}}" class="circle">
+          <span class="title"><b>Requestor:</b><a href="/foodie/{{request.sender_name}}"> {{request.sender_name}}</a></span>
+          <p>
+            <b>Type:</b> {{request.food_type}}</p>
+            <b>Location:</b> {{request.location}} <br />
+            <b>For:</b> {{request.start_time.date}} <b> @ </b> {{request.start_time.time}}</p>
+            <b>Interest:</b> {{request.interest}}</p>
+            <div class="secondary-content">
+              <button id="pending_cancel{{forloop.counter}}" style="border:none; background:none;" value={{request.key.urlsafe}}><i class="material-icons" style="color:red;">cancel</i></button>
+
+              {% include "cancel_request_modal.html" %}
+
+            </div>
+          </li>
+          {% else %}
           <li class="collection-item avatar">
+
             <img src ="/img?user_id={{request.sender.urlsafe}}" class="circle">
-            <span class="title"><b>Requestor:</b><a href="/foodie/{{request.sender_name}}?q=timeline/all"> {{request.sender_name}}</a></span>
+            <span class="title"><b>Requestor:</b><a href="/foodie/{{request.sender_name}}"> {{request.sender_name}}</a></span>
             <p>
               <b>Type:</b> {{request.food_type}}</p>
               <b>Location:</b> {{request.location}} <br />
               <b>For:</b> {{request.start_time.date}} <b> @ </b> {{request.start_time.time}}</p>
               {% if request.recipient_name|length > 0 %}
               <p> <b>Attendees:</b> 
-                <a href="/foodie/{{request.recipient_name}}?q=timeline/all">{{request.recipient_name}}</a>  
-              </p>
-              {% endif %}
-              <b>Interest:</b> {{request.interest}}</p>
-              <b>Bidders:</b> {{request.bidders|length}}</p>
-              <b>Status:</b> {{request.status}}
-              {% if profile.owner == user.key and request.sender == user.key %}
-              {% if request.status != "accepted" and request.status != "dead" %}
-              <div class="secondary-content">
-                <table>
-                  <tr>
-                    <button id="delete{{forloop.counter}}" style="border:none; background:none; color:red" value={{request.key.urlsafe}}><i class="material-icons">clear</i>Delete</button>
-                  </tr>
-                  <tr>
-                    <td>
-                      <a href="/editrequest/{{request.key.urlsafe}}" style="border:none; background:none;" ><i class="material-icons" =>mode_edit</i> Edit</a>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>
-                      <a href="/choose/{{request.key.urlsafe}}" style="border:none; background:none; color:green "><i class="material-icons">chat_bubble</i> Choose</a>
-                    </td>
-                  </tr>
-                  <tr></tr>
-                </table>
-              </div>
-              {% else %}
-              <div class="secondary-content">
-                <button id="delete{{forloop.counter}}" style="border:none; background:none; color:red" value={{request.key.urlsafe}}><i class="material-icons">clear</i>Delete</button>
-              </div>
-              {% endif %}
-              {% endif %}
-            </li>
-            {% empty %}
-            <li class="collection-header">
-             <center>
-              <h5>No Requests</h5>
-              <p>Find someone now!</p>
-            </center>
-          </li>
-          {% endfor %}
-        </ul>
-      </div>
-    </div>
-    <!-- table/pending end -->
-    <!-- table/accepted start -->
-    <div id="table-accepted" class="col s9" style="display:none;">
-     <div class="row">
-      <ul class="collection with-header col s12 m12">
-        <br />
-        {% for request in accepted_requests %}
-        {% if request.0.sender != user.key %}
-        <li class="collection-item avatar">
-          <img src ="/img?user_id={{request.0.sender.urlsafe}}" class="circle">
-          <span class="title"><b>Requestor:</b><a href="/foodie/{{request.0.sender_name}}"> {{request.0.sender_name}}</a></span>
-          <p>
-            <b>Type:</b> {{request.0.food_type}}</p>
-            <b>Location:</b> {{request.0.location}} <br />
-            <b>For:</b> {{request.0.start_time.date}} <b> @ </b> {{request.0.start_time.time}}</p>
-            <p> <b>Attendee:</b> 
-              <a href="/foodie/{{request.recipient_name}}">{{request.0.recipient_name}}</a>  
-            </p>
-            <b>Interest:</b> {{request.0.interest}}</p>
-            <div class="secondary-content">
-              <button id="pending_cancel{{forloop.counter}}" style="border:none; background:none;" value={{request.0.key.urlsafe}}><i class="material-icons" style="color:red;">cancel</i></button>
+                {% for person in request.recipient_name %}
+                <a href="/foodie/{{person}}">{{person}}</a>  
+                {% endfor %}</p>
+                {% endif %}
+                <b>Interest:</b> {{request.interest}}</p>
+                <b>Bidders:</b> {{request.bidders|length}}
 
-              {% include "cancel_request_modal.html" %}
-            </div>
-          </li>
-          {% else %}
-          <li class="collection-item avatar">
-            <img src ="/img?user_id={{request.0.sender.urlsafe}}" class="circle">
-            <span class="title"><b>Requestor:</b><a href="/foodie/{{request.0.recipient_name}}"> {{request.0.recipient_name}}</a></span>
-            <p>
-              <b>Type:</b> {{request.0.food_type}}</p>
-              <b>Location:</b> {{request.0.location}} <br />
-              <b>For:</b> {{request.0.start_time.date}} <b> @ </b> {{request.0.start_time.time}}</p>
-              <p> <b>Attendee:</b> 
-                <a href="/foodie/{{request.recipient_name}}">{{request.0.recipient_name}}</a>
-              </p>
-              <b>Interest:</b> {{request.0.interest}}</p>
-              <div class="secondary-content">
-                <button href="#cancel_requests" id="cancel_request{{forloop.counter}}" style="border:none; background:none;" value={{request.0.key.urlsafe}}><i class="material-icons" style="color:red;">cancel</i></button>
-              </div>
-              {% include "cancel_request_modal.html" %}
-            </li>
-            {% endif %}
-            {% empty %}
-            <li class="collection-header">
-             <center>
-              <h5>No Accepted Requests</h5>
-            </center>
-          </li>
-          {% endfor %}
-        </ul>
-      </div>
-    </div>
-    <!-- table/accepted end -->
-    <!-- table/complated start -->
-    <div id="table-completed" class="col s9" style="display:none; height: 85vh; overflow-y: scroll;"> 
-      <h4 class= "history-title">History</h4>
-      <div class="row">
-        <ul class="collection with-header col s12 m12">
-          <br />
-          {% for request in completed_requests %}
-          <li class="collection-item avatar">
-            <img src ="/img?user_id={{request.sender.urlsafe}}" class="circle">
-            <span class="title"><b>Requestor:</b><a href="/foodie/{{request.0.sender_name}}?q=timeline/all"> {{request.0.sender_name}}</a></span>
-            <p>
-              <b>Type:</b> {{request.0.food_type}}</p>
-              <b>Location:</b> {{request.0.location}} <br />
-              <b>For:</b> {{request.0.start_time.date}} <b> @ </b> {{request.0.start_time.time}}</p>
-              {% if request.0.recipient_name|length > 0 %}
-              <p> <b>Attendees:</b> 
-                <a href="/foodie/{{request.0.recipient_name}}?q=timeline/all">{{request.0.recipient_name}}</a>  
-              </p>
+                {% if profile.owner == user.key %}
+                <div class="secondary-content">
+                  <table>
+                    <tr>
+                      <button id="delete{{forloop.counter}}" style="border:none; background:none; color:red" value={{request.key.urlsafe}}><i class="material-icons">clear</i>Delete</button>
+                    </tr>
+                    <tr>
+                      <td>
+                        <a href="/editrequest/{{request.key.urlsafe}}" style="border:none; background:none;" ><i class="material-icons" =>mode_edit</i> Edit</a>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <a href="/choose/{{request.key.urlsafe}}" style="border:none; background:none; color:green "><i class="material-icons">chat_bubble</i> Choose</a>
+                      </td>
+                    </tr>
+                    <tr></tr>
+                  </table>
+                </div>
+                {% else %}
+                <div class="secondary-content">
+                  <button id="delete{{forloop.counter}}" style="border:none; background:none; color:red" value={{request.key.urlsafe}}><i class="material-icons">clear</i>Delete</button>
+                </div>
+                {% endif %}
+              </li>
               {% endif %}
-              <b>Interest:</b> {{request.0.interest}}</p>
-              <b>Bidders:</b> {{request.0.bidders|length}}</p>
-              <b>Status:</b> {{request.0.status}}
-            </li>
-            {% empty %}
-            <li class="collection-header">
-              <center>
-                <h5>No Requests</h5>
+              {% empty %}
+              <li class="collection-header">
+               <center>
+                <h5>No Pending Requests</h5>
               </center>
             </li>
             {% endfor %}
           </ul>
         </div>
       </div>
-      <!-- table/completed end -->
+      <!-- table/pending end -->
+      <!-- table/accepted start -->
+      <div id="table-accepted" class="col s9" style="display:none;">
+       <div class="row">
+        <ul class="collection with-header col s12 m12">
+          <br />
+          {% for request in accepted_requests %}
+          {% if request.0.sender != user.key %}
+          <li class="collection-item avatar">
+            <img src ="/img?user_id={{request.0.sender.urlsafe}}" class="circle">
+            <span class="title"><b>Requestor:</b><a href="/foodie/{{request.0.sender_name}}"> {{request.0.sender_name}}</a></span>
+            <p>
+              <b>Type:</b> {{request.0.food_type}}</p>
+              <b>Location:</b> {{request.0.location}} <br />
+              <b>For:</b> {{request.0.start_time.date}} <b> @ </b> {{request.0.start_time.time}}</p>
+              <p> <b>Attendee:</b> 
+                <a href="/foodie/{{request.recipient_name}}">{{request.0.recipient_name}}</a>  
+              </p>
+              <b>Interest:</b> {{request.0.interest}}</p>
+              <div class="secondary-content">
+                <button id="pending_cancel{{forloop.counter}}" style="border:none; background:none;" value={{request.0.key.urlsafe}}><i class="material-icons" style="color:red;">cancel</i></button>
 
-      <!-- timeline/all start-->
-      <div id="timeline-all" class="col s9 card" style="display:none; height: 85vh; overflow-y: scroll;">
-        <h4 class= "history-title">History</h4>
-        {% if timeline_requests|length == 0 %}
-        <li class="collection-header">
-          <center>
-            <h5>No Requests</h5>
-            <p>Find someone now!</p>
-          </center>
-        </li>
-        {% else %}
-        <!-- cd-timeline start -->
-        <div id="cd-timeline">
-          {% for request in timeline_requests %}
-          <div class="cd-timeline-block"> <!-- cd-timeline-block start -->
-            <div class="row">
-              <div class="cd-timeline-img cd-picture">
-                <img src="../images/cd-icon-picture.svg" alt="Picture">
-              </div> <!-- cd-timeline-img -->
-              {% if forloop.counter|divisibleby:2 %}
-              <div class="col s7" style="visibility: hidden;">placeholder</div>
+                {% include "cancel_request_modal.html" %}
+              </div>
+            </li>
+            {% else %}
+            <li class="collection-item avatar">
+              <img src ="/img?user_id={{request.0.sender.urlsafe}}" class="circle">
+              <span class="title"><b>Requestor:</b><a href="/foodie/{{request.0.recipient_name}}"> {{request.0.recipient_name}}</a></span>
+              <p>
+                <b>Type:</b> {{request.0.food_type}}</p>
+                <b>Location:</b> {{request.0.location}} <br />
+                <b>For:</b> {{request.0.start_time.date}} <b> @ </b> {{request.0.start_time.time}}</p>
+                <p> <b>Attendee:</b> 
+                  <a href="/foodie/{{request.recipient_name}}">{{request.0.recipient_name}}</a>
+                </p>
+                <b>Interest:</b> {{request.0.interest}}</p>
+                <div class="secondary-content">
+                  <button id="accepted_cancel{{forloop.counter}}" style="border:none; background:none;" value={{request.0.key.urlsafe}}><i class="material-icons" style="color:red;">cancel</i></button>
+                </div>
+                {% include "cancel_request_modal.html" %}
+              </li>
               {% endif %}
-              <div class="cd-timeline-content col s5">
-                <div class="col s12 food-type-display"><img id="1-food-type-img-{{request.0.key.urlsafe}}" class="food-type-img"></div>
-                <script type="text/javascript">
-                  FoodTypeDisplays.displayImg({"imgId":"1-food-type-img-{{request.0.key.urlsafe}}"}, '{{request.0.food_type}}' );
-                </script>
-                <div class="card-content">
+              {% empty %}
+              <li class="collection-header">
+               <center>
+                <h5>No Accepted Requests</h5>
+              </center>
+            </li>
+            {% endfor %}
+          </ul>
+        </div>
+      </div>
+      <!-- table/accepted end -->
+      <!-- table/complated start -->
+      <div id="table-completed" class="col s9" style="display:none; height: 85vh; overflow-y: scroll;"> 
+        <h4 class= "history-title">History</h4>
+        <div class="row">
+          <ul class="collection with-header col s12 m12">
+            <br />
+            {% for request in completed_requests %}
+            <li class="collection-item avatar">
+              <img src ="/img?user_id={{request.sender.urlsafe}}" class="circle">
+              <span class="title"><b>Requestor:</b><a href="/foodie/{{request.0.sender_name}}?q=timeline/all"> {{request.0.sender_name}}</a></span>
+              <p>
+                <b>Type:</b> {{request.0.food_type}}</p>
+                <b>Location:</b> {{request.0.location}} <br />
+                <b>For:</b> {{request.0.start_time.date}} <b> @ </b> {{request.0.start_time.time}}</p>
+                {% if request.0.recipient_name|length > 0 %}
+                <p> <b>Attendees:</b> 
+                  <a href="/foodie/{{request.0.recipient_name}}?q=timeline/all">{{request.0.recipient_name}}</a>  
+                </p>
+                {% endif %}
+                <b>Interest:</b> {{request.0.interest}}</p>
+                <b>Bidders:</b> {{request.0.bidders|length}}</p>
+                <b>Status:</b> {{request.0.status}}
+              </li>
+              {% empty %}
+              <li class="collection-header">
+                <center>
+                  <h5>No Requests</h5>
+                </center>
+              </li>
+              {% endfor %}
+            </ul>
+          </div>
+        </div>
+        <!-- table/completed end -->
+
+        <!-- timeline/all start-->
+        <div id="timeline-all" class="col s9 card" style="display:none; height: 85vh; overflow-y: scroll;">
+          <h4 class= "history-title">History</h4>
+          {% if timeline_requests|length == 0 %}
+          <li class="collection-header">
+            <center>
+              <h5>No Requests</h5>
+              <p>Find someone now!</p>
+            </center>
+          </li>
+          {% else %}
+          <!-- cd-timeline start -->
+          <div id="cd-timeline">
+            {% for request in timeline_requests %}
+            <div class="cd-timeline-block"> <!-- cd-timeline-block start -->
+              <div class="row">
+                <div class="cd-timeline-img cd-picture">
+                  <img src="../images/cd-icon-picture.svg" alt="Picture">
+                </div> <!-- cd-timeline-img -->
+                {% if forloop.counter|divisibleby:2 %}
+                <div class="col s7" style="visibility: hidden;">placeholder</div>
+                {% endif %}
+                <div class="cd-timeline-content col s5">
+                  <div class="col s12 food-type-display"><img id="1-food-type-img-{{request.0.key.urlsafe}}" class="food-type-img"></div>
+                  <script type="text/javascript">
+                    FoodTypeDisplays.displayImg({"imgId":"1-food-type-img-{{request.0.key.urlsafe}}"}, '{{request.0.food_type}}' );
+                  </script>
+                  <div class="card-content">
                 <div class="row"><!-- 
                   {% if request.0.sender == profile.owner %}
                   <div class="col s3"><a href="/foodie/{{request.0.recipient_name}}"><img src="/img?user_id={{request.0.recipient.urlsafe}}&height=50&width=50"></a></div>

@@ -38,7 +38,54 @@ $(document).ready(function() {
   else if(tab == 'timeline/completed') {
     $('#timeline-completed').show();
   }
+
+  var owner = $('#username').attr('value');
+  var cancel_type = "";
+
+  // Cancel pending request
+  $("[id^='pending_cancel']").click(function(){
+      cancel_type = "pending";
+      $('#cancel_request').openModal();
+      cancel_request = $(this).val();
+  });
+
+  // Cancel accepted request
+  $("[id^='accepted_cancel']").click(function(){
+      cancel_type = "accepted"
+      $('#cancel_request').openModal();
+      cancel_request = $(this).val();
+  });
   
+   // Confirm cancel request
+  $("[id^='confirm_cancel_request']").click(function(){
+      $.ajax({
+        type: "POST",
+        url: "/cancel",
+        data: {'request' : cancel_request},
+      });
+    setTimeout(function(){ // Refresh after 1 second
+      if(cancel_type == "accepted") {
+        window.location.href = '/foodie/'+owner+'?q=table/accepted';
+      }
+      if(cancel_type == "pending") {
+        window.location.href = '/foodie/'+owner+'?q=table/pending';
+      }
+    }, 200); 
+  });
+
+  //Delete Selected
+  $("[id^='delete']").click(function(){
+    // Delete function
+    var request = $(this).val();
+    $.ajax({
+      type: "POST",
+      url: "/delete",
+      data: {'request' : request},
+    });
+    setTimeout(function(){ // Refresh after 1 second
+      window.location.href = '/foodie/'+owner+'?q='+tab;
+    }, 200);
+  });
 
 
   // For sorted results
