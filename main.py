@@ -44,6 +44,7 @@ class LoginHandler(SessionHandler):
       self.response.out.write(template.render('views/login.html', {'error': error}))
 
 class FeedHandler(SessionHandler):
+  @login_required
   def get(self):
     user = self.user_model
     get_notifications(user)
@@ -52,7 +53,7 @@ class FeedHandler(SessionHandler):
     all_requests = Request.query(Request.start_time >= current_date).order(Request.start_time)
     all_requests = [r for r in all_requests if r.sender != user.key]
     pending_requests = Request.query(Request.status == 'pending').order(Request.start_time)
-    pending_requests = [r for r in pending_requests if r.start_time < current_time]
+    pending_requests = [r for r in pending_requests if r.start_time < current_date]
 
     # Sort by food type
     type_sort = sorted(all_requests, key=lambda x:x.food_type)
@@ -65,19 +66,9 @@ class FeedHandler(SessionHandler):
 
     for r in type_sort:
       for t in types:
-        print "Type: " + t
         if r.food_type == t:
           types[t].append(r)
-          type_sort.remove(r)
-          print "Appended: " + r.sender_name + " requesting " + r.food_type +" to list"
-
-    
-    # Get only requests not posted by user
-    all_requests = [r for r in all_requests if r.sender != user.key]
-    
-    print "*****"
-    print types
-    print "****"
+          break
 
     self.response.out.write(template.render('views/feed.html', {'user': user,
       'pending_requests': pending_requests, 'all_requests': all_requests, 'food_type':types}))
@@ -181,6 +172,7 @@ class Image(SessionHandler):
 
 class CommentHandler(SessionHandler):
   ''' Leave a comment for another user '''
+  @login_required
   def post(self):
     user = self.user_model
     request_key = cgi.escape(self.request.get('request_comment'))
@@ -188,7 +180,12 @@ class CommentHandler(SessionHandler):
     rating = cgi.escape(self.request.get('rating'))
     comment = cgi.escape(self.request.get('comment'))
 
-    if comment != None:
+    # Person getting endorsement
+    recipient = cgi.escape(self.request.get('recipient_name'))
+    recipient_user = User.query(User.username == recipient).get()
+    recipient_key = recipient_user.key
+
+    if len(comment) > 0:
       endorsement = Endorsement()
       endorsement.request = request.key
       endorsement.creation_time = datetime.datetime.now() - datetime.timedelta(hours=8)
@@ -208,12 +205,6 @@ class CommentHandler(SessionHandler):
 
       endorsement.put()
 
-    # Person getting endorsement
-    recipient = cgi.escape(self.request.get('recipient_name'))
-    recipient_user = User.query(User.username == recipient).get()
-    recipient_key = recipient_user.key
-
-
     # modify rating
     if rating == "positive":
       recipient_user.positive = recipient_user.positive + 1
@@ -221,7 +212,10 @@ class CommentHandler(SessionHandler):
       recipient_user.neutral = recipient_user.neutral + 1
     else:
       recipient_user.negative = recipient_user.negative + 1
-    recipient_user.percent_positive = (recipient_user.positive / (recipient_user.positive + recipient_user.negative)) * 100
+    if recipient_user.positive != 0:
+      recipient_user.percent_positive = (recipient_user.positive / (recipient_user.positive + recipient_user.negative)) * 100
+    else:
+      recipient_user.percent_positive = 0
     recipient_user.put()
 
     self.redirect('/foodie/{}'.format(recipient))
@@ -235,6 +229,7 @@ class SearchHandler(SessionHandler):
         Food Type
         Location given City, State
   '''
+  @login_required
   def get(self):
     user = self.user_model
     search = self.request.get('search').lower().strip()

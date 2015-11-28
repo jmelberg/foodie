@@ -3,51 +3,9 @@
 
 <div class="main_picture"></div>
  {% if user.credit_id == None %}
-  <!-- POP UP MODAL -->
-  <script type="text/javascript" src="https://static.wepay.com/min/js/tokenization.v2.js"></script>
-  <script type="text/javascript" src="../js/creditcard.js"></script>
-  <script type="text/javascript" src= "../js/request_suggestion_grid.js"></script>
+   <!-- Modal Structure -->
 
-  <!-- Modal Structure -->
-
-  <!-- Respond Modal -->
-    <div id="addpayment" name = "addpayment" class="modal modal-fixed-footer">
-      <div class="modal-content">
-        <table>
-          <tr>
-              <td>Name: </td>
-              <td><input id="name" type="text"></td>
-          </tr>
-          <tr>
-              <td>Email: </td>
-              <td><input id="email" type="text"></td>
-          </tr>
-          <tr>
-              <td>Credit Card Number: </td>
-              <td><input id="cc-number" type="text"></td>
-          </tr>
-          <tr>
-              <td>Expiration Month: </td>
-              <td><input id="cc-month" type="text"></td>
-          </tr>
-          <tr>
-              <td>Expiration Year: </td>
-              <td><input id="cc-year" type="text"></td>
-          </tr>
-          <tr>
-              <td>CVV: </td>
-              <td><input id="cc-cvv" type="text"></td>
-          </tr>
-          <tr>
-              <td>Zipcode: </td>
-              <td><input id="zip" type="text"></td>
-          </tr>
-      </table>
-      </div>
-      <div class="modal-footer">
-        <a type="submit" id="cc-submit" class=" modal-action modal-close waves-effect waves-green btn-flat">Submit</a>
-      </div>
-    </div>
+  {% include 'ccmodal.html' %}
   {% else %}
   <div class="layer"></div>
   <div class="header_container">
@@ -68,7 +26,6 @@
   </div>
 
   <div class="feed_divider">  <p class="category">Pending</p></div>
-
   <div class="row">
         <div id="slider1" class="owl-carousel">
           {% for pend in pending %}
@@ -80,16 +37,18 @@
   </div>
 
   {% for food, requests in food_type.items %}
-  <div class="feed_divider"> <p class="category">{{food|capfirst}}</p></div>
+  <div class="feed_divider"> <p class="category">{{food|title}}</p></div>
   <div class="row">
     <div id="slider{{forloop.counter|add:1}}" class="owl-carousel">
-      {% for r in requests %}
-      <div id="{{r.food_type}}" onload="getImage({{food}},{{r.food_type}})">
-        <a href="/confirm/{{r.key.urlsafe}}">
-          {{r.sender_name}} requests {{r.food_type}} in {{r.location}}
-        </a>
+      <div class="item">
+        {% for r in requests %}
+        <div id="{{r.food_type}}" onload="getImage({{food}},{{r.food_type}})">
+          <a href="/confirm/{{r.key.urlsafe}}">
+            {{r.sender_name}} requests {{r.food_type}} in {{r.location}}
+          </a>
+        </div>
+        {% endfor %}
       </div>
-      {% endfor %}
     </div>
   </div>
   {% endfor %}
