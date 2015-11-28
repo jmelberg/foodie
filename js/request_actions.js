@@ -12,7 +12,6 @@ $(document).ready(function() {
   $("[id^='pending_confirm_modal']").click(function() {
     $('#respond').openModal();
     bidder = $(this).val();
-    console.log(request);
   });
  
   // Hide requests
@@ -45,6 +44,7 @@ $(document).ready(function() {
 
   // Accept confirm application
   $("#select_bid_button").click(function() {
+    console.log('meh');
     $.ajax({
       type: "POST",
       url: "/choose/"+request,

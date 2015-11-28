@@ -45,15 +45,31 @@ $(document).ready(function() {
   // Cancel pending request
   $("[id^='pending_cancel']").click(function(){
       cancel_type = "pending";
-      $('#cancel_request').openModal();
+      $("[id^='cancel_request_p']").openModal();
       cancel_request = $(this).val();
+    console.log(cancel_request);
+  });
+
+  $("[id^='cancel_pending']").click(function(){
+      cancel_type = "pending";
+      $("[id^='cancel_pending_request']").openModal();
+      cancel_request = $(this).val();
+    console.log(cancel_request);
   });
 
   // Cancel accepted request
   $("[id^='accepted_cancel']").click(function(){
       cancel_type = "accepted"
-      $('#cancel_request').openModal();
+      $("[id^='cancel_request_a']").openModal();
       cancel_request = $(this).val();
+    console.log(cancel_request);
+  });
+
+  $("[id^='cancel_accepted']").click(function(){
+      cancel_type = "accepted";
+      $("[id^='cancel_accepted_request']").openModal();
+      cancel_request = $(this).val();
+    console.log(cancel_request);
   });
   
    // Confirm cancel request
@@ -64,12 +80,7 @@ $(document).ready(function() {
         data: {'request' : cancel_request},
       });
     setTimeout(function(){ // Refresh after 1 second
-      if(cancel_type == "accepted") {
-        window.location.href = '/foodie/'+owner+'?q=table/accepted';
-      }
-      if(cancel_type == "pending") {
-        window.location.href = '/foodie/'+owner+'?q=table/pending';
-      }
+      window.location.href = '/foodie/'+owner+'?q='+tab;
     }, 200); 
   });
 
@@ -86,42 +97,27 @@ $(document).ready(function() {
       window.location.href = '/foodie/'+owner+'?q='+tab;
     }, 200);
   });
-
-
-  // For sorted results
-  if(tab == 'time'){
-    $('ul.tabs').tabs('select_tab', 'mine');
-  }
-  else if(tab=='all'){
-    $('ul.tabs').tabs('select_tab', 'all');
-  }
-  else if(tab == 'location'){
-    $('#location_requests').show();
-    $('#all').hide();
-  }
-  else if(tab == 'price'){
-    $('#price_requests').show();
-    $('#all').hide();  
-  }
-  else if(tab == 'hangouts'){
-    $('#hangouts_requests').show();
-    $('#all').hide();
-    $('#hangouts_sort').hide();
-  }
-  else if(tab == 'lessons'){
-    $('#lessons_requests').show();
-    $('#all').hide();
-    $('#lessons_sort').hide();
-  }
-  else {
-    $('ul.tabs').tabs('select_tab', 'all');
-  }
-
-  if($('#pending').click(function(){ 
-    $('#price_requests').hide();
-    $('#location_requests').hide();
-  }));
-});
+  $("[id^='pending_confirm_modal']").click(function() {
+    $('#respond').openModal();
+    bidder = $(this).val();
+  });
+  // Accept confirm application
+  $("#select_bid_button").click(function() {
+    console.log('meh');
+    $.ajax({
+      type: "POST",
+      url: "/choose/"+request,
+      data: {'bidder': bidder},
+    });
+    setTimeout(function(){ // Refresh after 1 second
+      window.location.href = '/foodie/'+owner+'?q=table/all';
+    }, 200);
+  });
+  // Close pending confirm application modal
+  $('#close_modal').click(function(){
+    $('#respond').closeModal();
+  });
+})
 
 // Returns string from appended url
 function getUrlParameter(sParam)
@@ -136,9 +132,4 @@ function getUrlParameter(sParam)
       return sParameterName[1];
     }
   }
-}
-
-function changeElements(){
-  $('#location_requests').hide();
-  $('#price_requests').hide();
 }

@@ -91,7 +91,7 @@
               <b>Bidders:</b> {{request.bidders|length}}</p>
               <b>Status:</b> {{request.status}}
               {% if profile.owner == user.key %}
-              {% if request.status == "pending" %}
+              {% if request.status == "pending" or request.status == "waiting for a bid" %}
               {% if request.sender == user.key %}
               <div class="secondary-content">
                 <table>
@@ -115,16 +115,36 @@
               <div class="secondary-content">
                 <button id="pending_cancel{{forloop.counter}}" style="border:none; background:none;" value={{request.key.urlsafe}}><i class="material-icons" style="color:red;">cancel</i></button>
 
-                {% include "cancel_request_modal.html" %}
+                <div id="cancel_request_p{{forloop.counter}}" class="modal">
+                  <div class="modal-content">
+                    <h4>Cancel Request</h4>
+                    <p>Are you sure you want to back out of the request?</p>
+
+                  </div>
+                  <div class="modal-footer">
+                    <button id="confirm_cancel_request" class="modal-action modal-close waves-effect waves-green btn-flat">Yes</button>
+                    <button class="modal-action modal-close waves-effect waves-green btn-flat">No</button>
+                  </div>
+                </div>
 
               </div>
               {% endif %}
               {% endif %}
               {% if request.status == "accepted" %}
               <div class="secondary-content">
-                <button id="accepted_cancel{{forloop.counter}}" style="border:none; background:none;" value={{request.0.key.urlsafe}}><i class="material-icons" style="color:red;">cancel</i></button>
+                <button id="accepted_cancel{{forloop.counter}}" style="border:none; background:none;" value={{request.key.urlsafe}}><i class="material-icons" style="color:red;">cancel</i></button>
+                <div id="cancel_request_a{{forloop.counter}}" class="modal">
+                  <div class="modal-content">
+                    <h4>Cancel Request</h4>
+                    <p>Are you sure you want to back out of the request?</p>
+
+                  </div>
+                  <div class="modal-footer">
+                    <button id="confirm_cancel_request" class="modal-action modal-close waves-effect waves-green btn-flat">Yes</button>
+                    <button class="modal-action modal-close waves-effect waves-green btn-flat">No</button>
+                  </div>
+                </div>
               </div>
-              {% include "cancel_request_modal.html" %}
               {% endif %}
               {% endif %}
             </li>
@@ -156,9 +176,19 @@
             <b>For:</b> {{request.start_time.date}} <b> @ </b> {{request.start_time.time}}</p>
             <b>Interest:</b> {{request.interest}}</p>
             <div class="secondary-content">
-              <button id="pending_cancel{{forloop.counter}}" style="border:none; background:none;" value={{request.key.urlsafe}}><i class="material-icons" style="color:red;">cancel</i></button>
+              <button id="cancel_pending{{forloop.counter}}" style="border:none; background:none;" value={{request.key.urlsafe}}><i class="material-icons" style="color:red;">cancel</i></button>
+              <div id="cancel_pending_request{{forloop.counter}}" class="modal">
+                <div class="modal-content">
+                  <h4>Cancel Request</h4>
+                  <p>Are you sure you want to back out of the request?</p>
 
-              {% include "cancel_request_modal.html" %}
+                </div>
+                <div class="modal-footer">
+                  <button id="confirm_cancel_request" class="modal-action modal-close waves-effect waves-green btn-flat">Yes</button>
+                  <button class="modal-action modal-close waves-effect waves-green btn-flat">No</button>
+                </div>
+              </div>
+
 
             </div>
           </li>
@@ -236,9 +266,18 @@
               </p>
               <b>Interest:</b> {{request.0.interest}}</p>
               <div class="secondary-content">
-                <button id="pending_cancel{{forloop.counter}}" style="border:none; background:none;" value={{request.0.key.urlsafe}}><i class="material-icons" style="color:red;">cancel</i></button>
+                <button id="cancel_accepted{{forloop.counter}}" style="border:none; background:none;" value={{request.0.key.urlsafe}}><i class="material-icons" style="color:red;">cancel</i></button>
+                <div id="cancel_accepted_request{{forloop.counter}}" class="modal">
+                  <div class="modal-content">
+                    <h4>Cancel Request</h4>
+                    <p>Are you sure you want to back out of the request?</p>
 
-                {% include "cancel_request_modal.html" %}
+                  </div>
+                  <div class="modal-footer">
+                    <button id="confirm_cancel_request" class="modal-action modal-close waves-effect waves-green btn-flat">Yes</button>
+                    <button class="modal-action modal-close waves-effect waves-green btn-flat">No</button>
+                  </div>
+                </div>
               </div>
             </li>
             {% else %}
@@ -254,9 +293,19 @@
                 </p>
                 <b>Interest:</b> {{request.0.interest}}</p>
                 <div class="secondary-content">
-                  <button id="accepted_cancel{{forloop.counter}}" style="border:none; background:none;" value={{request.0.key.urlsafe}}><i class="material-icons" style="color:red;">cancel</i></button>
+                <button id="cancel_accepted{{forloop.counter}}" style="border:none; background:none;" value={{request.0.key.urlsafe}}><i class="material-icons" style="color:red;">cancel</i></button>
+                <div id="cancel_accepted_request{{forloop.counter}}" class="modal">
+                  <div class="modal-content">
+                    <h4>Cancel Request</h4>
+                    <p>Are you sure you want to back out of the request?</p>
+
+                  </div>
+                  <div class="modal-footer">
+                    <button id="confirm_cancel_request" class="modal-action modal-close waves-effect waves-green btn-flat">Yes</button>
+                    <button class="modal-action modal-close waves-effect waves-green btn-flat">No</button>
+                  </div>
                 </div>
-                {% include "cancel_request_modal.html" %}
+              </div>
               </li>
               {% endif %}
               {% empty %}
@@ -362,12 +411,12 @@
                 </div>
                 {% endif %}
                 {% if request.1 == "None" or request.1.sender_name != user.username %}
-                 {% if request.1|length < 2 %}
-                    <div class="card-action">
-                      <span><a class="modal-trigger grey white-text waves-effect waves-light btn" id="comment_button" style="width: 100%;" href="#comment" {% if request.0.recipient_name == user.username %} onclick="getRequest('{{request.0.key.urlsafe}}', '{{request.0.sender_name}}')" {% else %} onclick="getRequest('{{request.0.key.urlsafe}}', '{{request.0.recipient_name}}')" {% endif %}>Share Your Experience</a>
-                      </span>
-                    </div>
-                  {% endif %}
+                {% if request.1|length < 2 %}
+                <div class="card-action">
+                  <span><a class="modal-trigger grey white-text waves-effect waves-light btn" id="comment_button" style="width: 100%;" href="#comment" {% if request.0.recipient_name == user.username %} onclick="getRequest('{{request.0.key.urlsafe}}', '{{request.0.sender_name}}')" {% else %} onclick="getRequest('{{request.0.key.urlsafe}}', '{{request.0.recipient_name}}')" {% endif %}>Share Your Experience</a>
+                  </span>
+                </div>
+                {% endif %}
                 {% endif %}  
 
                 {% endif %}

@@ -108,7 +108,7 @@ class ProfileHandler(SessionHandler):
     dead_reqs = Request.query(ndb.OR(Request.sender==profile_owner.key, Request.recipient == profile_owner.key), Request.start_time <= alloted_time).order(Request.start_time).fetch()
     for r in dead_reqs:
       if(r.status != "completed"):
-        r.status = "pending"
+        r.status = "dead"
 
     # Get all pending request that user has bid on
     for request in available_requests:
@@ -123,7 +123,7 @@ class ProfileHandler(SessionHandler):
               # Bid by user
               pending_requests.append(request)
 
-    table_requests = dead_reqs[:] + my_reqs[:]
+    table_requests = dead_reqs[:] + my_reqs[:] + pending_requests
     table_requests = sorted(table_requests, key=lambda x: x.start_time, reverse=True)
     pending_requests = pending_requests + table_requests
     pending_requests = [x for x in pending_requests if x.status == "pending"]
