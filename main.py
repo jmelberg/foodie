@@ -66,19 +66,9 @@ class FeedHandler(SessionHandler):
 
     for r in type_sort:
       for t in types:
-        print "Type: " + t
         if r.food_type == t:
           types[t].append(r)
-          type_sort.remove(r)
-          print "Appended: " + r.sender_name + " requesting " + r.food_type +" to list"
-
-    
-    # Get only requests not posted by user
-    all_requests = [r for r in all_requests if r.sender != user.key]
-    
-    print "*****"
-    print types
-    print "****"
+          break
 
     self.response.out.write(template.render('views/feed.html', {'user': user,
       'pending_requests': pending_requests, 'all_requests': all_requests, 'food_type':types}))

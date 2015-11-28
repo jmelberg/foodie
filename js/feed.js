@@ -2,37 +2,15 @@ $(document).ready(function(){
 var owlLength;
 var owlCurrent;
 
-/*
-$('').(function(){
-  $.ajax({
-    type: "POST",
-    url: '/authorizepayment',
-      data: {'credit_card_id': JSON.stringify(data.credit_card_id)}
-  });
-});
-*/
-
   $('.collapsible').collapsible({
     accordion : true // A setting that changes the collapsible behavior to expandable instead of the default accordion style
   });
 
-  $("#slider").owlCarousel({
-pagination: false,
-afterAction: afterAction,
-autoPlay: 2000
-  });
-
-  $("#slider1").owlCarousel({
-pagination: false,
-afterAction: afterAction,
-autoPlay: 2000
-  });
-
-  $("#slider2").owlCarousel({
-pagination: false,
-afterAction: afterAction,
-autoPlay: 2000
-  });
+$( "[id^=slider]" ).owlCarousel({
+    pagination: false,
+  afterAction: afterAction,
+  autoPlay: 2000
+});
 
 
 function afterAction(){
