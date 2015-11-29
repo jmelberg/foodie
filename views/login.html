@@ -29,6 +29,17 @@
         $('#signup').show();
         $('#signup').addClass('animated slideInDown');
       });
+
+      var signInError = $('#signInError').text();
+      if(signInError.length > 0) {
+        $('#text1').removeClass('animated fadeInLeft');
+        $('#text2').removeClass('animated fadeInDown');
+        $('#text3').removeClass('animated fadeInRight');
+        $('#signInCard').show();
+        $('.getstarted-btn').hide();
+        $('.sub-heading').hide();
+        $('#signInCard').addClass('animated wobble');
+      }
       
       $('#signInBtn').click(function() {
         $('#signInCard').show();
@@ -65,13 +76,13 @@
   <div class="row heading">
       <div class="container heading-container">
         <div class="row">
-          <div class="col s4 center-align animated fadeInLeft orange-text text-lighten-2 " style= "width:28%;">
+          <div id="text1" class="col s4 center-align animated fadeInLeft orange-text text-lighten-2 " style= "width:28%;">
             <h1>Food</h1>
           </div>
-          <div class="col s4 center-align animated fadeInDown orange-text text-lighten-2 ">
+          <div id="text2" class="col s4 center-align animated fadeInDown orange-text text-lighten-2 ">
             <h1>Unites</h1>
           </div>
-          <div class="col s4 center-align animated fadeInRight orange-text text-lighten-2 ">
+          <div id="text3" class="col s4 center-align animated fadeInRight orange-text text-lighten-2 ">
             <h1>People</h1>
           </div>
         </div>
@@ -102,7 +113,7 @@
                 <a href="/">Cancel</a>
                 <button type="submit" style="background:none; border:none; text-transform:uppercase; color:orange">Log In</button>
               </div>
-              <small></small>
+              <small id="signInError">{{error}}</small>
             </form>
           </div>
         </div>

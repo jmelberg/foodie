@@ -124,6 +124,8 @@ function getUrlParameter(sParam)
 }
 
 function changeElements(){
+  $('#lessons_requests').hide();
+  $('#hangouts_requests').hide();
   $('#location_requests').hide();
   $('#price_requests').hide();
 }
