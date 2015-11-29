@@ -2,12 +2,17 @@ cron:
 - description: SMS Notification Push
   url: /notify
   #Run every 5 minutes from 6:00am - 11:00pm
-  schedule: every 5 minutes from 6:00 to 23:00
+  schedule: every 5 minutes
 
 - description: Option to fire notification Push
   url: /notify_fire
   # Run every 5 minutes
-  schedule: every 5 minutes from 6:00 to 23:00
+  schedule: every 5 minutes
+
+- description: Clean up dead requests
+  url: /dead
+  # Run every hour
+  schedule: every 60 minutes
 
 
 

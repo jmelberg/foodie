@@ -22,13 +22,17 @@ api_key = 'AIzaSyBAO3qaYH4LGQky8vAA07gCVex1LBhUdbE'
 class SMSHandler(SessionHandler):
   def get(self):
     current_time = datetime.datetime.now() - datetime.timedelta(hours=8)
-    max_time = current_time - datetime.timedelta(minutes=30)
+    max_time = current_time - datetime.timedelta(minutes=5)
     # Get all requests in accepted state
     #completed_requests = Request.query(Request.status == "accepted").fetch()
     completed_requests = Request.query(Request.start_time >= current_time, Request.start_time < max_time).fetch()
     completed_requests = [x for x in completed_requests if x.recipient != None and x.status == "accepted"]
     for request in completed_requests:
       send_sms(request)
+      # Change status of request
+      request.status = "sms"
+      request.put()
+
 
 class SMSFireHandler(SessionHandler):
   # Option to fire after 10 minutes has passed
@@ -37,10 +41,20 @@ class SMSFireHandler(SessionHandler):
     max_time = current_time + datetime.timedelta(minutes=10)
     # Get all requests in accepted state
     #completed_requests = Request.query(Request.status == "foodie").fetch()
-    completed_requests = Request.query(Request.start_time >= max_time, Request.start_time < current_time).fetch()
+    completed_requests = Request.query(Request.start_time < current_time, Request.start_time < max_time).fetch()
     completed_requests = [x for x in completed_requests if x.recipient != None and x.status == "foodie"]
     for request in completed_requests:
       send_fire_notification(request)
+
+class DeadRequestHandler(SessionHandler):
+  # Change status of request to dead if no show
+  def get(self):
+    current_time = datetime.datetime.now() - datetime.timedelta(hours=8)
+    max_time = current_time + datetime.timedelta(hours=1)
+    dead_requests = Request.query(Request.start_time > current_time, Request.start_time < max_time).fetch()
+    dead_requests = [x for x in dead_requests if x.status == "sms" and x.recipient != None]
+    for request in dead_requests:
+      request.status = "dead"
 
 class FireHandler(SessionHandler):
   # Fires food expert
@@ -86,7 +100,7 @@ class CompletedRequestHandler(SessionHandler):
           if request.status == "foodie":
             #Foodie checked in already
             request.status = "complete"
-          elif request.status == "accepted":
+          elif request.status == "sms":
             #Expert is first to check in
             request.status = "expert"
           else:
@@ -106,7 +120,7 @@ class CompletedRequestHandler(SessionHandler):
           print "Requestor approved"
           if request.status == "expert":
             request.status = "complete"
-          elif request.status =="accepted":
+          elif request.status =="sms":
             request.status = "foodie"
           else:
             # Request has experied / fired

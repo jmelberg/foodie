@@ -29,7 +29,7 @@ class RequestsHandler(SessionHandler):
     request_sort = cgi.escape(self.request.get('requests'))
     current_date = datetime.datetime.now() - datetime.timedelta(hours=8)
     # Return only those two hours or more in future
-    alloted_time = current_date + datetime.timedelta(hours=2)
+    alloted_time = current_date + datetime.timedelta(minutes=20)
     sorted_requests = []
     available_requests = Request.query(Request.start_time >= alloted_time).order(Request.start_time)
     print "alloted", alloted_time
@@ -43,7 +43,7 @@ class RequestsHandler(SessionHandler):
     approved_requests = []
 
     # Get User requests
-    my_requests = Request.query(Request.start_time >= alloted_time - datetime.timedelta(hours=2),
+    my_requests = Request.query(Request.start_time >= alloted_time - datetime.timedelta(minutes=30),
                                 Request.sender == user.key).order(Request.start_time).fetch()
 
     for request in my_requests:
@@ -425,7 +425,7 @@ class CheckTimeConflict(SessionHandler):
     # Remove current request if applicable
     if active_request:
       ongoing_request.remove(edit_request)
-    alloted_date = start_time + datetime.timedelta(hours=2) #Max limit
+    alloted_date = start_time + datetime.timedelta(minutes=20) #Max limit
 
     create = timeCheck(ongoing_request, alloted_date, start_time)
     if create is True:
@@ -441,7 +441,7 @@ def timeCheck(ongoing_request, alloted_date, start_time):
   print "Requested: ", start_time
   print "MAX: ", alloted_date
   current_time = datetime.datetime.now() - datetime.timedelta(hours=8)
-  min_time = start_time - datetime.timedelta(hours=2) #Min limit
+  min_time = start_time - datetime.timedelta(minutes=20) #Min limit
   # Check to see if time has already passed
   if start_time > current_time:
     # Check for current requests
