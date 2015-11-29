@@ -336,6 +336,12 @@ class AuthorizePaymentsHandler(SessionHandler):
     user.credit_id = credit
     user.put()
 
+class TestChargeHandler(SessionHandler):
+  def get(self):
+    charge = Charge(383659670, 2909426724, 1.00, "Live Payments Works!")
+
+#def Charge(account_id, credit_card_id, amount, desc):
+
 
 config = {}
 config['webapp2_extras.sessions'] = {
@@ -369,6 +375,7 @@ app = webapp2.WSGIApplication([
                              ('/verify/(.+)/(.+)', VerifyHandler),
                              ('/fire/(.+)/(.+)', FireHandler),
                              ('/complete', CompletedRequestHandler),
+                             ('/testpayment', TestChargeHandler),
                              ('/dead', DeadRequestHandler),
                              ('/logout', LogoutHandler),
                              ('/authorizepayment', AuthorizePaymentsHandler),
