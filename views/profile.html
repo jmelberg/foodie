@@ -75,37 +75,55 @@
         <ul class="collection with-header col s12 m12">
           <br />
           {% for request in table_requests %}
-          <li class="collection-item avatar">
-            <img src ="/img?user_id={{request.sender.urlsafe}}" class="circle">
-            <span class="title"><b>Requestor:</b><a href="/foodie/{{request.sender_name}}?q=timeline/all"> {{request.sender_name}}</a></span>
-            <p>
-              <b>Type:</b> {{request.food_type}}</p>
-              <b>Location:</b> {{request.location}} <br />
-              <b>For:</b> {{request.start_time.date}} <b> @ </b> {{request.start_time.time}}</p>
-              {% if request.recipient_name|length > 0 %}
-              <p> <b>Attendees:</b> 
-                <a href="/foodie/{{request.recipient_name}}?q=timeline/all">{{request.recipient_name}}</a>  
-              </p>
-              {% endif %}
-              <b>Interest:</b> {{request.interest}}</p>
-              <b>Bidders:</b> {{request.bidders|length}}</p>
-              <b>Status:</b> {{request.status}}
+          <li class="collection-item">
+            <div class="row search-row">
+              <div class= "col s3">
+                <div id="food-img-{{request.key.urlsafe}}" class="food-img"></div>
+                <script type="text/javascript">
+                  FoodTypeDisplays.displayBackground({'backgroundId':'food-img-{{request.key.urlsafe}}'},'{{request.food_type}}');
+                </script>
+              </div>
+              <div class= "col s4">
+                <a class = "search-result-title">{{request.food_type|title}}</a> &nbsp; for {{request.interest}}
+                <p class = "search-detail">
+                  <div class="chip">
+                    <img src="/img?user_id={{request.sender.urlsafe}}" alt="requestor">
+                    <a href="/foodie/{{request.sender_name}}">{{request.sender_name}}</a>
+                  </div></br>
+                  <!--<b><a href="/foodie/{{request.sender_name}}"> {{request.sender_name}}</a></b></br>-->
+                  Price: ${{request.price}}</br>
+                  {% if request.recipient_name|length > 0 %}
+                  Attendees:
+                    <a href="/foodie/{{request.recipient_name}}">{{request.recipient_name}}</a></br>
+                  {% endif %}
+                  Bidders:{{request.bidders|length}}
+                </p>
+              </div>
+              <div class= "col s4">
+                <p class = "search-detail">
+                  </br></br>
+                  <b> {{request.status}}  </b></br> 
+                  {{request.location|title}}</br>
+                  {{request.start_time}}
+                </p>
+              </div>
+              <div class= "col s1">
               {% if profile.owner == user.key %}
               {% if request.status == "pending" or request.status == "waiting for a bid" %}
               {% if request.sender == user.key %}
               <div class="secondary-content">
                 <table>
                   <tr>
-                    <button id="delete{{forloop.counter}}" style="border:none; background:none; color:red" value={{request.key.urlsafe}}><i class="material-icons">clear</i>Delete</button>
+                    <button id="delete{{forloop.counter}}" style="border:none; background:none; color:#B71C1C" title= "delete" value={{request.key.urlsafe}}><i class="material-icons">clear</i></button>
                   </tr>
                   <tr>
                     <td>
-                      <a href="/editrequest/{{request.key.urlsafe}}" style="border:none; background:none;" ><i class="material-icons" =>mode_edit</i> Edit</a>
+                      <a href="/editrequest/{{request.key.urlsafe}}" style="border:none; background:none; color:#333333" title= "edit"><i class="material-icons" =>mode_edit</i></a>
                     </td>
                   </tr>
                   <tr>
                     <td>
-                      <a href="/choose/{{request.key.urlsafe}}" style="border:none; background:none; color:green "><i class="material-icons">chat_bubble</i> Choose</a>
+                      <a href="/choose/{{request.key.urlsafe}}" style="border:none; background:none; color:#1B5E20 " title= "choose"><i class="material-icons">playlist_add_check</i></a>
                     </td>
                   </tr>
                   <tr></tr>
@@ -113,7 +131,7 @@
               </div>
               {% else %}
               <div class="secondary-content">
-                <button id="pending_cancel{{forloop.counter}}" style="border:none; background:none;" value={{request.key.urlsafe}}><i class="material-icons" style="color:red;">cancel</i></button>
+                <button id="pending_cancel{{forloop.counter}}" style="border:none; background:none;" title= "cancel" value={{request.key.urlsafe}}><i class="material-icons" style="color:#B71C1C;">clear</i></button>
 
                 <div id="cancel_request_p{{forloop.counter}}" class="modal">
                   <div class="modal-content">
@@ -132,7 +150,7 @@
               {% endif %}
               {% if request.status == "accepted" %}
               <div class="secondary-content">
-                <button id="accepted_cancel{{forloop.counter}}" style="border:none; background:none;" value={{request.key.urlsafe}}><i class="material-icons" style="color:red;">cancel</i></button>
+                <button id="accepted_cancel{{forloop.counter}}" style="border:none; background:none;" title= "cancel" value={{request.key.urlsafe}}><i class="material-icons" style="color:#B71C1C;">clear</i></button>
                 <div id="cancel_request_a{{forloop.counter}}" class="modal">
                   <div class="modal-content">
                     <h4>Cancel Request</h4>
@@ -147,6 +165,8 @@
               </div>
               {% endif %}
               {% endif %}
+              </div>
+            </div>
             </li>
             {% empty %}
             <li class="collection-header">
@@ -162,68 +182,105 @@
     <!-- table/all end -->
     <!-- table/pending start -->
     <div id="table-pending" class="col s9" style="display:none;">
+     <h4 class= "history-title">Pending</h4>
      <div class="row">
       <ul class="collection with-header col s12 m12">
         <br />
         {% for request in pending_requests %}
         {% if request.sender != profile.owner %}
-        <li class="collection-item avatar">
-          <img src ="/img?user_id={{request.sender.urlsafe}}" class="circle">
-          <span class="title"><b>Requestor:</b><a href="/foodie/{{request.sender_name}}"> {{request.sender_name}}</a></span>
-          <p>
-            <b>Type:</b> {{request.food_type}}</p>
-            <b>Location:</b> {{request.location}} <br />
-            <b>For:</b> {{request.start_time.date}} <b> @ </b> {{request.start_time.time}}</p>
-            <b>Interest:</b> {{request.interest}}</p>
-            <div class="secondary-content">
-              <button id="cancel_pending{{forloop.counter}}" style="border:none; background:none;" value={{request.key.urlsafe}}><i class="material-icons" style="color:red;">cancel</i></button>
-              <div id="cancel_pending_request{{forloop.counter}}" class="modal">
-                <div class="modal-content">
-                  <h4>Cancel Request</h4>
-                  <p>Are you sure you want to back out of the request?</p>
+        <li class="collection-item ">
+          <div class="row search-row">
+              <div class= "col s3">
+                <div id="food-img2-{{request.key.urlsafe}}" class="food-img"></div>
+                <script type="text/javascript">
+                  FoodTypeDisplays.displayBackground({'backgroundId':'food-img2-{{request.key.urlsafe}}'},'{{request.food_type}}');
+                </script>
+              </div>
+              <div class= "col s4">
+                <a class = "search-result-title">{{request.food_type|title}}</a> &nbsp; for {{request.interest}}
+                <p class = "search-detail">
+                  <div class="chip">
+                    <img src="/img?user_id={{request.sender.urlsafe}}" alt="requestor">
+                    <a href="/foodie/{{request.sender_name}}">{{request.sender_name}}</a>
+                  </div></br>
+                  <!--<b><a href="/foodie/{{request.sender_name}}"> {{request.sender_name}}</a></b></br>-->
+                  Price: ${{request.price}}</br>
+                  Bidders:{{request.bidders|length}}
+                </p>                
+              </div>
+              <div class= "col s4">
+                <p class = "search-detail">
+                  </br></br>
+                  {{request.location|title}}</br>
+                  {{request.start_time}}
+                </p>
+              </div>
+              <div class= "col s1">
+                <div class="secondary-content">
+                  <button id="cancel_pending{{forloop.counter}}" style="border:none; background:none;" value={{request.key.urlsafe}}><i class="material-icons" style="color:#B71C1C;">clear</i></button>
+                  <div id="cancel_pending_request{{forloop.counter}}" class="modal">
+                    <div class="modal-content">
+                      <h4>Cancel Request</h4>
+                      <p>Are you sure you want to back out of the request?</p>
 
-                </div>
-                <div class="modal-footer">
-                  <button id="confirm_cancel_request" class="modal-action modal-close waves-effect waves-green btn-flat">Yes</button>
-                  <button class="modal-action modal-close waves-effect waves-green btn-flat">No</button>
+                    </div>
+                    <div class="modal-footer">
+                      <button id="confirm_cancel_request" class="modal-action modal-close waves-effect waves-green btn-flat">Yes</button>
+                      <button class="modal-action modal-close waves-effect waves-green btn-flat">No</button>
+                    </div>
+                  </div>
                 </div>
               </div>
-
-
             </div>
           </li>
+          
           {% else %}
-          <li class="collection-item avatar">
-
-            <img src ="/img?user_id={{request.sender.urlsafe}}" class="circle">
-            <span class="title"><b>Requestor:</b><a href="/foodie/{{request.sender_name}}"> {{request.sender_name}}</a></span>
-            <p>
-              <b>Type:</b> {{request.food_type}}</p>
-              <b>Location:</b> {{request.location}} <br />
-              <b>For:</b> {{request.start_time.date}} <b> @ </b> {{request.start_time.time}}</p>
-              {% if request.recipient_name|length > 0 %}
-              <p> <b>Attendees:</b> 
-                {% for person in request.recipient_name %}
-                <a href="/foodie/{{person}}">{{person}}</a>  
-                {% endfor %}</p>
-                {% endif %}
-                <b>Interest:</b> {{request.interest}}</p>
-                <b>Bidders:</b> {{request.bidders|length}}
-
+          <li class="collection-item">
+            <div class="row search-row">
+              <div class= "col s3">
+                <div id="food-img3-{{request.key.urlsafe}}" class="food-img"></div>
+                <script type="text/javascript">
+                  FoodTypeDisplays.displayBackground({'backgroundId':'food-img3-{{request.key.urlsafe}}'},'{{request.food_type}}');
+                </script>
+              </div>
+              <div class= "col s4">
+                <a class = "search-result-title">{{request.food_type|title}}</a> &nbsp; for {{request.interest}}
+                <p class = "search-detail">
+                  <div class="chip">
+                    <img src="/img?user_id={{request.sender.urlsafe}}" alt="requestor">
+                    <a href="/foodie/{{request.sender_name}}">{{request.sender_name}}</a>
+                  </div></br>
+                  <!--<b><a href="/foodie/{{request.sender_name}}"> {{request.sender_name}}</a></b></br>-->
+                  Price: ${{request.price}}</br>
+                  {% if request.recipient_name|length > 0 %}
+                  Attendees:
+                    <a href="/foodie/{{request.recipient_name}}">{{request.recipient_name}}</a></br>
+                  {% endif %}
+                  Bidders:{{request.bidders|length}}
+                </p>                
+              </div>
+              <div class= "col s4">
+                <p class = "search-detail">
+                  </br></br>
+                  {{request.location|title}}</br>
+                  {{request.start_time}}
+                </p>
+              </div>
+              <div class= "col s1">
                 {% if profile.owner == user.key %}
                 <div class="secondary-content">
                   <table>
                     <tr>
-                      <button id="delete{{forloop.counter}}" style="border:none; background:none; color:red" value={{request.key.urlsafe}}><i class="material-icons">clear</i>Delete</button>
+                      <button id="delete{{forloop.counter}}" style="border:none; background:none; color:#B71C1C" title= "delete" value={{request.key.urlsafe}}><i class="material-icons">clear</i></button>
                     </tr>
                     <tr>
                       <td>
-                        <a href="/editrequest/{{request.key.urlsafe}}" style="border:none; background:none;" ><i class="material-icons" =>mode_edit</i> Edit</a>
+                        <a href="/editrequest/{{request.key.urlsafe}}" style="border:none; background:none;color:#333333" title= "edit" ><i class="material-icons" =>mode_edit</i></a>
                       </td>
                     </tr>
                     <tr>
                       <td>
-                        <a href="/choose/{{request.key.urlsafe}}" style="border:none; background:none; color:green "><i class="material-icons">chat_bubble</i> Choose</a>
+                        <a href="/choose/{{request.key.urlsafe}}" style="border:none; background:none; color:#1B5E20 " title= "delete" ><i class="material-icons">playlist_add_check</i> Choose</a>
                       </td>
                     </tr>
                     <tr></tr>
@@ -231,10 +288,12 @@
                 </div>
                 {% else %}
                 <div class="secondary-content">
-                  <button id="delete{{forloop.counter}}" style="border:none; background:none; color:red" value={{request.key.urlsafe}}><i class="material-icons">clear</i>Delete</button>
+                  <button id="delete{{forloop.counter}}" style="border:none; background:none; color:#1B5E20" title= "delete" value={{request.key.urlsafe}}><i class="material-icons">clear</i></button>
                 </div>
                 {% endif %}
-              </li>
+              </div>
+            </div>
+            </li>
               {% endif %}
               {% empty %}
               <li class="collection-header">
@@ -249,51 +308,88 @@
       <!-- table/pending end -->
       <!-- table/accepted start -->
       <div id="table-accepted" class="col s9" style="display:none;">
+       <h4 class= "history-title">Accepted</h4>
        <div class="row">
         <ul class="collection with-header col s12 m12">
           <br />
           {% for request in accepted_requests %}
           {% if request.0.sender != user.key %}
-          <li class="collection-item avatar">
-            <img src ="/img?user_id={{request.0.sender.urlsafe}}" class="circle">
-            <span class="title"><b>Requestor:</b><a href="/foodie/{{request.0.sender_name}}"> {{request.0.sender_name}}</a></span>
-            <p>
-              <b>Type:</b> {{request.0.food_type}}</p>
-              <b>Location:</b> {{request.0.location}} <br />
-              <b>For:</b> {{request.0.start_time.date}} <b> @ </b> {{request.0.start_time.time}}</p>
-              <p> <b>Attendee:</b> 
-                <a href="/foodie/{{request.recipient_name}}">{{request.0.recipient_name}}</a>  
-              </p>
-              <b>Interest:</b> {{request.0.interest}}</p>
-              <div class="secondary-content">
-                <button id="cancel_accepted{{forloop.counter}}" style="border:none; background:none;" value={{request.0.key.urlsafe}}><i class="material-icons" style="color:red;">cancel</i></button>
-                <div id="cancel_accepted_request{{forloop.counter}}" class="modal">
-                  <div class="modal-content">
-                    <h4>Cancel Request</h4>
-                    <p>Are you sure you want to back out of the request?</p>
-
-                  </div>
-                  <div class="modal-footer">
-                    <button id="confirm_cancel_request" class="modal-action modal-close waves-effect waves-green btn-flat">Yes</button>
-                    <button class="modal-action modal-close waves-effect waves-green btn-flat">No</button>
-                  </div>
-                </div>
+          <li class="collection-item">
+            <div class="row search-row">
+              <div class= "col s3">
+                <div id="food-img4-{{request.0.key.urlsafe}}" class="food-img"></div>
+                <script type="text/javascript">
+                  FoodTypeDisplays.displayBackground({'backgroundId':'food-img4-{{request.0.key.urlsafe}}'},'{{request.0.food_type}}');
+                </script>
               </div>
+              <div class= "col s4">
+                <a class = "search-result-title">{{request.0.food_type|title}}</a> &nbsp; for {{request.0.interest}}
+                <p class = "search-detail">
+                  <div class="chip">
+                    <img src="/img?user_id={{request.0.sender.urlsafe}}" alt="requestor">
+                    <a href="/foodie/{{request.0.sender_name}}">{{request.0.sender_name}}</a>
+                  </div></br>
+                  <!--<b><a href="/foodie/{{request.sender_name}}"> {{request.sender_name}}</a></b></br>-->
+                  Price: ${{request.0.price}}</br>
+                </p>                
+              </div>
+              <div class= "col s4">
+                <p class = "search-detail">
+                  </br></br>
+                  {{request.0.location|title}}</br>
+                  {{request.0.start_time}}
+                </p>
+              </div>
+              <div class= "col s1">
+                <div class="secondary-content">
+                  <button id="cancel_accepted{{forloop.counter}}" style="border:none; background:none;" title= "cancel" value={{request.0.key.urlsafe}}><i class="material-icons" style="color:#B71C1C;">clear</i></button>
+                  <div id="cancel_accepted_request{{forloop.counter}}" class="modal">
+                    <div class="modal-content">
+                      <h4>Cancel Request</h4>
+                      <p>Are you sure you want to back out of the request?</p>
+
+                    </div>
+                    <div class="modal-footer">
+                      <button id="confirm_cancel_request" class="modal-action modal-close waves-effect waves-green btn-flat">Yes</button>
+                      <button class="modal-action modal-close waves-effect waves-green btn-flat">No</button>
+                    </div>
+                  </div>
+                </div>    
+                </div>
+            </div>
             </li>
             {% else %}
-            <li class="collection-item avatar">
-              <img src ="/img?user_id={{request.0.sender.urlsafe}}" class="circle">
-              <span class="title"><b>Requestor:</b><a href="/foodie/{{request.0.recipient_name}}"> {{request.0.recipient_name}}</a></span>
-              <p>
-                <b>Type:</b> {{request.0.food_type}}</p>
-                <b>Location:</b> {{request.0.location}} <br />
-                <b>For:</b> {{request.0.start_time.date}} <b> @ </b> {{request.0.start_time.time}}</p>
-                <p> <b>Attendee:</b> 
+            <li class="collection-item">
+              <div class="row search-row">
+              <div class= "col s3">
+                <div id="food-img5-{{request.0.key.urlsafe}}" class="food-img"></div>
+                <script type="text/javascript">
+                  FoodTypeDisplays.displayBackground({'backgroundId':'food-img5-{{request.0.key.urlsafe}}'},'{{request.0.food_type}}');
+                </script>
+              </div>
+              <div class= "col s4">
+                <a class = "search-result-title">{{request.0.food_type|title}}</a> &nbsp; for {{request.0.interest}}
+                <p class = "search-detail">
+                  <div class="chip">
+                    <img src="/img?user_id={{request.0.sender.urlsafe}}" alt="requestor">
+                    <a href="/foodie/{{request.0.sender_name}}">{{request.0.sender_name}}</a>
+                  </div></br>
+                  <!--<b><a href="/foodie/{{request.sender_name}}"> {{request.sender_name}}</a></b></br>-->
+                  Price: ${{request.0.price}}</br>
+                  Attendee:
                   <a href="/foodie/{{request.recipient_name}}">{{request.0.recipient_name}}</a>
+                </p>                
+              </div>
+              <div class= "col s4">
+                <p class = "search-detail">
+                  </br></br>
+                  {{request.0.location|title}}</br>
+                  {{request.0.start_time}}
                 </p>
-                <b>Interest:</b> {{request.0.interest}}</p>
+              </div>
+              <div class= "col s1">
                 <div class="secondary-content">
-                <button id="cancel_accepted{{forloop.counter}}" style="border:none; background:none;" value={{request.0.key.urlsafe}}><i class="material-icons" style="color:red;">cancel</i></button>
+                <button id="cancel_accepted{{forloop.counter}}" style="border:none; background:none;" value={{request.0.key.urlsafe}}><i class="material-icons" style="color:#B71C1C;">clear</i></button>
                 <div id="cancel_accepted_request{{forloop.counter}}" class="modal">
                   <div class="modal-content">
                     <h4>Cancel Request</h4>
@@ -321,26 +417,41 @@
       <!-- table/accepted end -->
       <!-- table/complated start -->
       <div id="table-completed" class="col s9" style="display:none; height: 85vh; overflow-y: scroll;"> 
-        <h4 class= "history-title">History</h4>
+        <h4 class= "history-title">Completed</h4>
         <div class="row">
           <ul class="collection with-header col s12 m12">
             <br />
             {% for request in completed_requests %}
-            <li class="collection-item avatar">
-              <img src ="/img?user_id={{request.sender.urlsafe}}" class="circle">
-              <span class="title"><b>Requestor:</b><a href="/foodie/{{request.0.sender_name}}?q=timeline/all"> {{request.0.sender_name}}</a></span>
-              <p>
-                <b>Type:</b> {{request.0.food_type}}</p>
-                <b>Location:</b> {{request.0.location}} <br />
-                <b>For:</b> {{request.0.start_time.date}} <b> @ </b> {{request.0.start_time.time}}</p>
-                {% if request.0.recipient_name|length > 0 %}
-                <p> <b>Attendees:</b> 
-                  <a href="/foodie/{{request.0.recipient_name}}?q=timeline/all">{{request.0.recipient_name}}</a>  
+            <li class="collection-item">
+               <div class="row search-row">
+              <div class= "col s3">
+                <div id="food-img6-{{request.0.key.urlsafe}}" class="food-img"></div>
+                <script type="text/javascript">
+                  FoodTypeDisplays.displayBackground({'backgroundId':'food-img6-{{request.0.key.urlsafe}}'},'{{request.0.food_type}}');
+                </script>
+              </div>
+              <div class= "col s4">
+                <a class = "search-result-title">{{request.0.food_type|title}}</a> &nbsp; for {{request.0.interest}}
+                <p class = "search-detail">
+                  <div class="chip">
+                    <img src="/img?user_id={{request.0.sender.urlsafe}}" alt="requestor">
+                    <a href="/foodie/{{request.0.sender_name}}">{{request.0.sender_name}}</a>
+                  </div></br>
+                  <!--<b><a href="/foodie/{{request.sender_name}}"> {{request.sender_name}}</a></b></br>-->
+                  Price: ${{request.0.price}}</br>
+                  {% if request.recipient_name|length > 0 %}
+                  Attendees:
+                    <a href="/foodie/{{request.recipient_name}}">{{request.recipient_name}}</a></br>
+                  {% endif %}
+                </p>                
+              </div>
+              <div class= "col s4">
+                <p class = "search-detail">
+                  </br></br>
+                  {{request.0.location|title}}</br>
+                  {{request.0.start_time}}
                 </p>
-                {% endif %}
-                <b>Interest:</b> {{request.0.interest}}</p>
-                <b>Bidders:</b> {{request.0.bidders|length}}</p>
-                <b>Status:</b> {{request.0.status}}
+              </div>
               </li>
               {% empty %}
               <li class="collection-header">
@@ -397,7 +508,7 @@
                     <span><b>For:</b> {{request.0.start_time.date}} @ {{request.0.start_time.time}}</span><br />
                     <span><b>Type:</b> {{request.0.food_type}}</span><br />
                     <span><b>Interest:</b> {{request.0.interest}}</span><br />
-                    <span><b>Status:</b> {{request.0.status}}</span><br />
+                    <span><b>Status:</b> {{request.0.status}}</span><br /><br />
                   </div>
                 </div>
 
@@ -474,7 +585,7 @@
                     <span><b>For:</b> {{request.0.start_time.date}} @ {{request.0.start_time.time}}</span><br />
                     <span><b>Type:</b> {{request.0.food_type}}</span><br />
                     <span><b>Interest:</b> {{request.0.interest}}</span><br />
-                    <span><b>Status:</b> {{request.0.status}}</span><br />
+                    <span><b>Status:</b> {{request.0.status}}</span><br /><br />
                   </div>
                 </div>
 
@@ -548,7 +659,7 @@
                     <span><b>For:</b> {{request.0.start_time.date}} @ {{request.0.start_time.time}}</span><br />
                     <span><b>Type:</b> {{request.0.food_type}}</span><br />
                     <span><b>Interest:</b> {{request.0.interest}}</span><br />
-                    <span><b>Status:</b> {{request.0.status}}</span><br />
+                    <span><b>Status:</b> {{request.0.status}}</span><br /><br />
                   </div>
                 </div>
 
