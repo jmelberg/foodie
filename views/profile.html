@@ -40,7 +40,7 @@
         </a>
       </div>
     </div>
-    <div class = "row profile-tabs">
+    <div class = "row profile-tabs" style="margin-top: -15px;">
       <ul>
         <li><a href="/foodie/{{owner.username}}?q=table/all" class="btn" id="tableViewBtn" style="width: 100%;"> Table </a></li>
         <li><a href="/foodie/{{owner.username}}?q=timeline/all" class="btn" id="timelineViewBtn" style="display: none; width: 100%;"> Timeline </a></li>
@@ -67,9 +67,21 @@
     </div>
   </div>
   <div id="history-view">
+  <div id="sexy-sort-btn"class="fixed-action-btn" style="bottom: 45px; right: 30px; display:none;">
+    <a class="btn-floating btn-large red">
+      <i class="large material-icons">search</i>
+    </a>
+    <ul>
+      <li><a id="hangouts_sort"class="btn-floating teal btn tooltipped" data-position="left" data-delay="50" data-tooltip="Hangouts">H</a></li>
+      <li><a id="lessons_sort" class="btn-floating teal btn tooltipped" data-position="left" data-delay="50" data-tooltip="Food Type">F</a></li>
+      <li><a id="price_sort" class="btn-floating yellow darken-1 btn tooltipped" data-position="left" data-delay="50" data-tooltip="Price"><i class="material-icons">attach_money</i></a></li>
+      <li><a id="time_sort"class="btn-floating green btn tooltipped" data-position="left" data-delay="50" data-tooltip="Time"><i class="material-icons">access_time</i></a></li>
+      <li><a id="location_sort" class="btn-floating blue btn tooltipped" data-position="left" data-delay="50" data-tooltip="Location"><i class="material-icons">place</i></a></li>
+    </ul>
+  </div>
 
     <!-- table/all start -->
-    <div id="table-all" class="col s9" style="display:none; height: 85vh; overflow-y: scroll;"> 
+    <div id="table-all" class="col s9 card history-content"> 
       <h4 class= "history-title">History</h4>
       <div class="row">
         <ul class="collection with-header col s12 m12">
@@ -91,13 +103,14 @@
               <b>Bidders:</b> {{request.bidders|length}}</p>
               <b>Status:</b> {{request.status}}
               {% if profile.owner == user.key %}
-              {% if request.status == "pending" or request.status == "waiting for a bid" %}
+              {% if request.status == "pending" or request.status == "waiting for a bid" or request.status == "dead" %}
               {% if request.sender == user.key %}
               <div class="secondary-content">
                 <table>
                   <tr>
                     <button id="delete{{forloop.counter}}" style="border:none; background:none; color:red" value={{request.key.urlsafe}}><i class="material-icons">clear</i>Delete</button>
                   </tr>
+                  {% if request.status == "pending" or request.status == "waiting for a bid" %}
                   <tr>
                     <td>
                       <a href="/editrequest/{{request.key.urlsafe}}" style="border:none; background:none;" ><i class="material-icons" =>mode_edit</i> Edit</a>
@@ -108,6 +121,7 @@
                       <a href="/choose/{{request.key.urlsafe}}" style="border:none; background:none; color:green "><i class="material-icons">chat_bubble</i> Choose</a>
                     </td>
                   </tr>
+                  {% endif %}
                   <tr></tr>
                 </table>
               </div>
@@ -161,7 +175,7 @@
     </div>
     <!-- table/all end -->
     <!-- table/pending start -->
-    <div id="table-pending" class="col s9" style="display:none;">
+    <div id="table-pending" class="col s9 card history-content">
      <div class="row">
       <ul class="collection with-header col s12 m12">
         <br />
@@ -248,7 +262,7 @@
       </div>
       <!-- table/pending end -->
       <!-- table/accepted start -->
-      <div id="table-accepted" class="col s9" style="display:none;">
+      <div id="table-accepted" class="col s9 card history-content">
        <div class="row">
         <ul class="collection with-header col s12 m12">
           <br />
@@ -319,8 +333,8 @@
         </div>
       </div>
       <!-- table/accepted end -->
-      <!-- table/complated start -->
-      <div id="table-completed" class="col s9" style="display:none; height: 85vh; overflow-y: scroll;"> 
+      <!-- table/completed start -->
+      <div id="table-completed" class="col s9 card history-content"> 
         <h4 class= "history-title">History</h4>
         <div class="row">
           <ul class="collection with-header col s12 m12">
@@ -355,7 +369,7 @@
         <!-- table/completed end -->
 
         <!-- timeline/all start-->
-        <div id="timeline-all" class="col s9 card" style="display:none; height: 85vh; overflow-y: scroll;">
+        <div id="timeline-all" class="col s9 card history-content">
           <h4 class= "history-title">History</h4>
           {% if timeline_requests|length == 0 %}
           <li class="collection-header">
@@ -432,7 +446,7 @@
     </div>
     <!-- timeline/all end -->
     <!-- timeline/accepted start-->
-    <div id="timeline-accepted" class="col s9 card" style="display: none; height: 85vh; overflow-y: scroll;">
+    <div id="timeline-accepted" class="col s9 card history-content">
       <h4 class= "history-title">History</h4>
       {% if accepted_requests|length == 0 %}
       <li class="collection-header">
@@ -506,7 +520,7 @@
     </div>
     <!-- timeline/accepted end -->
     <!-- timeline/completed start-->
-    <div id="timeline-completed" class="col s9 card" style="display: none; height: 85vh; overflow-y: scroll;">
+    <div id="timeline-completed" class="col s9 card history-content">
       <h4 class= "history-title">History</h4>
       {% if completed_requests|length == 0 %}
       <li class="collection-header">
