@@ -41,11 +41,11 @@
                 </script>
               </div>
               <div class= "col s4">
-                <a class = "search-result-title" href="/confirm/{{result.1.key.urlsafe}}">{{result.1.food_type|title}}</a> &nbsp; for {{result.1.interest}}
+                <a class = "search-result-title" href="/confirm/{{result.1.key.urlsafe}}">{{result.1.food_type|title}}</a></br> for {{result.1.interest}}
                 <p class = "search-detail">
                   Requested By <b><a href="/foodie/{{result.0.username}}"> {{result.0.first_name}} {{result.0.last_name}} </a></b></br>
                   {{result.0.percent_positive}}% positive rating </br>
-                  ${{result.1.min_price}} - ${{result.1.max_price}}
+                  ${{result.1.price}}
                 </p>
               </div>
               <div class= "col s5">
@@ -71,11 +71,11 @@
                 <div class="food-img"></div>
               </div>
               <div class= "col s4">
-                <a class = "search-result-title">{{result.1.food_type|title}}</a> &nbsp; for {{result.1.interest}}
+                <a class = "search-result-title">{{result.1.food_type|title}}</a></br> for {{result.1.interest}}
                 <p class = "search-detail">
                   Requested By <b><a href="/foodie/{{result.0.username}}"> {{result.0.first_name}} {{result.0.last_name}} </a></b></br>
                   {{result.0.percent_positive}}% positive rating </br>
-                  ${{result.1.min_price}} - ${{result.1.max_price}}
+                  ${{result.1.price}}
                 </p>
               </div>
               <div class= "col s5">
