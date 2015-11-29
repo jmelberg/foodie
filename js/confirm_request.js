@@ -1,6 +1,5 @@
 $(document).ready(function(){
   $.getScript("../js/create_request.js");
-  console.log(tab);
     var current_request = $('#confirm_request').val();
     var location;
 

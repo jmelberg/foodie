@@ -100,7 +100,7 @@ class ProfileHandler(SessionHandler):
     pending_requests = []
     accepted_requests = []
     completed_reqs = []
-    alloted_time = current_date + datetime.timedelta(hours=2)
+    alloted_time = current_date + datetime.timedelta(minutes=20)
 
     # Get all requests where profile owner is foodie and expert
     available_requests = Request.query(Request.start_time >= alloted_time).order(Request.start_time)
@@ -369,6 +369,7 @@ app = webapp2.WSGIApplication([
                              ('/verify/(.+)/(.+)', VerifyHandler),
                              ('/fire/(.+)/(.+)', FireHandler),
                              ('/complete', CompletedRequestHandler), 
+                             ('/dead', DeadRequestHandler),
                              ('/logout', LogoutHandler),
                              ('/authorizepayment', AuthorizePaymentsHandler),
                              ('/getwepaytoken', GetWePayUserTokenHandler),
