@@ -79,6 +79,7 @@ $(document).ready(function(){
 
     $('#agreement').click(function(){
       confirmed_aggreement = !confirmed_aggreement;
+      
       status = finalAgreement(filled_time, filled_food_type, filled_location, confirmed_price, confirmed_aggreement);
     });
 
@@ -91,7 +92,8 @@ $(document).ready(function(){
         var food_type = $('#food_type').val();
         var price = $('#price').val();
         var interest = $('input[type="radio"]:checked').val();
-      
+        var owner = $('#username').attr('value');
+        
         $.ajax({
           type: "POST",
           url: '/request',
@@ -99,7 +101,7 @@ $(document).ready(function(){
           'food_type': food_type, 'interest': interest},
           success: function(){
             setTimeout(function(){ // Refresh after 1 second
-            window.location.href = '/feed';
+            window.location.href = '/foodie/'+owner+'?q=table/all';
             }, 100);
           }
         });
