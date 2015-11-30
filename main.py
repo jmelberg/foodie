@@ -145,7 +145,7 @@ class ProfileHandler(SessionHandler):
         timeline_comments.append("None")
 
     timeline_requests = zip(timeline_requests, timeline_comments)
-    completed_requests = [x for x in timeline_requests if x[0].status == "completed"]
+    completed_requests = [x for x in timeline_requests if x[0].status == "complete"]
     fired_requests = [x for x in timeline_requests if x[0].status == "foodie"]
 
     self.response.out.write(template.render('views/profile.html',

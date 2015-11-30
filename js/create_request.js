@@ -18,7 +18,6 @@ $(document).ready(function(){
       if(location.length > 0){
         filled_location = true;
         status = finalAgreement(filled_time, filled_food_type, filled_location, confirmed_price, confirmed_aggreement);
-        /*submit_button.style.visibility = "visible";*/
       }
       else{
         filled_location = false;
@@ -28,7 +27,6 @@ $(document).ready(function(){
         else {
           submit_button.addClass('disabled');
         }
-        /*submit_button.style.visibility = "hidden";*/
       }
     });
 
@@ -37,7 +35,6 @@ $(document).ready(function(){
       if(food_type.length > 0){
         filled_food_type = true;
         status = finalAgreement(filled_time, filled_food_type, filled_location, confirmed_price, confirmed_aggreement);
-        /*submit_button.style.visibility = "visible";*/
       }
       else{
         filled_food_type = false;
@@ -47,7 +44,6 @@ $(document).ready(function(){
         else {
           submit_button.addClass('disabled');
         }
-        /*submit_button.style.visibility = "hidden";*/
       }
     })
 
@@ -66,7 +62,6 @@ $(document).ready(function(){
       if(price > 0 && price.length > 0){
         confirmed_price = true;
         status = finalAgreement(filled_time, filled_food_type, filled_location, confirmed_price, confirmed_aggreement);
-        /*submit_button.style.visibility = "visible";*/
       }
       else{
         confirmed_price = false;
@@ -76,7 +71,6 @@ $(document).ready(function(){
         else {
           submit_button.addClass('disabled');
         }
-        /*submit_button.style.visibility = "hidden";*/
       }
       if(price.substring(0, 1) == "-") {
         confirmed_price = false;
@@ -95,9 +89,6 @@ $(document).ready(function(){
         var date = $('#date').val();
         var time = $('#time').val();
         var location = $('#location').val();
-        /*var price = $("#price-input");*/
-        /*var m_price = $('#min_price').val();
-        var mx_price = $('#max_price').val();*/
         var food_type = $('#food_type').val();
         var price = $('#price').val();
         var interest = $('input[type="radio"]:checked').val();
@@ -173,16 +164,6 @@ function checkTime(time, date, confirmed_aggreement) {
         }
         filled_time = false;
       }
-/*
-      $("#slot_available").text(result);
-      if(result == 'Available'){
-        $("#slot_available").show();
-        $("#send_request").show();
-      }
-      else {
-        $("#slot_available").show();
-        $("#send_request").hide();
-      } */
     }
   });
 }

@@ -110,7 +110,7 @@
       <ul class="side-nav" id="mobile-demo">
         <li><a href="/feed"><i class="material-icons left">home</i>Home</a></li>
         <li>
-          <a href="/requests?q=mine"><i class="material-icons left">event_note</i>
+          <a href="/foodie/{{user.username}}?q=table/all"><i class="material-icons left">event_note</i>
           My Requests
           {% if user.pending_requests > 0 %}
           <span class="new badge">{{user.pending_requests}}</span>

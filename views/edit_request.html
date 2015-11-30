@@ -55,7 +55,7 @@
           </div>  
           <!-- TODO: Field checking -->
           <a id="submit_edit" class="btn-flat">Edit Request</a>
-          <a href="/requests" class="btn-flat">Cancel </a>
+          <a href="/foodie/{{user.username}}?q=table/all" class="btn-flat">Cancel </a>
           <input name="edit_request" id="edit_request" value={{request.key.urlsafe}} hidden>
           <!--<input name="edit_interest" id="edit_interest" value={{request.interest}}hidden> -->
       </div>

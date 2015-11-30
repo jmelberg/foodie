@@ -58,7 +58,7 @@ $(document).ready(function(){
             'price': e_price,'food_type': food_type, 'interest': interest}
       });
       setTimeout(function(){ // Refresh after 1 second
-        window.location.href = '/requests';
+        window.location.href = '/feed';
       }, 200);
     }
   });

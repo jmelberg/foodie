@@ -153,8 +153,12 @@ def get_notifications(user):
     print "No bidders: ", pend_requests
   user.pending_requests = new_bidders
   user.available_requests = len(available_requests)
+  print len(available_requests)
   user.approved_requests = len(approved_requests)
+  print len(approved_requests)
+  user.last_check = current_time
   user.put()
+  print "user updated"
 
 class CreateRequestHandler(SessionHandler):
   ''' Create request '''
@@ -236,7 +240,7 @@ class EditRequestHandler(SessionHandler):
     else:
       print "Could not add"
 
-    self.redirect('/requests')
+    self.redirect('/foodie/{}'.format(user.username) + "?q=timeline/all")
 
 class ChooseRequestHandler(SessionHandler):
   @login_required
@@ -272,7 +276,7 @@ class JoinRequestHandler(SessionHandler):
     user = self.user_model
     request = ndb.Key(urlsafe=request_id).get()
     if request.location is None or request.food_type is None:
-      self.redirect('/requests')
+      self.redirect('/feed')
     response = query_api(request.food_type, request.location)
     results = []
     for business in response:
@@ -343,6 +347,7 @@ class JoinRequestHandler(SessionHandler):
           bidder.location = new_location.key
           bidder.name = self.user_model.username
           bidder.bid_time = datetime.datetime.now() - datetime.timedelta(hours=8)
+          bid.price = request.price
           bidder.put()
           request.bidders.append(bidder.key)
           request.status = "pending"
@@ -350,7 +355,7 @@ class JoinRequestHandler(SessionHandler):
     else:
       print "Already connected"
 
-    self.redirect('/requests')
+    self.redirect('/feed')
 
 class DeleteRequestHandler(SessionHandler):
   ''' Removes request entirely '''
