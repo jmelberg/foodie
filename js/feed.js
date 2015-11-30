@@ -26,4 +26,13 @@ var FeedCarousel = (function () {
   $(".stop").click(function(){
     owl.trigger('owl.stop');
   })
+  $(".food-item-wrapper").hover(function(event) {
+    $(this).children(".food-item-picture").children(".reply-icon").fadeIn();
+    $(this).children(".food-item-picture").children(".food-selector").children(".owl-item-text").css('visibility','hidden');
+  }, 
+  function(e) {
+    $(this).children(".food-item-picture").children(".reply-icon").fadeOut();
+    $(this).children(".food-item-picture").children(".food-selector").children(".owl-item-text").css('visibility','visible');
+    e.stopPropagation();
+  });
 })();

@@ -37,8 +37,7 @@
 }
 
 .owl-arrow-wrapper {
-  padding: 44px 0px;
-  width: 4%;
+  padding: 53.5px 0px;
   position: absolute;
   margin-top: 10px;
   text-align: center;
@@ -63,5 +62,37 @@
 }
 
 .owl-item-text {
+  font-size: 14px;
+}
+
+.food-suggestion-item {
+  height: 179px;
+  width: 100%;
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: cover;
+  -moz-background-size: cover;
+    -webkit-background-size: cover;
+    -moz-transition: all .7s;
+    -webkit-transition: all .7s;
+    transition: all .7s;
+    -moz-transform: scale(1,1);
+    -webkit-transform: scale(1,1);
+    transform: scale(1,1)
+  background-color: #fafafa;
   
+}
+.reply-icon{
+  position: absolute;
+  width: 100%;
+  color: white;
+  text-align: center;
+  font-size: 35px;
+  font-weight: 400;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  word-wrap: break-word;
+  display: none;
+  z-index: 10;
 }
