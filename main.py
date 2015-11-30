@@ -319,12 +319,11 @@ class GetWePayUserTokenHandler(SessionHandler):
   def post(self):
     user = self.user_model
     code = cgi.escape(self.request.get("acct_json"))
-    print code
     r = wepay.get_token(redirect_url, client_id, client_secret, code[1:-1])
     acct_token = r["access_token"]
     acct_id = r["user_id"]
-    createAccount = CreateExpertAccount(acct_token,user.username)
-    user.wepay_id = str(createAccount["account_id"])
+    createthis = CreateExpertAccount(acct_token,user.username)
+    user.wepay_id = str(createthis["account_id"])
     user.wepay_token = str(acct_token)
     user.put()
 
