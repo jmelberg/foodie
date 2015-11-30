@@ -14,10 +14,10 @@ from wepay import *
 from models import User, Profile, Request, Endorsement, Bidder
 from payments import *
 
-client_id = 175855
-client_secret = 'dfb950e7ea'
-redirect_url = 'http://localhost:8080/'
-wepay = WePay(False, None)
+client_id = 3044
+client_secret = 'a2ed348f70'
+redirect_url = 'http://food-enthusiast.appspot.com'
+wepay = WePay(True, None)
 
 
 class LoginHandler(SessionHandler):
@@ -49,9 +49,10 @@ class FeedHandler(SessionHandler):
     user = self.user_model
     get_notifications(user)
     current_date = datetime.datetime.now() - datetime.timedelta(hours=8)
-    
+
     all_requests = Request.query(Request.start_time >= current_date).order(Request.start_time)
     all_requests = [r for r in all_requests if r.sender != user.key]
+    all_requests = [r for r in all_requests if r.status == 'waiting for a bid' or r.status == 'pending']
     pending_requests = Request.query(Request.status == 'pending').order(Request.start_time)
     pending_requests = [r for r in pending_requests if r.start_time < current_date]
 
@@ -335,6 +336,12 @@ class AuthorizePaymentsHandler(SessionHandler):
     user.credit_id = credit
     user.put()
 
+class TestChargeHandler(SessionHandler):
+  def get(self):
+    charge = Charge(383659670, 2909426724, 1.00, "Live Payments Works!")
+
+#def Charge(account_id, credit_card_id, amount, desc):
+
 
 config = {}
 config['webapp2_extras.sessions'] = {
@@ -367,7 +374,8 @@ app = webapp2.WSGIApplication([
                              ('/thanks', ThanksHandler),
                              ('/verify/(.+)/(.+)', VerifyHandler),
                              ('/fire/(.+)/(.+)', FireHandler),
-                             ('/complete', CompletedRequestHandler), 
+                             ('/complete', CompletedRequestHandler),
+                             ('/testpayment', TestChargeHandler),
                              ('/dead', DeadRequestHandler),
                              ('/logout', LogoutHandler),
                              ('/authorizepayment', AuthorizePaymentsHandler),

@@ -2,10 +2,10 @@
 $(document).ready(function(){
 
 
-  WePay.set_endpoint("stage"); // stage or production
+  WePay.set_endpoint("production"); // stage or production
 
   WePay.OAuth2.button_init(document.getElementById('start_oauth2'), {
-      "client_id":"175855",
+      "client_id":3044,
        "scope":["manage_accounts","collect_payments","view_user","send_money","preapprove_payments"],
       "user_name":"",
       "user_email":"",

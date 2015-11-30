@@ -118,10 +118,10 @@ $(document).ready(function() {
   });
   // Accept confirm application
   $("#select_bid_button").click(function() {
-    console.log('meh');
+    console.log(request.value);
     $.ajax({
       type: "POST",
-      url: "/choose/"+request,
+      url: "/choose/"+request.value,
       data: {'bidder': bidder},
     });
     setTimeout(function(){ // Refresh after 1 second
