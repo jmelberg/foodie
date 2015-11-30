@@ -99,13 +99,12 @@
                 <p class = "search-detail">
                   <div class="chip">
                     <img src="/img?user_id={{request.sender.urlsafe}}" alt="requestor">
-                    <a href="/foodie/{{request.sender_name}}">{{request.sender_name}}</a>
+                    <a href="/foodie/{{request.sender_name}}?q=timeline/all">{{request.sender_name}}</a>
                   </div></br>
-                  <!--<b><a href="/foodie/{{request.sender_name}}"> {{request.sender_name}}</a></b></br>-->
                   Price: ${{request.price}}</br>
                   {% if request.recipient_name|length > 0 %}
                   Attendees:
-                  <a href="/foodie/{{request.recipient_name}}">{{request.recipient_name}}</a></br>
+                  <a href="/foodie/{{request.recipient_name}}?q=timeline/all">{{request.recipient_name}}</a></br>
                   {% endif %}
                   Bidders:{{request.bidders|length}}
                 </p>
@@ -172,9 +171,8 @@
           <p class = "search-detail">
             <div class="chip">
               <img src="/img?user_id={{request.sender.urlsafe}}" alt="requestor">
-              <a href="/foodie/{{request.sender_name}}">{{request.sender_name}}</a>
+              <a href="/foodie/{{request.sender_name}}?q=timeline/all">{{request.sender_name}}</a>
             </div></br>
-            <!--<b><a href="/foodie/{{request.sender_name}}"> {{request.sender_name}}</a></b></br>-->
             Price: ${{request.price}}</br>
             Bidders:{{request.bidders|length}}
           </p>                
@@ -219,13 +217,12 @@
         <p class = "search-detail">
           <div class="chip">
             <img src="/img?user_id={{request.sender.urlsafe}}" alt="requestor">
-            <a href="/foodie/{{request.sender_name}}">{{request.sender_name}}</a>
+            <a href="/foodie/{{request.sender_name}}?q=timeline/all">{{request.sender_name}}</a>
           </div></br>
-          <!--<b><a href="/foodie/{{request.sender_name}}"> {{request.sender_name}}</a></b></br>-->
           Price: ${{request.price}}</br>
           {% if request.recipient_name|length > 0 %}
           Attendees:
-          <a href="/foodie/{{request.recipient_name}}">{{request.recipient_name}}</a></br>
+          <a href="/foodie/{{request.recipient_name}}?q=timeline/all">{{request.recipient_name}}</a></br>
           {% endif %}
           Bidders:{{request.bidders|length}}
         </p>                
@@ -297,9 +294,8 @@
           <p class = "search-detail">
             <div class="chip">
               <img src="/img?user_id={{request.sender.urlsafe}}" alt="requestor">
-              <a href="/foodie/{{request.sender_name}}">{{request.sender_name}}</a>
+              <a href="/foodie/{{request.sender_name}}?q=timeline/all">{{request.sender_name}}</a>
             </div></br>
-            <!--<b><a href="/foodie/{{request.sender_name}}"> {{request.sender_name}}</a></b></br>-->
             Price: ${{request.price}}</br>
           </p>                
         </div>
@@ -342,9 +338,8 @@
         <p class = "search-detail">
           <div class="chip">
             <img src="/img?user_id={{request.sender.urlsafe}}" alt="requestor">
-            <a href="/foodie/{{request.sender_name}}">{{request.sender_name}}</a>
+            <a href="/foodie/{{request.sender_name}}?q=timeline/all">{{request.sender_name}}</a>
           </div></br>
-          <!--<b><a href="/foodie/{{request.sender_name}}"> {{request.sender_name}}</a></b></br>-->
           Price: ${{request.price}}</br>
           Attendee:
           <a href="/foodie/{{request.recipient_name}}?q=timeline/all">{{request.recipient_name}}</a>
@@ -405,13 +400,12 @@
           <p class = "search-detail">
             <div class="chip">
               <img src="/img?user_id={{request.0.sender.urlsafe}}" alt="requestor">
-              <a href="/foodie/{{request.0.sender_name}}">{{request.0.sender_name}}</a>
+              <a href="/foodie/{{request.0.sender_name}}?q=timeline/all">{{request.0.sender_name}}</a>
             </div></br>
-            <!--<b><a href="/foodie/{{request.sender_name}}"> {{request.sender_name}}</a></b></br>-->
             Price: ${{request.0.price}}</br>
             {% if request.recipient_name|length > 0 %}
             Attendees:
-            <a href="/foodie/{{request.recipient_name}}">{{request.recipient_name}}</a></br>
+            <a href="/foodie/{{request.recipient_name}}?q=timeline/all">{{request.recipient_name}}</a></br>
             {% endif %}
           </p>                
         </div>
@@ -461,12 +455,7 @@
             FoodTypeDisplays.displayImg({"imgId":"1-food-type-img-{{request.0.key.urlsafe}}"}, '{{request.0.food_type}}' );
           </script>
           <div class="card-content">
-                <div class="row"><!-- 
-                  {% if request.0.sender == profile.owner %}
-                  <div class="col s3"><a href="/foodie/{{request.0.recipient_name}}"><img src="/img?user_id={{request.0.recipient.urlsafe}}&height=50&width=50"></a></div>
-                  {% else %}
-                  <div class="col s3"><a href="/foodie/{{request.0.sender_name}}"><img src="/img?user_id={{request.0.sender.urlsafe}}&height=50&width=50"></a></div>
-                  {% endif %} -->
+                <div class="row">
                   <div class="col s9">
                     {% if request.0.sender == profile.owner %}
                     <span><b>Expert:</b> {{request.0.recipient_name}} </span><br />
@@ -481,23 +470,24 @@
                 </div>
 
                 {% if request.0.recipient == profile.owner or request.0.sender == profile.owner %}
-                {% if request.1 != "None" %}
-                <span><b>Comments</b></span>
-                <div class="card-action">
-                  {% for c in request.1 %}
-                  <span><b>{{c.sender_name}}:</b> "{{c.text}}"</span><br/>
-                  {% endfor %}
-                </div>
-                {% endif %}
-                {% if request.1 == "None" or request.1.sender_name != user.username %}
-                  {% if request.1|length < 2 %}
+                  {% if request.1 != "None" %}
+                  <span><b>Comments</b></span>
                   <div class="card-action">
-                    <span><a class="modal-trigger grey white-text waves-effect waves-light btn" id="comment_button" style="width: 100%;" href="#comment" {% if request.0.recipient_name == user.username %} onclick="getRequest('{{request.0.key.urlsafe}}', '{{request.0.sender_name}}')" {% else %} onclick="getRequest('{{request.0.key.urlsafe}}', '{{request.0.recipient_name}}')" {% endif %}>Share Your Experience</a>
-                    </span>
+                    {% for c in request.1 %}
+                    <span><b>{{c.sender_name}}:</b> "{{c.text}}"</span><br/>
+                    {% endfor %}
                   </div>
                   {% endif %}
-                {% endif %}  
-
+                  {% if request.1 == "None" or request.1.0.sender_name != user.username %}
+                    {% if request.1|length < 2 or request.1 == "None" %}
+                      {% if user.username == request.0.sender_name or user.username == request.0.recipient_name %}
+                        <div class="card-action">
+                          <span><a class="modal-trigger grey white-text waves-effect waves-light btn" id="comment_button" style="width: 100%;" href="#comment" {% if request.0.recipient_name == user.username %} onclick="getRequest('{{request.0.key.urlsafe}}', '{{request.0.sender_name}}')" {% else %} onclick="getRequest('{{request.0.key.urlsafe}}', '{{request.0.recipient_name}}')" {% endif %}>Share Your Experience</a>
+                          </span>
+                        </div>
+                        {% endif %}
+                    {% endif %}
+                  {% endif %}
                 {% endif %}
               </div>
             </div> <!-- cd-timeline-block end -->
@@ -538,12 +528,7 @@
                 FoodTypeDisplays.displayImg({"imgId":"food-type-img-{{request.0.key.urlsafe}}"}, '{{request.0.food_type}}' );
               </script>
               <div class="card-content">
-                <div class="row"><!-- 
-                  {% if request.0.sender == profile.owner %}
-                  <div class="col s3"><a href="/foodie/{{request.0.recipient_name}}"><img src="/img?user_id={{request.0.recipient.urlsafe}}&height=50&width=50"></a></div>
-                  {% else %}
-                  <div class="col s3"><a href="/foodie/{{request.0.sender_name}}"><img src="/img?user_id={{request.0.sender.urlsafe}}&height=50&width=50"></a></div>
-                  {% endif %} -->
+                <div class="row">
                   <div class="col s9">
                     {% if request.0.sender == profile.owner %}
                     <span><b>Expert:</b> {{request.0.recipient_name}} </span><br />
@@ -612,12 +597,7 @@
                 FoodTypeDisplays.displayImg({"imgId":"food-type-img-{{request.0.key.urlsafe}}"}, '{{request.0.food_type}}' );
               </script>
               <div class="card-content">
-                <div class="row"><!-- 
-                  {% if request.0.sender == profile.owner %}
-                  <div class="col s3"><a href="/foodie/{{request.0.recipient_name}}"><img src="/img?user_id={{request.0.recipient.urlsafe}}&height=50&width=50"></a></div>
-                  {% else %}
-                  <div class="col s3"><a href="/foodie/{{request.0.sender_name}}"><img src="/img?user_id={{request.0.sender.urlsafe}}&height=50&width=50"></a></div>
-                  {% endif %} -->
+                <div class="row">
                   <div class="col s9">
                     {% if request.0.sender == profile.owner %}
                     <span><b>Expert:</b> {{request.0.recipient_name}} </span><br />
