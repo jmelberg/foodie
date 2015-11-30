@@ -1,0 +1,41 @@
+<!-- POP UP MODAL -->
+<script type="text/javascript" src="https://static.wepay.com/min/js/tokenization.v2.js"></script>
+<script type="text/javascript" src="../js/creditcard.js"></script>
+
+<!-- Respond Modal -->
+<div id="addpayment" name = "addpayment" class="modal modal-fixed-footer">
+  <div class="modal-content">
+    <table>
+      <tr>
+        <th colspan="2"> Credit Card Information: </th>
+      </tr>
+      <tr>
+          <td>Full Name: </td>
+          <td colspan="3"><input id="name" type="text"></td>
+      </tr>
+      <tr>
+          <td>Email: </td>
+          <td colspan="3"><input id="email" type="text"></td>
+      </tr>
+      <tr>
+          <td>Credit Card Number: </td>
+          <td colspan="3"><input id="cc-number" type="password" ></td>
+      </tr>
+      <tr>
+          <td>Expiration Month: </td>
+          <td><input id="cc-month" type="text"></td>
+          <td>Expiration Year: </td>
+          <td><input id="cc-year" type="text"></td>
+      </tr>
+      <tr>
+          <td>CVV: </td>
+          <td><input id="cc-cvv" type="password"></td>
+          <td>Zipcode: </td>
+          <td><input id="zip" type="text"></td>
+      </tr>
+  </table>
+  </div>
+  <div class="modal-footer">
+    <a type="submit" id="cc-submit" class=" modal-action modal-close waves-effect waves-green btn-flat">Submit</a>
+  </div>
+</div>

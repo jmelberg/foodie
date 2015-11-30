@@ -29,7 +29,7 @@ class RequestsHandler(SessionHandler):
     request_sort = cgi.escape(self.request.get('requests'))
     current_date = datetime.datetime.now() - datetime.timedelta(hours=8)
     # Return only those two hours or more in future
-    alloted_time = current_date + datetime.timedelta(hours=2)
+    alloted_time = current_date + datetime.timedelta(minutes=20)
     sorted_requests = []
     available_requests = Request.query(Request.start_time >= alloted_time).order(Request.start_time)
     print "alloted", alloted_time
@@ -43,7 +43,7 @@ class RequestsHandler(SessionHandler):
     approved_requests = []
 
     # Get User requests
-    my_requests = Request.query(Request.start_time >= alloted_time - datetime.timedelta(hours=2),
+    my_requests = Request.query(Request.start_time >= alloted_time - datetime.timedelta(minutes=30),
                                 Request.sender == user.key).order(Request.start_time).fetch()
 
     for request in my_requests:
@@ -153,8 +153,12 @@ def get_notifications(user):
     print "No bidders: ", pend_requests
   user.pending_requests = new_bidders
   user.available_requests = len(available_requests)
+  print len(available_requests)
   user.approved_requests = len(approved_requests)
+  print len(approved_requests)
+  user.last_check = current_time
   user.put()
+  print "user updated"
 
 class CreateRequestHandler(SessionHandler):
   ''' Create request '''
@@ -183,7 +187,7 @@ class CreateRequestHandler(SessionHandler):
     request.location = location
     request.start_time = start_time
     request.creation_time = datetime.datetime.now() - datetime.timedelta(hours=8) #PST
-    request.price = price
+    request.price = abs(price)
     request.food_type = food_type
     request.interest = interest
     request.status = "waiting for a bid"
@@ -194,6 +198,7 @@ class CreateRequestHandler(SessionHandler):
 
 class EditRequestHandler(SessionHandler):
   ''' Edit current request '''
+  @login_required
   def get(self, request_id):
     user = self.user_model
     request = ndb.Key(urlsafe=request_id).get()
@@ -229,15 +234,16 @@ class EditRequestHandler(SessionHandler):
       previous_request.start_time = start_time
       previous_request.food_type = food_type
       previous_request.interest = interest
-      previous_request.price = price
+      previous_request.price = abs(price)
       previous_request.put()
       print "Added request to queue"
     else:
       print "Could not add"
 
-    self.redirect('/requests')
+    self.redirect('/foodie/{}'.format(user.username) + "?q=timeline/all")
 
 class ChooseRequestHandler(SessionHandler):
+  @login_required
   def get(self, request_id):
     user = self.user_model
     request = ndb.Key(urlsafe = request_id).get()
@@ -265,11 +271,12 @@ class ChooseRequestHandler(SessionHandler):
 
 class JoinRequestHandler(SessionHandler):
   ''' Processes current requests and removes from database '''
+  @login_required
   def get(self, request_id):
     user = self.user_model
     request = ndb.Key(urlsafe=request_id).get()
     if request.location is None or request.food_type is None:
-      self.redirect('/requests')
+      self.redirect('/feed')
     response = query_api(request.food_type, request.location)
     results = []
     for business in response:
@@ -340,6 +347,7 @@ class JoinRequestHandler(SessionHandler):
           bidder.location = new_location.key
           bidder.name = self.user_model.username
           bidder.bid_time = datetime.datetime.now() - datetime.timedelta(hours=8)
+          bid.price = request.price
           bidder.put()
           request.bidders.append(bidder.key)
           request.status = "pending"
@@ -347,10 +355,11 @@ class JoinRequestHandler(SessionHandler):
     else:
       print "Already connected"
 
-    self.redirect('/requests')
+    self.redirect('/feed')
 
 class DeleteRequestHandler(SessionHandler):
   ''' Removes request entirely '''
+  @login_required
   def post(self):
     user = self.user_model
     request_key = self.request.get('request')
@@ -364,6 +373,7 @@ class DeleteRequestHandler(SessionHandler):
       print "Not permitted to delete"
 
 class CancelRequestHandler(SessionHandler):
+  @login_required
   def post(self):
     user = self.user_model
     request_key = self.request.get('request')
@@ -420,7 +430,7 @@ class CheckTimeConflict(SessionHandler):
     # Remove current request if applicable
     if active_request:
       ongoing_request.remove(edit_request)
-    alloted_date = start_time + datetime.timedelta(hours=2) #Max limit
+    alloted_date = start_time + datetime.timedelta(minutes=20) #Max limit
 
     create = timeCheck(ongoing_request, alloted_date, start_time)
     if create is True:
@@ -436,7 +446,7 @@ def timeCheck(ongoing_request, alloted_date, start_time):
   print "Requested: ", start_time
   print "MAX: ", alloted_date
   current_time = datetime.datetime.now() - datetime.timedelta(hours=8)
-  min_time = start_time - datetime.timedelta(hours=2) #Min limit
+  min_time = start_time - datetime.timedelta(minutes=20) #Min limit
   # Check to see if time has already passed
   if start_time > current_time:
     # Check for current requests

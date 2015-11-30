@@ -1,4 +1,5 @@
 $(document).ready(function(){
+  $.getScript("../js/create_request.js");
     var current_request = $('#confirm_request').val();
     var location;
 
@@ -20,13 +21,13 @@ $(document).ready(function(){
       data: {'location': location},
     });
     setTimeout(function(){ // Refresh after 1 second
-      window.location.href = '/requests';
+      window.location.href = '/feed';
     }, 200);
   });
 
   // Close confirm request modal
   $('#close_modal').click(function(){
     $('#respond').closeModal();
-    window.location.href = '/requests';
+    window.location.href = '/feed';
   });
 });

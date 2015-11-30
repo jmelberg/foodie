@@ -16,7 +16,7 @@
        <ul class="collection">
         {% for result in search_results %}
           <li class="collection-item avatar">
-            <a href="/foodie/{{result.0.username}}">
+            <a href="/foodie/{{result.0.username}}?q=timeline/all">
             <img src="/img?user_id={{result.0.key.urlsafe}}" alt="" class="circle">
             <span class="title">{{result.0.username}}</span>
             </a>
@@ -41,11 +41,11 @@
                 </script>
               </div>
               <div class= "col s4">
-                <a class = "search-result-title" href="/confirm/{{result.1.key.urlsafe}}">{{result.1.food_type|title}}</a> &nbsp; for {{result.1.interest}}
+                <a class = "search-result-title" href="/confirm/{{result.1.key.urlsafe}}">{{result.1.food_type|title}}</a></br> for {{result.1.interest}}
                 <p class = "search-detail">
-                  Requested By <b><a href="/foodie/{{result.0.username}}"> {{result.0.first_name}} {{result.0.last_name}} </a></b></br>
+                  Requested By <b><a href="/foodie/{{result.0.username}}?q=timeline/all"> {{result.0.first_name}} {{result.0.last_name}} </a></b></br>
                   {{result.0.percent_positive}}% positive rating </br>
-                  ${{result.1.min_price}} - ${{result.1.max_price}}
+                  ${{result.1.price}}
                 </p>
               </div>
               <div class= "col s5">
@@ -71,11 +71,11 @@
                 <div class="food-img"></div>
               </div>
               <div class= "col s4">
-                <a class = "search-result-title">{{result.1.food_type|title}}</a> &nbsp; for {{result.1.interest}}
+                <a class = "search-result-title">{{result.1.food_type|title}}</a></br> for {{result.1.interest}}
                 <p class = "search-detail">
-                  Requested By <b><a href="/foodie/{{result.0.username}}"> {{result.0.first_name}} {{result.0.last_name}} </a></b></br>
+                  Requested By <b><a href="/foodie/{{result.0.username}}?q=timeline/all"> {{result.0.first_name}} {{result.0.last_name}} </a></b></br>
                   {{result.0.percent_positive}}% positive rating </br>
-                  ${{result.1.min_price}} - ${{result.1.max_price}}
+                  ${{result.1.price}}
                 </p>
               </div>
               <div class= "col s5">

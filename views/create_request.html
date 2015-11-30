@@ -102,7 +102,7 @@
               <div class="input-field col s12">
 
                 <label>Price</label> <br /><br />
-                <input type="number" id="price" name="price" min="0">
+                <input type="number" id="price" name="price" min="1">
                 <div id="range-input" style="display:none;">
                   <input type="number" id="min_price" name="min_price" style="display:none;" >
                   <input type="number" id="max_price" name="max_price" style="display:none;">
@@ -131,7 +131,7 @@
               </div>
             </div>   
 
-            <a href="/requests" class="btn-flat">Cancel</a>
+            <a href="/foodie/{{user.username}}/?q=table/all" class="btn-flat">Cancel</a>
             <a id="send_request" type="submit" class="btn-flat disabled">Send Request</a>
           <!-- </form> -->
         </div>

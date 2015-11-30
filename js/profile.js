@@ -1,75 +1,138 @@
 $(document).ready(function() {
   var tab = getUrlParameter('q');
 
-  if(tab == 'table/all') {
-    $('#timeline-dropdown').hide();
-    $('#table-dropdown').show();
-    $('#table').show();
-    $('#timeline-all').hide();
-    $('#tableViewBtn').hide();
+  if(tab == 'table/waiting') {
+    $('#table-waiting').show();
     $('#timelineViewBtn').show();
+    $('#tableViewBtn').hide();
+    $('#tableDDBtn').show();
+    $('#timelineDDBtn').hide();
   } 
   else if(tab == 'table/pending') {
-    $('#timeline-dropdown').hide();
-    $('#table-dropdown').show();
-
+    $('#table-pending').show();
+    $('#timelineViewBtn').show();
+    $('#tableViewBtn').hide();
+    $('#tableDDBtn').show();
+    $('#timelineDDBtn').hide();
   }
   else if(tab == 'table/accepted') {
-    $('#timeline-dropdown').hide();
-    $('#table-dropdown').show();
-
+    $('#table-accepted').show();
+    $('#timelineViewBtn').show();
+    $('#tableViewBtn').hide();
+    $('#tableDDBtn').show();
+    $('#timelineDDBtn').hide();
   }
   else if(tab == 'table/completed') {
-    $('#timeline-dropdown').hide();
-    $('#table-dropdown').show();
+    $('#table-completed').show();
+    $('#timelineViewBtn').show();
+    $('#tableViewBtn').hide();
+    $('#tableDDBtn').show();
+    $('#timelineDDBtn').hide();
   }
-  else if(tab == 'timeline/pending') {
-    $('#timeline-all').hide();
-    $('#timeline-pending').show();
+  else if(tab == 'timeline/all') {
+    $('#timeline-all').show();
+    $('#sexy-sort-btn').hide();
   }
   else if(tab == 'timeline/accepted') {
-
+    $('#timeline-accepted').show();
+    $('#sexy-sort-btn').hide();
   }
   else if(tab == 'timeline/completed') {
-
+    $('#timeline-completed').show();
+    $('#sexy-sort-btn').hide();
   }
+
+  var owner = $('#username').attr('value');
+  var cancel_type = "";
+
+  $('#hangouts_sort').click(function() {
+    window.location.href = '/foodie/'+owner+'?q='+tab+'/hangouts';
+  });
+  $('#lesson_sort').click(function() {
+    window.location.href = '/foodie/'+owner+'?q='+tab+'/lesson';
+  });
+  $('#price_sort').click(function() {
+    window.location.href = '/foodie/'+owner+'?q='+tab+'/price';
+  });
+  $('#time_sort').click(function() {
+    window.location.href = '/foodie/'+owner+'?q='+tab;
+  });
+  $('#lcoation_sort').click(function() {
+    window.location.href = '/foodie/'+owner+'?q='+tab+'/location';
+  });
+
+  // Cancel pending request
+  $("[id^='pending_cancel']").click(function(){
+      cancel_type = "pending";
+      $("[id^='cancel_request_p']").openModal();
+      cancel_request = $(this).val();
+  });
+
+  $("[id^='cancel_pending']").click(function(){
+      cancel_type = "pending";
+      $("[id^='cancel_pending_request']").openModal();
+      cancel_request = $(this).val();
+  });
+
+  // Cancel accepted request
+  $("[id^='accepted_cancel']").click(function(){
+      cancel_type = "accepted"
+      $("[id^='cancel_request_a']").openModal();
+      cancel_request = $(this).val();
+  });
+
+  $("[id^='cancel_accepted']").click(function(){
+      cancel_type = "accepted";
+      $("[id^='cancel_accepted_request']").openModal();
+      cancel_request = $(this).val();
+  });
   
+   // Confirm cancel request
+  $("[id^='confirm_cancel_request']").click(function(){
+      $.ajax({
+        type: "POST",
+        url: "/cancel",
+        data: {'request' : cancel_request},
+      });
+    setTimeout(function(){ // Refresh after 1 second
+      window.location.href = '/foodie/'+owner+'?q='+tab;
+    }, 200); 
+  });
 
-
-  // For sorted results
-  if(tab == 'time'){
-    $('ul.tabs').tabs('select_tab', 'mine');
-  }
-  else if(tab=='all'){
-    $('ul.tabs').tabs('select_tab', 'all');
-  }
-  else if(tab == 'location'){
-    $('#location_requests').show();
-    $('#all').hide();
-  }
-  else if(tab == 'price'){
-    $('#price_requests').show();
-    $('#all').hide();  
-  }
-  else if(tab == 'hangouts'){
-    $('#hangouts_requests').show();
-    $('#all').hide();
-    $('#hangouts_sort').hide();
-  }
-  else if(tab == 'lessons'){
-    $('#lessons_requests').show();
-    $('#all').hide();
-    $('#lessons_sort').hide();
-  }
-  else {
-    $('ul.tabs').tabs('select_tab', 'all');
-  }
-
-  if($('#pending').click(function(){ 
-    $('#price_requests').hide();
-    $('#location_requests').hide();
-  }));
-});
+  //Delete Selected
+  $("[id^='delete']").click(function(){
+    // Delete function
+    var request = $(this).val();
+    $.ajax({
+      type: "POST",
+      url: "/delete",
+      data: {'request' : request},
+    });
+    setTimeout(function(){ // Refresh after 1 second
+      window.location.href = '/foodie/'+owner+'?q='+tab;
+    }, 200);
+  });
+  $("[id^='pending_confirm_modal']").click(function() {
+    $('#respond').openModal();
+    bidder = $(this).val();
+  });
+  // Accept confirm application
+  $("#select_bid_button").click(function() {
+    console.log(request.value);
+    $.ajax({
+      type: "POST",
+      url: "/choose/"+request.value,
+      data: {'bidder': bidder},
+    });
+    setTimeout(function(){ // Refresh after 1 second
+      window.location.href = '/foodie/'+owner+'?q=table/pending';
+    }, 200);
+  });
+  // Close pending confirm application modal
+  $('#close_modal').click(function(){
+    $('#respond').closeModal();
+  });
+})
 
 // Returns string from appended url
 function getUrlParameter(sParam)
@@ -84,9 +147,4 @@ function getUrlParameter(sParam)
       return sParameterName[1];
     }
   }
-}
-
-function changeElements(){
-  $('#location_requests').hide();
-  $('#price_requests').hide();
 }

@@ -44,25 +44,34 @@ class LoginHandler(SessionHandler):
       self.response.out.write(template.render('views/login.html', {'error': error}))
 
 class FeedHandler(SessionHandler):
+  @login_required
   def get(self):
     user = self.user_model
     get_notifications(user)
     current_date = datetime.datetime.now() - datetime.timedelta(hours=8)
-    # Return only those two hours or more in future
-    alloted_time = current_date + datetime.timedelta(hours=2)
     
-    all_requests = Request.query(Request.start_time >= alloted_time).order(Request.start_time)
-    pending_requests = Request.query(Request.status == 'pending').order(Request.start_time)
-    pending_requests = [r for r in pending_requests if r.start_time < current_time]
-    
-    # Get only requests not posted by user
+    all_requests = Request.query(Request.start_time >= current_date).order(Request.start_time)
     all_requests = [r for r in all_requests if r.sender != user.key]
-    
-    print all_requests
+    pending_requests = Request.query(Request.status == 'pending').order(Request.start_time)
+    pending_requests = [r for r in pending_requests if r.start_time < current_date]
 
+    # Sort by food type
+    type_sort = sorted(all_requests, key=lambda x:x.food_type)
+    types = {}
 
-    self.response.out.write(template.render('views/feed.html', {'user': self.user_model,
-      'pending_requests': pending_requests, 'all_requests': all_requests}))
+    for r in type_sort:
+      # Get all types
+      if r.food_type not in types:
+        types[r.food_type] = []
+
+    for r in type_sort:
+      for t in types:
+        if r.food_type == t:
+          types[t].append(r)
+          break
+
+    self.response.out.write(template.render('views/feed.html', {'user': user,
+      'pending_requests': pending_requests, 'all_requests': all_requests, 'food_type':types}))
 
 class ProfileHandler(SessionHandler):
   """handler to display a profile page"""
@@ -85,65 +94,64 @@ class ProfileHandler(SessionHandler):
 
     # Get Request regarding the user
     reqs = []
-    allTimeline_reqs = []
+    timeline_requests = []
+    waiting_requests = []
     my_reqs = []
+    fired_requests = []
     table_reqs = []
-    pending_reqs = []
-    accepted_reqs = []
+    pending_requests = []
+    accepted_requests = []
     completed_reqs = []
-    alloted_time = current_date + datetime.timedelta(hours=2)
+    alloted_time = current_date + datetime.timedelta(minutes=20)
 
     # Get all requests where profile owner is foodie and expert
-    my_reqs = Request.query(ndb.OR(Request.sender==profile_owner.key, Request.recipient == profile_owner.key)).order(Request.start_time).fetch()
-    allTimeline_reqs = my_reqs
-    pending_reqs = [x for x in my_reqs if x.status == "pending"]
-    accepted_reqs = [x for x in my_reqs if x.status == "accepted"]
-    completed_reqs = [x for x in my_reqs if x.status == "completed"]
+    available_requests = Request.query(Request.start_time >= alloted_time).order(Request.start_time)
+    my_reqs = Request.query(ndb.OR(Request.sender==profile_owner.key, Request.recipient == profile_owner.key), Request.start_time >= alloted_time).order(Request.start_time).fetch()
+    dead_reqs = Request.query(ndb.OR(Request.sender==profile_owner.key, Request.recipient == profile_owner.key), Request.start_time <= alloted_time).order(Request.start_time).fetch()
 
-    allTimeline_comments = []
-    for r in allTimeline_reqs:
+
+    # Get all pending request that user has bid on
+    for request in available_requests:
+      # Get all requests you didn't send
+      if request.sender != profile_owner.key:
+        # Request not accepted yet
+        if request.recipient == None:
+          # Check for bidders
+          for bid in request.bidders:
+            bid = bid.get()
+            if bid.name == profile_owner.username:
+              # Bid by user
+              pending_requests.append(request)
+
+    table_requests = my_reqs[:] + dead_reqs[:] + pending_requests[:]
+    table_requests = sorted(table_requests, key=lambda x: x.start_time, reverse=True)
+    waiting_requests = [x for x in table_requests if x.status == "waiting for a bid"]
+    accepted_requests = [x for x in table_requests if x.status == "accepted"]
+    timeline_requests = table_requests
+    pending_requests = [x for x in timeline_requests if x.status == "pending"]
+    pending_requests = sorted(pending_requests, key = lambda x: x.start_time, reverse=True)
+    timeline_requests = [x for x in timeline_requests if x.status != "waiting for a bid"]
+    timeline_requests = [x for x in timeline_requests if x.status != "pending"]
+    timeline_requests = [x for x in timeline_requests if x.status != "dead"]
+    timeline_requests = [x for x in timeline_requests if x.status != "accepted"]
+
+
+    timeline_comments = []
+    for r in timeline_requests:
       c = Endorsement.query(Endorsement.request == r.key).fetch()
       if c:
-        allTimeline_comments.append(c)
+        timeline_comments.append(c)
       else:
-        allTimeline_comments.append("None")
+        timeline_comments.append("None")
 
-    allTimeline_reqs = zip(allTimeline_reqs, allTimeline_comments)
-
-    pending_comments = []
-    for r in pending_reqs:
-      c = Endorsement.query(Endorsement.request == r.key).fetch()
-      if c:
-        pending_comments.append(c)
-      else:
-        pending_comments.append("None")
-
-    pending_reqs = zip(pending_reqs, pending_comments)
-
-    accepted_comments = []
-    for r in accepted_reqs:
-      c = Endorsement.query(Endorsement.request == r.key).fetch()
-      if c:
-        accepted_comments.append(c)
-      else:
-        accepted_comments.append("None")
-
-    accepted_reqs = zip(accepted_reqs, accepted_comments)
-
-    completed_comments = []
-    for r in completed_reqs:
-      c = Endorsement.query(Endorsement.request == r.key).fetch()
-      if c:
-        completed_comments.append(c)
-      else:
-        completed_comments.append("None")
-
-    completed_reqs = zip(completed_reqs, completed_comments)
+    timeline_requests = zip(timeline_requests, timeline_comments)
+    completed_requests = [x for x in timeline_requests if x[0].status == "complete"]
+    fired_requests = [x for x in timeline_requests if x[0].status == "foodie"]
 
     self.response.out.write(template.render('views/profile.html',
-                             {'owner':profile_owner, 'profile':profile, #'endorsements': comments,
-                            'history': history, 'user': viewer, 'allTimeline_reqs': allTimeline_reqs, 'pending_reqs': pending_reqs,
-                            'accepted_reqs': accepted_reqs, 'completed_reqs': completed_reqs}))
+                             {'owner':profile_owner, 'profile':profile, 'history': history, 'user': viewer, 'timeline_requests': timeline_requests, 
+                             'pending_requests': pending_requests, 'accepted_requests': accepted_requests, 'completed_requests': completed_requests, 
+                             'waiting_requests': waiting_requests, 'fired_requests': fired_requests}))
 
 class Image(SessionHandler):
   """Serves the image associated with an avatar"""
@@ -164,14 +172,20 @@ class Image(SessionHandler):
 
 class CommentHandler(SessionHandler):
   ''' Leave a comment for another user '''
+  @login_required
   def post(self):
     user = self.user_model
     request_key = cgi.escape(self.request.get('request_comment'))
     request = ndb.Key(urlsafe=request_key).get()
     rating = cgi.escape(self.request.get('rating'))
     comment = cgi.escape(self.request.get('comment'))
-    
-    if comment != None:
+
+    # Person getting endorsement
+    recipient = cgi.escape(self.request.get('recipient_name'))
+    recipient_user = User.query(User.username == recipient).get()
+    recipient_key = recipient_user.key
+
+    if len(comment) > 0:
       endorsement = Endorsement()
       endorsement.request = request.key
       endorsement.creation_time = datetime.datetime.now() - datetime.timedelta(hours=8)
@@ -191,42 +205,40 @@ class CommentHandler(SessionHandler):
 
       endorsement.put()
 
-    # Person getting endorsement
-    recipient = cgi.escape(self.request.get('recipient_name'))
-    recipient_user = User.query(User.username == recipient).get()
-    recipient_key = recipient_user.key
-
-      
-    # modify rating 
+    # modify rating
     if rating == "positive":
       recipient_user.positive = recipient_user.positive + 1
     elif rating == "neutral":
       recipient_user.neutral = recipient_user.neutral + 1
     else:
       recipient_user.negative = recipient_user.negative + 1
-    recipient_user.percent_positive = (recipient_user.positive / (recipient_user.positive + recipient_user.negative)) * 100
+    if recipient_user.positive != 0:
+      recipient_user.percent_positive = (recipient_user.positive / (recipient_user.positive + recipient_user.negative)) * 100
+    else:
+      recipient_user.percent_positive = 0
     recipient_user.put()
 
-    self.redirect('/foodie/{}'.format(recipient))
+    self.redirect('/foodie/{}'.format(recipient) + "?q=timeline/all")
 
 class SearchHandler(SessionHandler):
   ''' Search for users by the following criteria:
         Username
-        First Name 
+        First Name
         Last Name
         First & Last Name
         Food Type
         Location given City, State
   '''
+  @login_required
   def get(self):
     user = self.user_model
     search = self.request.get('search').lower().strip()
     print "Search Term: ", search
-    
+
     #Seach for people
     results = []
     profiles = []
-    
+
     # Search for requests
     available_requests = []
     available_users = []
@@ -234,7 +246,7 @@ class SearchHandler(SessionHandler):
     completed_requests = []
     completed_users = []
     current_time = datetime.datetime.now() - datetime.timedelta(hours=8)
-    
+
     # Check for type
     food_type_requests = Request.query(Request.food_type == search).fetch()
     food_type = [x for x in food_type_requests if x.start_time > current_time]
@@ -322,8 +334,8 @@ class AuthorizePaymentsHandler(SessionHandler):
     credit = cgi.escape(self.request.get("credit_card_id"))
     authorize = AuthorizeCreditCard(credit)
     user.credit_id = credit
-    user.put()    
-        
+    user.put()
+
 
 config = {}
 config['webapp2_extras.sessions'] = {
@@ -357,6 +369,7 @@ app = webapp2.WSGIApplication([
                              ('/verify/(.+)/(.+)', VerifyHandler),
                              ('/fire/(.+)/(.+)', FireHandler),
                              ('/complete', CompletedRequestHandler), 
+                             ('/dead', DeadRequestHandler),
                              ('/logout', LogoutHandler),
                              ('/authorizepayment', AuthorizePaymentsHandler),
                              ('/getwepaytoken', GetWePayUserTokenHandler),

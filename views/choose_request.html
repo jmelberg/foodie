@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 {% block content %}
-<script type="text/javascript" src="../js/request_actions.js"></script>
+<script type="text/javascript" src="../js/profile.js"></script>
+<div id='username' value='{{user.username}}'></div>
 <div class="row header-block">
   <div class="page-header"><h5>Please Choose A Bid</h5></div>
 </div>
@@ -14,7 +15,7 @@
           <li class="collection-item avatar">
             <img src ="/img?user_id={{bid.0.sender.urlsafe}}" class="circle">
             <span class="title">
-              <b>Requestor:</b><a href="/foodie/{{bid.0.name}}"> {{bid.0.name}}</a></span>
+              <b>Requestor:</b><a href="/foodie/{{bid.0.name}}?q=timeline/all"> {{bid.0.name}}</a></span>
             <p>
               <b>Location:</b> {{bid.1.name}} <br /> {{bid.1.address}} <br/>
               <b>Price:</b> ${{bid.0.price}} </p>

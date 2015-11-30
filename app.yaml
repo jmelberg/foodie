@@ -9,7 +9,10 @@ handlers:
   static_dir: js
 
 - url: /css
-  static_dir: css 
+  static_dir: css
+
+- url: /owl-carousel
+  static_dir: lib/owl-carousel
 
 - url: /animations
   static_dir: lib/animations
@@ -22,7 +25,6 @@ handlers:
 
 - url: .*
   script: main.app
-
 
 libraries:
 - name: webapp2

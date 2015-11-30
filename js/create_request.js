@@ -2,10 +2,8 @@ var filled_location = false;
 var filled_time = false;
 $(document).ready(function(){
   // Variables
-  var slider = document.getElementById('range-input');
-  var min_price = document.getElementById('min_price');
-  var max_price = document.getElementById('max_price');
   var submit_button = $('#send_request');
+  var confirmed_price = false;
   var filled_food_type = false;
   var confirmed_aggreement = false;
   var status = false;
@@ -18,8 +16,7 @@ $(document).ready(function(){
       var location = $(this).val();
       if(location.length > 0){
         filled_location = true;
-        status = finalAgreement(filled_time, filled_food_type, filled_location, confirmed_aggreement);
-        /*submit_button.style.visibility = "visible";*/
+        status = finalAgreement(filled_time, filled_food_type, filled_location, confirmed_price, confirmed_aggreement);
       }
       else{
         filled_location = false;
@@ -29,7 +26,6 @@ $(document).ready(function(){
         else {
           submit_button.addClass('disabled');
         }
-        /*submit_button.style.visibility = "hidden";*/
       }
     });
 
@@ -37,8 +33,7 @@ $(document).ready(function(){
       var food_type = $(this).val();
       if(food_type.length > 0){
         filled_food_type = true;
-        status = finalAgreement(filled_time, filled_food_type, filled_location, confirmed_aggreement);
-        /*submit_button.style.visibility = "visible";*/
+        status = finalAgreement(filled_time, filled_food_type, filled_location, confirmed_price, confirmed_aggreement);
       }
       else{
         filled_food_type = false;
@@ -48,7 +43,6 @@ $(document).ready(function(){
         else {
           submit_button.addClass('disabled');
         }
-        /*submit_button.style.visibility = "hidden";*/
       }
     })
 
@@ -62,9 +56,30 @@ $(document).ready(function(){
       }
     });
 
+    $('#price').on("change keypress", function() {
+      var price = $(this).val();
+      if(price > 0 && price.length > 0){
+        confirmed_price = true;
+        status = finalAgreement(filled_time, filled_food_type, filled_location, confirmed_price, confirmed_aggreement);
+      }
+      else{
+        confirmed_price = false;
+        if(submit_button.attr('class') === 'btn-flat disabled' && price <= 0 && price.length != 0) {
+          submit_button.removeClass('disabled');
+        }
+        else {
+          submit_button.addClass('disabled');
+        }
+      }
+      if(price.substring(0, 1) == "-") {
+        confirmed_price = false;
+        status = finalAgreement(filled_time, filled_food_type, filled_location, confirmed_price, confirmed_aggreement);
+      }      
+    });
+
     $('#agreement').click(function(){
       confirmed_aggreement = !confirmed_aggreement;
-      status = finalAgreement(filled_time, filled_food_type, filled_location, confirmed_aggreement);
+      status = finalAgreement(filled_time, filled_food_type, filled_location, confirmed_price, confirmed_aggreement);
     });
 
     $('#send_request').click(function() {
@@ -73,9 +88,6 @@ $(document).ready(function(){
         var date = $('#date').val();
         var time = $('#time').val();
         var location = $('#location').val();
-        var price = $("#price-input");
-        /*var m_price = $('#min_price').val();
-        var mx_price = $('#max_price').val();*/
         var food_type = $('#food_type').val();
         var price = $('#price').val();
         var interest = $('input[type="radio"]:checked').val();
@@ -84,33 +96,13 @@ $(document).ready(function(){
           type: "POST",
           url: '/request',
           data: {'date':date, 'time':time, 'location':location, 'price': price,
-          'food_type': food_type, 'interest': interest}
+          'food_type': food_type, 'interest': interest},
+          success: function(){
+            setTimeout(function(){ // Refresh after 1 second
+            window.location.href = '/feed';
+            }, 100);
+          }
         });
-        setTimeout(function(){ // Refresh after 1 second
-        window.location.href = '/requests';
-        }, 100);
-      }
-    });
-
-    noUiSlider.create(slider, {
-      start: [20, 80],
-      connect: true,
-      step: 1,
-      range: {
-        'min': 0,
-        'max': 100
-      },
-      format: wNumb({
-        decimals: 0
-      })
-    });
-
-    slider.noUiSlider.on('update', function( values, handle ) {
-      var value = values[handle];
-      if ( handle ) {
-        max_price.value = value;
-      } else {
-        min_price.value = value;
       }
     });
   });
@@ -122,8 +114,8 @@ function checkLocation(location) {
   }
 }
 
-function finalAgreement(time, food_type, location, confirmed_aggreement) {
-  if(time === true && location === true && food_type === true && confirmed_aggreement === true) {
+function finalAgreement(time, food_type, location, confirmed_price, confirmed_aggreement) {
+  if(time === true && location === true && food_type === true && confirmed_price === true && confirmed_aggreement === true) {
     $('#send_request').removeClass('disabled');
     return true;
   }
@@ -171,16 +163,6 @@ function checkTime(time, date, confirmed_aggreement) {
         }
         filled_time = false;
       }
-/*
-      $("#slot_available").text(result);
-      if(result == 'Available'){
-        $("#slot_available").show();
-        $("#send_request").show();
-      }
-      else {
-        $("#slot_available").show();
-        $("#send_request").hide();
-      } */
     }
   });
 }

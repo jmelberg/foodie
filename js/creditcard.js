@@ -5,7 +5,7 @@ $(document).ready(function(){
 
   $('#addpayment').openModal();
 
-  WePay.set_endpoint("stage"); // change to "production" when live
+  WePay.set_endpoint("production"); // change to "production" when live
 
   // Shortcuts
   var d = document;
@@ -24,7 +24,7 @@ $(document).ready(function(){
   addEvent(d.id('cc-submit'), 'click', function() {
       var userName = [valueById('name')].join(' ');
           response = WePay.credit_card.create({
-          "client_id":        175855,
+          "client_id":        3044,
           "user_name":        valueById('name'),
           "email":            valueById('email'),
           "cc_number":        valueById('cc-number'),
@@ -41,11 +41,15 @@ $(document).ready(function(){
           } else {
               // call your own app's API to save the token inside the data;
               // show a success page
-              alert(JSON.stringify(data.credit_card_id));
               $.ajax({
                 type: "POST",
                 url: '/authorizepayment',
-                  data: {'credit_card_id': JSON.stringify(data.credit_card_id)}
+                data: {'credit_card_id': JSON.stringify(data.credit_card_id)},
+                success: function(){
+                  setTimeout(function(){
+                    window.location.href = '/feed';
+                  }, 200);
+                }
               });
           }
       });

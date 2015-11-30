@@ -12,7 +12,6 @@ $(document).ready(function() {
   $("[id^='pending_confirm_modal']").click(function() {
     $('#respond').openModal();
     bidder = $(this).val();
-    console.log(request);
   });
  
   // Hide requests
@@ -39,19 +38,20 @@ $(document).ready(function() {
         data: {'request' : cancel_request},
       });
     setTimeout(function(){ // Refresh after 1 second
-      window.location.href = '/requests';
+      window.location.href = '/feed';
     }, 200); 
   });
 
   // Accept confirm application
   $("#select_bid_button").click(function() {
+    console.log('meh');
     $.ajax({
       type: "POST",
       url: "/choose/"+request,
       data: {'bidder': bidder},
     });
     setTimeout(function(){ // Refresh after 1 second
-      window.location.href = '/requests';
+      window.location.href = '/feed';
     }, 200);
   });
   // Close pending confirm application modal
@@ -69,7 +69,7 @@ $(document).ready(function() {
       data: {'request' : request},
     });
     setTimeout(function(){ // Refresh after 1 second
-      window.location.href = '/requests';
+      window.location.href = '/feed';
     }, 200);
   });
 
@@ -124,6 +124,8 @@ function getUrlParameter(sParam)
 }
 
 function changeElements(){
+  $('#lessons_requests').hide();
+  $('#hangouts_requests').hide();
   $('#location_requests').hide();
   $('#price_requests').hide();
 }
