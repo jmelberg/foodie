@@ -149,7 +149,7 @@ class ProfileHandler(SessionHandler):
 
     timeline_requests = zip(timeline_requests, timeline_comments)
     completed_requests = [x for x in timeline_requests if x[0].status == "complete"]
-    fired_requests = [x for x in timeline_requests if x[0].status == "foodie"]
+    fired_requests = [x for x in timeline_requests if x[0].status == "fired"]
 
     self.response.out.write(template.render('views/profile.html',
                              {'owner':profile_owner, 'profile':profile, 'history': history, 'user': viewer, 'timeline_requests': timeline_requests,
