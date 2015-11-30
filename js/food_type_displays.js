@@ -43,8 +43,8 @@ var FoodTypeDisplays = (function(FM) {
 		var sizeCode = size || 'q' ;
 		var backgroundEle = document.getElementById(obj.backgroundId);
 		FM.searchKey(foodType,sizeCode,function(data){
-			// var index = Math.floor( Math.random() * data.length );
-			var index = 1;
+			var index = Math.floor( Math.random() * data.length );
+			// var index = 1;
 
 			//prefetch image
 			var newImage = new Image();

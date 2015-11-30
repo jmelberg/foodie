@@ -15,7 +15,7 @@
     <button onClick="window.location='/request';" class="request">Make A Request</button>
   </div>
 
-  <div class="feed_divider divider-1 row"><p class="col s12 category">All</p></div>
+  <div class="feed_divider divider-1 row"><h5 style="color:#FFF;">&nbspAll</h5></div>
   <div class="row"></div>
 
   <div class="row">
@@ -23,23 +23,20 @@
           <div class="one">
             <div class="owl-wrapper">
               {% if all_requests|length != 0 %}
-              <div class="owl-arrow-wrapper owl-left-arrow-wrapper">
-                <div >&#10092;</div>
-              </div>
-              <div class="owl-arrow-wrapper owl-right-arrow-wrapper">
-                <div>&#10093;</div>
-              </div>
               {% endif %}
               <div class="owl-slides owl-carousel owl-theme">
                 {% for item in all_requests %}
                   <div class="food-item-wrapper">
-                    <a href="/query?search={{item.food_type}}" class="food-item-picture">
-                      <div class="reply-icon"><i class="large material-icons">search</i></div>
-                      <div id="owl-item-{{item.key.urlsafe}}" class="item">
-                        <span class="owl-item-text">{{item.food_type}}</span>
-                      </div>
-                      <script>FoodTypeDisplays.displayBackground( {backgroundId:"owl-item-{{item.key.urlsafe}}"} ,"{{item.food_type}}","n");</script>
-                    </a>
+                    <div class="food-item-picture">
+                      <a href="/query?search={{item.food_type}}" class="food-item-link">
+                        <div class="reply-icon"><i class="large material-icons">search</i></div>
+                        <div id="owl-item-{{item.key.urlsafe}}" class="item food-selector">
+                          <span class="owl-item-text">{{item.food_type}}</span>
+                        </div>
+                        <script>FoodTypeDisplays.displayBackground( {backgroundId:"owl-item-{{item.key.urlsafe}}"} ,"{{item.food_type}}","n");</script>
+                      </a>
+                    </div>
+                    <div class="grey-bg"></div>
                   </div>
                 {% endfor %}
               </div>
@@ -47,8 +44,8 @@
           </div>
         </div>
   </div>
-  {% if pending|length > 0 %}
-  <div class="feed_divider row">  <p class="col s12 category">Pending</p></div>
+  <!-- {% if pending|length > 0 %}
+  <div class="feed_divider row">  <h5 style="color:#FFF;">&nbspPending</h5></div>
   <div class="row">
         <div id="slider1" class="">
           {% for pend in pending %}
@@ -58,21 +55,15 @@
           {% endfor %}
         </div>
   </div>
-  {% endif %}
+  {% endif %} -->
 
   {% for food, requests in food_type.items %}
-  <div class="feed_divider row"> <p class="col s12 category">{{food|title}}</p></div>
+  <div class="feed_divider row"> <h5 style="color:#FFF;">&nbsp{{food|title}}</h5></div>
   <div class="row"></div>
   <div class="row">
     <div id="slider{{forloop.counter|add:1}}" class="">
       <div class="item">
           <div class="owl-wrapper">
-            <div class="owl-arrow-wrapper owl-left-arrow-wrapper">
-              <div >&#10092;</div>
-            </div>
-            <div class="owl-arrow-wrapper owl-right-arrow-wrapper">
-              <div>&#10093;</div>
-            </div>
             <div class="owl-slides owl-carousel owl-theme">
               {% for r in requests %}
               <div class="food-item-wrapper">

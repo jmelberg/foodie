@@ -11,6 +11,7 @@ var FeedCarousel = (function () {
       lazyLoad : true,
       // navigation : true,
       autoPlay: true,
+      autoPlayHoverPause:true
   }); 
   // Custom Navigation Events
   $(".next").click(function(){
@@ -22,16 +23,19 @@ var FeedCarousel = (function () {
   $(".play").click(function(){
     owl.trigger('owl.play',1000); //owl.play event accept autoPlay speed as second parameter
   })
-  $(".stop").click(function(){
-    owl.trigger('owl.stop');
-  })
+  $(".owl-left-arrow-wrapper").click(function(event) {
+    console.log('hello');
+    owl.trigger('owl.next');
+  });
   $(".food-item-wrapper").hover(function(event) {
-    $(this).children(".food-item-picture").children(".reply-icon").fadeIn();
-    $(this).children(".food-item-picture").children(".food-selector").children(".owl-item-text").css('visibility','hidden');
+    $(this).children(".food-item-picture").children(".food-item-link").children(".reply-icon").fadeIn();
+    $(this).children(".food-item-picture").children(".food-item-link").children(".food-selector").children(".owl-item-text").css('visibility','hidden');
+    owl.trigger('owl.stop');
   }, 
   function(e) {
-    $(this).children(".food-item-picture").children(".reply-icon").fadeOut();
-    $(this).children(".food-item-picture").children(".food-selector").children(".owl-item-text").css('visibility','visible');
+    $(this).children(".food-item-picture").children(".food-item-link").children(".reply-icon").fadeOut();
+    $(this).children(".food-item-picture").children(".food-item-link").children(".food-selector").children(".owl-item-text").css('visibility','visible');
+    owl.trigger('owl.play',2500);
     e.stopPropagation();
   });
 })();
