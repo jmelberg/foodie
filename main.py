@@ -323,7 +323,7 @@ class GetWePayUserTokenHandler(SessionHandler):
     r = wepay.get_token(redirect_url, client_id, client_secret, code[1:-1])
     acct_token = r["access_token"]
     acct_id = r["user_id"]
-    createAccount = CreateExpertAccount(acct_token,"Nikki Lee")
+    createAccount = CreateExpertAccount(acct_token,user.username)
     user.wepay_id = str(createAccount["account_id"])
     user.wepay_token = str(acct_token)
     user.put()
