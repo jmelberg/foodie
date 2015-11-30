@@ -29,7 +29,7 @@ class SMSHandler(SessionHandler):
     # Get all requests in accepted state
     completed_requests = Request.query(Request.status == "accepted").fetch()
     completed_requests = [x for x in completed_requests if x.recipient != None]
-    #completed_requests = [x for x in completed_requests if x.start_time >= min_time and x.start_time < max_time]
+    completed_requests = [x for x in completed_requests if x.start_time >= min_time and x.start_time < max_time]
     for request in completed_requests:
       send_sms(request)
       # Change status of request
