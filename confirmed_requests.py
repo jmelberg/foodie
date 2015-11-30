@@ -11,6 +11,7 @@ from google.appengine.api import urlfetch
 from webapp2_extras import sessions, auth
 from basehandler import SessionHandler, login_required
 from models import User, Profile, Request, Endorsement, Location, Bidder
+from payments import *
 from yelp_api import query_api
 from urllib2 import urlopen
 import urllib
@@ -96,6 +97,10 @@ class CompletedRequestHandler(SessionHandler):
     request = ndb.Key(urlsafe=request_id).get()
     print "Request:", request.longitude, request.latitude
     print "Actual:", longitude, latitude
+
+    expert = request.recipient.get()
+    foodie = request.sender.get()
+
     there = False
     if latitude <= (request.latitude - 0.1) or latitude >= (request.latitude + 0.1):
       if longitude <= (request.longitude - 0.1) or longitude >= (request.longitude + 0.1):
@@ -115,6 +120,7 @@ class CompletedRequestHandler(SessionHandler):
           #Expert is first to check in
           request.status = "expert"
           #1/2 payment processed
+          Charge(expert.wepay_id, foodie.credit_id, (request.price/2), "1/2 payment processed")
         else:
           # Request has expired
           print "Request is no longer valid"
@@ -130,6 +136,7 @@ class CompletedRequestHandler(SessionHandler):
         if request.status == "expert":
           request.status = "complete"
           # process full payment
+          Charge(expert.wepay_id, foodie.credit_id, (request.price/2), "Full payment processed")
         elif request.status =="sms":
           request.status = "foodie"
         else:
