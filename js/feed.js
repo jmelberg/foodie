@@ -11,8 +11,7 @@ var FeedCarousel = (function () {
       lazyLoad : true,
       // navigation : true,
       autoPlay: true,
-  });
- 
+  }); 
   // Custom Navigation Events
   $(".next").click(function(){
     owl.trigger('owl.next');

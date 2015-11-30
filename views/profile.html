@@ -11,7 +11,11 @@
       <div class= "profile-img" style= "background: url('/img?user_id={{owner.key.urlsafe}}'); background-size: cover;"></div>
       <div class="profile-name">{{owner.first_name}}&nbsp;{{owner.last_name}}</div>
       <div class="profile-aboutme"><p><i class="material-icons" style="transform: scale(-1, 1);">format_quote</i>{{profile.about_me}}<i class="material-icons">format_quote</i></p></div>
+      
     </div>
+    {% if user.key == profile.owner %}
+      <center><button data-target="edit_profile_modal" class="btn modal-trigger">Edit Profile</button></center><br />
+      {% endif %}
     <div class = "row average-rating-block">
       <div class="feedback_ratings">
         <a title="Positive">
@@ -646,4 +650,53 @@
   </div>
 </form>
 
+<!-- Edit Modal -->
+<div id="edit_profile_modal" name="edit_profile_modal" class="modal modal-fixed-footer">
+  <div class="modal-content">
+    <table>
+      <tr>
+        <th colspan="2"> Profile Information: </th>
+        <input style="display:none;" value="{{user.username}}" id="user">
+      </tr>
+      <tr>
+        <td>Name: </td>
+        <td colspan="3"><input id="f_name" type="text" value="{{user.first_name}}"></td>
+        <td colspan="3"><input id="l_name" type="text" value="{{user.last_name}}"></tc>
+      </tr>
+      <tr>
+          <td>About Me: </td>
+          <td colspan="6"><input id="profile_about" type="text" value="{{profile.about_me}}"></td>
+      </tr>
+      <tr>
+          <td>Phone Number: </td>
+          <td colspan="6"><input id="phone_number" type="text" value="{{user.telephone}}"></td>
+      </tr>
+  </table>
+  </div>
+  <div class="modal-footer">
+    <a type="submit" id="edit_submit" name="edit_submit" class=" modal-action modal-close waves-effect waves-green btn-flat">Submit</a>
+  </div>
+</div>
+
+<script>
+$('#edit_submit').click(function(){
+  var f_name = document.getElementById('f_name').value;
+  var l_name = document.getElementById('l_name').value;
+  var profile = document.getElementById('profile_about').value;
+  var phone = document.getElementById('phone_number').value;
+  var user = document.getElementById('user').value;
+  $.ajax({
+    type: "POST",
+    url: '/editprofile',
+    data: {'user': user, 'first': f_name, 'last': l_name, 'about_me': profile, 'phone': phone},
+      success: function(){
+        setTimeout(function(){
+          window.location.href = '/';
+        }, 200);
+      }
+  });
+});
+</script>
+
 {% endblock %}
+

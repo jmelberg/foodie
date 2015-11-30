@@ -88,8 +88,8 @@ class RequestsHandler(SessionHandler):
     foodlesson_requests = [r for r in fl_requests if r.start_time >= alloted_time]
     foodlesson_requests = [r for r in fl_requests if r.recipient == None]
 
-    user.last_check = datetime.datetime.now() - datetime.timedelta(hours=8)
-    print "Updated check time to: " , user.last_check
+    #user.last_check = datetime.datetime.now() - datetime.timedelta(hours=8)
+    #print "Updated check time to: " , user.last_check
     user.put()
 
     for request in approved_requests:
@@ -98,8 +98,6 @@ class RequestsHandler(SessionHandler):
       print "Sender:", request.sender.urlsafe()
       print "Recipient:", request.recipient.urlsafe()
     
-    get_notifications(user)
-
     self.response.out.write(template.render('views/requests.html',
                             {'user': user, 'sorted_requests': sorted_requests, 'my_requests': my_requests,
                             'price_requests': price_requests, 'location_requests': location_requests, 'hangouts_requests': hangouts_requests,
@@ -139,24 +137,22 @@ def get_notifications(user):
   pend_requests = [r for r in pend_requests if len(r.bidders) > 0]
   new_bidders = 0
   if len(pend_requests) > 0:
-
     for r in pend_requests:
       for bid in r.bidders:
         bid = bid.get()
-        print "Bid Time: " , bid.bid_time
-
         if bid.bid_time != None:
           if bid.bid_time > check_time:
-           new_bidders += 1
+            print "Bid Time: " , bid.bid_time
+            new_bidders += 1
   else:
     pend_requests = [r for r in pend_requests if r.creation_time >= check_time]
     print "No bidders: ", pend_requests
+
   user.pending_requests = new_bidders
   user.available_requests = len(available_requests)
   print len(available_requests)
   user.approved_requests = len(approved_requests)
   print len(approved_requests)
-  user.last_check = current_time
   user.put()
   print "user updated"
 
@@ -347,7 +343,7 @@ class JoinRequestHandler(SessionHandler):
           bidder.location = new_location.key
           bidder.name = self.user_model.username
           bidder.bid_time = datetime.datetime.now() - datetime.timedelta(hours=8)
-          bid.price = request.price
+          bidder.price = request.price
           bidder.put()
           request.bidders.append(bidder.key)
           request.status = "pending"
@@ -367,8 +363,6 @@ class DeleteRequestHandler(SessionHandler):
     request = ndb.Key(urlsafe=request_key).get()
     if request.sender == user.key:
       request.key.delete()
-      user.open_requests -= 1
-      user.put()
     else:
       print "Not permitted to delete"
 

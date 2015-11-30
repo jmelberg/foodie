@@ -16,7 +16,7 @@ from payments import *
 
 client_id = 3044
 client_secret = 'a2ed348f70'
-access_token = 'PRODUCTION_f78c8a84a59f1b66cee242068d778b23367b8e69b7743b435e3cd82da9e46190'
+access_token = 'PRODUCTION_04b9fda092d11e744a5806eca8570338f69a0283dfbb3ca4845ad2f079ccc292'
 redirect_url = 'http://food-enthusiast.appspot.com'
 wepay = WePay(True, access_token)
 
@@ -36,7 +36,6 @@ class LoginHandler(SessionHandler):
           username = user_login.username
       u = self.auth.get_user_by_password(username, password, remember=True,
       save_session=True)
-      get_notifications(self.user_model)
       self.redirect('/feed')
     except( auth.InvalidAuthIdError, auth.InvalidPasswordError):
       error = "Invalid Email/Password"
@@ -49,7 +48,7 @@ class FeedHandler(SessionHandler):
     user = self.user_model
     get_notifications(user)
     current_date = datetime.datetime.now() - datetime.timedelta(hours=8)
-    
+
     all_requests = Request.query(Request.start_time >= current_date).order(Request.start_time)
     all_requests = [r for r in all_requests if r.sender != user.key]
     pending_requests = Request.query(Request.status == 'pending').order(Request.start_time)
@@ -77,6 +76,10 @@ class ProfileHandler(SessionHandler):
   """handler to display a profile page"""
   def get(self, profile_id):
     viewer = self.user_model
+    get_notifications(viewer)
+    viewer.last_check =datetime.datetime.now() - datetime.timedelta(hours=8)
+    viewer.put()
+
     # Get profile info
     profile_owner = User.query(User.username == profile_id).get()
     profile = Profile.query(Profile.owner == profile_owner.key).get()
@@ -135,6 +138,7 @@ class ProfileHandler(SessionHandler):
     timeline_requests = [x for x in timeline_requests if x.status != "dead"]
     timeline_requests = [x for x in timeline_requests if x.status != "accepted"]
 
+
     timeline_comments = []
     for r in timeline_requests:
       c = Endorsement.query(Endorsement.request == r.key).fetch()
@@ -148,9 +152,35 @@ class ProfileHandler(SessionHandler):
     fired_requests = [x for x in timeline_requests if x[0].status == "foodie"]
 
     self.response.out.write(template.render('views/profile.html',
-                             {'owner':profile_owner, 'profile':profile, 'history': history, 'user': viewer, 'timeline_requests': timeline_requests, 
-                             'pending_requests': pending_requests, 'accepted_requests': accepted_requests, 'completed_requests': completed_requests, 
+                             {'owner':profile_owner, 'profile':profile, 'history': history, 'user': viewer, 'timeline_requests': timeline_requests,
+                             'pending_requests': pending_requests, 'accepted_requests': accepted_requests, 'completed_requests': completed_requests,
                              'waiting_requests': waiting_requests, 'fired_requests': fired_requests}))
+
+class EditProfileHandler(SessionHandler):
+  def post(self):
+    name = cgi.escape(self.request.get('user'))
+    user = User.query(User.username == name).get()
+    profile = Profile.query(Profile.owner == user.key).get()
+    f_name = cgi.escape(self.request.get('first'))
+    l_name = cgi.escape(self.request.get('last'))
+    about = cgi.escape(self.request.get('about_me'))
+    phone = cgi.escape(self.request.get('phone'))
+
+    # Update user
+    user.l_first_name = f_name.lower().strip()
+    user.l_last_name = l_name.lower().strip()
+    user.first_name = f_name.strip()
+    user.last_name = l_name.strip()
+    if len(phone) == 10:
+      user.telephone = "+1" + phone
+    else:
+      user.telephone = phone
+    user.put()
+
+    profile.about_me = about
+    profile.put()
+
+
 
 class Image(SessionHandler):
   """Serves the image associated with an avatar"""
@@ -315,24 +345,15 @@ class LogoutHandler(SessionHandler):
     self.redirect('/')
 
 class GetWePayUserTokenHandler(SessionHandler):
-  def get(self):
-    self.response.out.write(template.render('views/payments.html', {'user': self.user_model}))
-  
   def post(self):
     user = self.user_model
     code = cgi.escape(self.request.get("acct_json"))
-    print code
     r = wepay.get_token(redirect_url, client_id, client_secret, code[1:-1])
     acct_token = r["access_token"]
     acct_id = r["user_id"]
-    wepay_create = WePay(True, acct_token)
-    response = wepay.call('/account/create', {
-    'name': user.username,
-    'description': 'Expert User.'
-    })
-    print response
-    create = CreatePaymentAccount(acct_id)
-    user.wepay_id = str(acct_id)
+    createthis = CreateExpertAccount(acct_token,user.username)
+    user.wepay_id = str(createthis["account_id"])
+    user.wepay_token = str(acct_token)
     user.put()
 
 class AuthorizePaymentsHandler(SessionHandler):
@@ -342,6 +363,12 @@ class AuthorizePaymentsHandler(SessionHandler):
     authorize = AuthorizeCreditCard(credit)
     user.credit_id = credit
     user.put()
+
+class TestChargeHandler(SessionHandler):
+  def get(self):
+    charge = Charge("PRODUCTION_7040820d52ece89eaac422bfac064a04f447c027c078fbae3abb1fb739123c10",1614365466, 194932521, 1.00, "Live Payments Works!")
+
+#def Charge(account_id, credit_card_id, amount, desc):
 
 
 config = {}
@@ -354,6 +381,7 @@ config['webapp2_extras.auth'] = {
 
 app = webapp2.WSGIApplication([
                              ('/', LoginHandler),
+                             ('/editprofile', EditProfileHandler),
                              ('/register', RegisterHandler),
                              ('/checkusername', UsernameHandler),
                              ('/foodie/(\w+)', ProfileHandler),
@@ -375,9 +403,10 @@ app = webapp2.WSGIApplication([
                              ('/thanks', ThanksHandler),
                              ('/verify/(.+)/(.+)', VerifyHandler),
                              ('/fire/(.+)/(.+)', FireHandler),
-                             ('/complete', CompletedRequestHandler), 
+                             ('/complete', CompletedRequestHandler),
                              ('/dead', DeadRequestHandler),
                              ('/logout', LogoutHandler),
+                             ('/testpayment', TestChargeHandler),
                              ('/authorizepayment', AuthorizePaymentsHandler),
                              ('/getwepaytoken', GetWePayUserTokenHandler),
                               ], debug=False, config=config)
