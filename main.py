@@ -96,6 +96,7 @@ class ProfileHandler(SessionHandler):
     reqs = []
     timeline_requests = []
     my_reqs = []
+    fired_requests = []
     table_reqs = []
     pending_requests = []
     accepted_requests = []
@@ -106,9 +107,7 @@ class ProfileHandler(SessionHandler):
     available_requests = Request.query(Request.start_time >= alloted_time).order(Request.start_time)
     my_reqs = Request.query(ndb.OR(Request.sender==profile_owner.key, Request.recipient == profile_owner.key), Request.start_time >= alloted_time).order(Request.start_time).fetch()
     dead_reqs = Request.query(ndb.OR(Request.sender==profile_owner.key, Request.recipient == profile_owner.key), Request.start_time <= alloted_time).order(Request.start_time).fetch()
-    for r in dead_reqs:
-      if(r.status != "completed"):
-        r.status = "dead"
+
 
     # Get all pending request that user has bid on
     for request in available_requests:
@@ -123,8 +122,9 @@ class ProfileHandler(SessionHandler):
               # Bid by user
               pending_requests.append(request)
 
-    table_requests = dead_reqs[:] + my_reqs[:] + pending_requests
+    table_requests = my_reqs[:] + dead_reqs[:] + pending_requests[:]
     table_requests = sorted(table_requests, key=lambda x: x.start_time, reverse=True)
+    accepted_requests = [x for x in table_requests if x.status == "accepted"]
     pending_requests = pending_requests + table_requests
     pending_requests = [x for x in pending_requests if x.status == "pending"]
     pending_requests = sorted(pending_requests, key = lambda x: x.start_time, reverse=True)
@@ -132,6 +132,7 @@ class ProfileHandler(SessionHandler):
     timeline_requests = [x for x in timeline_requests if x.status != "waiting for a bid"]
     timeline_requests = [x for x in timeline_requests if x.status != "pending"]
     timeline_requests = [x for x in timeline_requests if x.status != "dead"]
+    timeline_requests = [x for x in timeline_requests if x.status != "accepted"]
 
 
     timeline_comments = []
@@ -143,15 +144,13 @@ class ProfileHandler(SessionHandler):
         timeline_comments.append("None")
 
     timeline_requests = zip(timeline_requests, timeline_comments)
-    print timeline_requests
-
-    accepted_requests = [x for x in timeline_requests if x[0].status == "accepted"]
-    completed_reqs = [x for x in timeline_requests if x[0].status == "completed"]
+    completed_requests = [x for x in timeline_requests if x[0].status == "completed"]
+    fired_requests = [x for x in timeline_requests if x[0].status == "foodie"]
 
     self.response.out.write(template.render('views/profile.html',
                              {'owner':profile_owner, 'profile':profile, #'endorsements': comments,
                             'history': history, 'user': viewer, 'timeline_requests': timeline_requests, 'pending_requests': pending_requests,
-                            'accepted_requests': accepted_requests, 'completed_reqs': completed_reqs, 'table_requests': table_requests}))
+                            'accepted_requests': accepted_requests, 'completed_requests': completed_requests, 'table_requests': table_requests, 'fired_requests': fired_requests}))
 
 class Image(SessionHandler):
   """Serves the image associated with an avatar"""

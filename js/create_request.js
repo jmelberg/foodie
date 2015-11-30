@@ -81,8 +81,7 @@ $(document).ready(function(){
       if(price.substring(0, 1) == "-") {
         confirmed_price = false;
         status = finalAgreement(filled_time, filled_food_type, filled_location, confirmed_price, confirmed_aggreement);
-      }
-      
+      }      
     });
 
     $('#agreement').click(function(){

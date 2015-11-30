@@ -183,7 +183,7 @@ class CreateRequestHandler(SessionHandler):
     request.location = location
     request.start_time = start_time
     request.creation_time = datetime.datetime.now() - datetime.timedelta(hours=8) #PST
-    request.price = price
+    request.price = abs(price)
     request.food_type = food_type
     request.interest = interest
     request.status = "waiting for a bid"
@@ -230,7 +230,7 @@ class EditRequestHandler(SessionHandler):
       previous_request.start_time = start_time
       previous_request.food_type = food_type
       previous_request.interest = interest
-      previous_request.price = price
+      previous_request.price = abs(price)
       previous_request.put()
       print "Added request to queue"
     else:
