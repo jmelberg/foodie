@@ -156,6 +156,34 @@ class ProfileHandler(SessionHandler):
                              'pending_requests': pending_requests, 'accepted_requests': accepted_requests, 'completed_requests': completed_requests,
                              'waiting_requests': waiting_requests, 'fired_requests': fired_requests}))
 
+class EditProfileHandler(SessionHandler):
+  def post(self):
+    name = cgi.escape(self.request.get('user'))
+    user = User.query(User.username == name).get()
+    profile = Profile.query(Profile.owner == user.key).get()
+    f_name = cgi.escape(self.request.get('first'))
+    l_name = cgi.escape(self.request.get('last'))
+    about = cgi.escape(self.request.get('about_me'))
+    phone = cgi.escape(self.request.get('phone'))
+
+    # Update user
+    user.l_first_name = f_name.lower().strip()
+    user.l_last_name = l_name.lower().strip()
+    user.first_name = f_name.strip()
+    user.last_name = l_name.strip()
+    if phone[:1] == "+1":
+      user.telephone = phone
+    elif len(phone) == 10:
+      user.telephone = "+1" + phone
+    else:
+      print "Phone can not update"
+    user.put()
+
+    profile.about_me = about
+    profile.put()
+
+
+
 class Image(SessionHandler):
   """Serves the image associated with an avatar"""
   def get(self):
@@ -355,6 +383,7 @@ config['webapp2_extras.auth'] = {
 
 app = webapp2.WSGIApplication([
                              ('/', LoginHandler),
+                             ('/editprofile', EditProfileHandler),
                              ('/register', RegisterHandler),
                              ('/checkusername', UsernameHandler),
                              ('/foodie/(\w+)', ProfileHandler),
