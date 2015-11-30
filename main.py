@@ -36,7 +36,6 @@ class LoginHandler(SessionHandler):
           username = user_login.username
       u = self.auth.get_user_by_password(username, password, remember=True,
       save_session=True)
-      get_notifications(self.user_model)
       self.redirect('/feed')
     except( auth.InvalidAuthIdError, auth.InvalidPasswordError):
       error = "Invalid Email/Password"
@@ -77,6 +76,10 @@ class ProfileHandler(SessionHandler):
   """handler to display a profile page"""
   def get(self, profile_id):
     viewer = self.user_model
+    get_notifications(viewer)
+    viewer.last_check =datetime.datetime.now() - datetime.timedelta(hours=8)
+    viewer.put()
+
     # Get profile info
     profile_owner = User.query(User.username == profile_id).get()
     profile = Profile.query(Profile.owner == profile_owner.key).get()
