@@ -14,11 +14,11 @@ from wepay import *
 from models import User, Profile, Request, Endorsement, Bidder
 from payments import *
 
-client_id = 175855
-client_secret = 'dfb950e7ea'
-redirect_url = 'http://localhost:8080/'
-wepay = WePay(False, None)
-
+client_id = 3044
+client_secret = 'a2ed348f70'
+access_token = 'PRODUCTION_f78c8a84a59f1b66cee242068d778b23367b8e69b7743b435e3cd82da9e46190'
+redirect_url = 'http://food-enthusiast.appspot.com'
+wepay = WePay(True, access_token)
 
 class LoginHandler(SessionHandler):
   def get(self):
@@ -317,13 +317,21 @@ class LogoutHandler(SessionHandler):
 class GetWePayUserTokenHandler(SessionHandler):
   def get(self):
     self.response.out.write(template.render('views/payments.html', {'user': self.user_model}))
-
+  
   def post(self):
     user = self.user_model
     code = cgi.escape(self.request.get("acct_json"))
+    print code
     r = wepay.get_token(redirect_url, client_id, client_secret, code[1:-1])
     acct_token = r["access_token"]
     acct_id = r["user_id"]
+    wepay_create = WePay(True, acct_token)
+    response = wepay.call('/account/create', {
+    'name': user.username,
+    'description': 'Expert User.'
+    })
+    print response
+    create = CreatePaymentAccount(acct_id)
     user.wepay_id = str(acct_id)
     user.put()
 
