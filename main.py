@@ -127,10 +127,9 @@ class ProfileHandler(SessionHandler):
     table_requests = sorted(table_requests, key=lambda x: x.start_time, reverse=True)
     waiting_requests = [x for x in table_requests if x.status == "waiting for a bid"]
     accepted_requests = [x for x in table_requests if x.status == "accepted"]
-    pending_requests = pending_requests + table_requests
-    pending_requests = [x for x in pending_requests if x.status == "pending"]
-    pending_requests = sorted(pending_requests, key = lambda x: x.start_time, reverse=True)
     timeline_requests = table_requests
+    pending_requests = [x for x in timeline_requests if x.status == "pending"]
+    pending_requests = sorted(pending_requests, key = lambda x: x.start_time, reverse=True)
     timeline_requests = [x for x in timeline_requests if x.status != "waiting for a bid"]
     timeline_requests = [x for x in timeline_requests if x.status != "pending"]
     timeline_requests = [x for x in timeline_requests if x.status != "dead"]
@@ -150,9 +149,9 @@ class ProfileHandler(SessionHandler):
     fired_requests = [x for x in timeline_requests if x[0].status == "foodie"]
 
     self.response.out.write(template.render('views/profile.html',
-                             {'owner':profile_owner, 'profile':profile, #'endorsements': comments,
-                            'history': history, 'user': viewer, 'timeline_requests': timeline_requests, 'pending_requests': pending_requests,
-                            'accepted_requests': accepted_requests, 'completed_requests': completed_requests, 'waiting_requests': waiting_requests, 'fired_requests': fired_requests}))
+                             {'owner':profile_owner, 'profile':profile, 'history': history, 'user': viewer, 'timeline_requests': timeline_requests, 
+                             'pending_requests': pending_requests, 'accepted_requests': accepted_requests, 'completed_requests': completed_requests, 
+                             'waiting_requests': waiting_requests, 'fired_requests': fired_requests}))
 
 class Image(SessionHandler):
   """Serves the image associated with an avatar"""

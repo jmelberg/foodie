@@ -125,7 +125,7 @@ $(document).ready(function() {
       data: {'bidder': bidder},
     });
     setTimeout(function(){ // Refresh after 1 second
-      window.location.href = '/foodie/'+owner+'?q=table/all';
+      window.location.href = '/foodie/'+owner+'?q=table/pending';
     }, 200);
   });
   // Close pending confirm application modal

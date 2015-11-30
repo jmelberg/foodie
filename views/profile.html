@@ -380,53 +380,6 @@
 </div>
 </div>
 <!-- table/accepted end -->
-<!-- table/completed start -->
-<div id="table-completed" class="col s9 history-content"> 
-  <h4 class= "history-title">History</h4>
-  <div class="row">
-    <ul class="collection with-header col s12 m12">
-      <br />
-      {% for request in completed_requests %}
-      <li class="collection-item">
-       <div class="row search-row">
-        <div class= "col s3">
-          <div id="food-img6-{{request.0.key.urlsafe}}" class="food-img"></div>
-          <script type="text/javascript">
-            FoodTypeDisplays.displayBackground({'backgroundId':'food-img6-{{request.0.key.urlsafe}}'},'{{request.0.food_type}}');
-          </script>
-        </div>
-        <div class= "col s4">
-          <a class = "search-result-title">{{request.0.food_type|title}}</a> &nbsp; for {{request.0.interest}}
-          <p class = "search-detail">
-            <div class="chip">
-              <img src="/img?user_id={{request.0.sender.urlsafe}}" alt="requestor">
-              <a href="/foodie/{{request.0.sender_name}}?q=timeline/all">{{request.0.sender_name}}</a>
-            </div></br>
-            Price: ${{request.0.price}}</br>
-            {% if request.recipient_name|length > 0 %}
-            Attendees:
-            <a href="/foodie/{{request.recipient_name}}?q=timeline/all">{{request.recipient_name}}</a></br>
-            {% endif %}
-          </p>                
-        </div>
-        <div class= "col s4">
-          <p class = "search-detail">
-          </br></br>
-          {{request.0.location|title}}</br>
-          {{request.0.start_time}}
-        </p>
-      </div>
-    </li>
-    {% empty %}
-    <li class="collection-header">
-      <center>
-        <h5>No Requests</h5>
-      </center>
-    </li>
-    {% endfor %}
-  </ul>
-</div>
-<!-- table/completed end -->
 <!-- timeline/all start-->
 <div id="timeline-all" class="col s9 card history-content">
   <h4 class= "history-title">History</h4>
