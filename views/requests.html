@@ -26,7 +26,7 @@
           <li class="collection-item avatar">
             <img src ="/img?user_id={{request.sender.urlsafe}}" class="circle">
             <span class="title">
-              <b>Requestor:</b><a href="/foodie/{{request.sender_name}}"> {{request.sender_name}}</a></span>
+              <b>Requestor:</b><a href="/foodie/{{request.sender_name}}?q=timeline/all"> {{request.sender_name}}</a></span>
             <p>
               <b>Type:</b> {{request.food_type}}</p>
               <b>Location:</b> {{request.location}} <br />
@@ -62,7 +62,7 @@
         {% if request.sender != user.key %}
         <li class="collection-item avatar">
           <img src ="/img?user_id={{request.sender.urlsafe}}" class="circle">
-          <span class="title"><b>Requestor:</b><a href="/foodie/{{request.sender_name}}"> {{request.sender_name}}</a></span>
+          <span class="title"><b>Requestor:</b><a href="/foodie/{{request.sender_name}}?q=timeline/all"> {{request.sender_name}}</a></span>
           <p>
             <b>Type:</b> {{request.food_type}}</p>
             <b>Location:</b> {{request.location}} <br />
@@ -79,7 +79,7 @@
         <li class="collection-item avatar">
 
           <img src ="/img?user_id={{request.sender.urlsafe}}" class="circle">
-            <span class="title"><b>Requestor:</b><a href="/foodie/{{request.sender_name}}"> {{request.sender_name}}</a></span>
+            <span class="title"><b>Requestor:</b><a href="/foodie/{{request.sender_name}}?q=timeline/all"> {{request.sender_name}}</a></span>
             <p>
               <b>Type:</b> {{request.food_type}}</p>
               <b>Location:</b> {{request.location}} <br />
@@ -87,7 +87,7 @@
               {% if request.recipient_name|length > 0 %}
                 <p> <b>Attendees:</b> 
                 {% for person in request.recipient_name %}
-                <a href="/foodie/{{person}}">{{person}}</a>  
+                <a href="/foodie/{{person}}?q=timeline/all">{{person}}</a>  
                 {% endfor %}</p>
               {% endif %}
               <b>Interest:</b> {{request.interest}}</p>
@@ -133,13 +133,13 @@
         {% if request.sender != user.key %}
         <li class="collection-item avatar">
           <img src ="/img?user_id={{request.sender.urlsafe}}" class="circle">
-          <span class="title"><b>Requestor:</b><a href="/foodie/{{request.sender_name}}"> {{request.sender_name}}</a></span>
+          <span class="title"><b>Requestor:</b><a href="/foodie/{{request.sender_name}}?q=timeline/all"> {{request.sender_name}}</a></span>
           <p>
             <b>Type:</b> {{request.food_type}}</p>
             <b>Location:</b> {{request.location}} <br />
             <b>For:</b> {{request.start_time.date}} <b> @ </b> {{request.start_time.time}}</p>
             <p> <b>Attendee:</b> 
-            <a href="/foodie/{{request.recipient_name}}">{{request.recipient_name}}</a>  
+            <a href="/foodie/{{request.recipient_name}}?q=timeline/all">{{request.recipient_name}}</a>  
             </p>
             <b>Interest:</b> {{request.interest}}</p>
           <div class="secondary-content">
@@ -151,13 +151,13 @@
         {% else %}
         <li class="collection-item avatar">
           <img src ="/img?user_id={{request.sender.urlsafe}}" class="circle">
-          <span class="title"><b>Requestor:</b><a href="/foodie/{{request.recipient_name}}"> {{request.recipient_name}}</a></span>
+          <span class="title"><b>Requestor:</b><a href="/foodie/{{request.recipient_name}}?q=timeline/all"> {{request.recipient_name}}</a></span>
           <p>
             <b>Type:</b> {{request.food_type}}</p>
             <b>Location:</b> {{request.location}} <br />
             <b>For:</b> {{request.start_time.date}} <b> @ </b> {{request.start_time.time}}</p>
             <p> <b>Attendee:</b> 
-            <a href="/foodie/{{request.recipient_name}}">{{request.recipient_name}}</a>
+            <a href="/foodie/{{request.recipient_name}}?q=timeline/all">{{request.recipient_name}}</a>
           </p>
             <b>Interest:</b> {{request.interest}}</p>
           <div class="secondary-content">
@@ -184,14 +184,14 @@
       {% for request in my_requests %}
         <li class="collection-item avatar">
           <img src ="/img?user_id={{request.sender.urlsafe}}" class="circle">
-          <span class="title"><b>Requestor:</b><a href="/foodie/{{request.sender_name}}"> {{request.sender_name}}</a></span>
+          <span class="title"><b>Requestor:</b><a href="/foodie/{{request.sender_name}}?q=timeline/all"> {{request.sender_name}}</a></span>
           <p>
             <b>Type:</b> {{request.food_type}}</p>
             <b>Location:</b> {{request.location}} <br />
             <b>For:</b> {{request.start_time.date}} <b> @ </b> {{request.start_time.time}}</p>
             {% if request.recipient_name|length > 0 %}
               <p> <b>Attendees:</b> 
-              <a href="/foodie/{{request.recipient_name}}">{{request.recipient_name}}</a>  
+              <a href="/foodie/{{request.recipient_name}}?q=timeline/all">{{request.recipient_name}}</a>  
               </p>
             {% endif %}
             <b>Price Range:</b> ${{request.min_price}} to ${{request.max_price}}</p>
@@ -245,7 +245,7 @@
           <li class="collection-item avatar">
             <img src ="/img?user_id={{request.sender.urlsafe}}" class="circle">
             <span class="title">
-              <b>Requestor:</b><a href="/foodie/{{request.sender_name}}"> {{request.sender_name}}</a></span>
+              <b>Requestor:</b><a href="/foodie/{{request.sender_name}}?q=timeline/all"> {{request.sender_name}}</a></span>
             <p>
               <b>Type:</b> {{request.food_type}}</p>
               <b>Location:</b> {{request.location}} <br />
@@ -283,7 +283,7 @@
           <li class="collection-item avatar">
             <img src ="/img?user_id={{request.sender.urlsafe}}" class="circle">
             <span class="title">
-              <b>Requestor:</b><a href="/foodie/{{request.sender_name}}"> {{request.sender_name}}</a></span>
+              <b>Requestor:</b><a href="/foodie/{{request.sender_name}}?q=timeline/all"> {{request.sender_name}}</a></span>
             <p>
               <b>Type:</b> {{request.food_type}}</p>
               <b>Location:</b> {{request.location}} <br />
@@ -320,7 +320,7 @@
           <li class="collection-item avatar">
             <img src ="/img?user_id={{request.sender.urlsafe}}" class="circle">
             <span class="title">
-              <b>Requestor:</b><a href="/foodie/{{request.sender_name}}"> {{request.sender_name}}</a></span>
+              <b>Requestor:</b><a href="/foodie/{{request.sender_name}}?q=timeline/all"> {{request.sender_name}}</a></span>
             <p>
               <b>Type:</b> {{request.food_type}}</p>
               <b>Location:</b> {{request.location}} <br />
@@ -357,7 +357,7 @@
           <li class="collection-item avatar">
             <img src ="/img?user_id={{request.sender.urlsafe}}" class="circle">
             <span class="title">
-              <b>Requestor:</b><a href="/foodie/{{request.sender_name}}"> {{request.sender_name}}</a></span>
+              <b>Requestor:</b><a href="/foodie/{{request.sender_name}}?q=timeline/all"> {{request.sender_name}}</a></span>
             <p>
               <b>Type:</b> {{request.food_type}}</p>
               <b>Location:</b> {{request.location}} <br />

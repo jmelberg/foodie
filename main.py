@@ -218,7 +218,7 @@ class CommentHandler(SessionHandler):
       recipient_user.percent_positive = 0
     recipient_user.put()
 
-    self.redirect('/foodie/{}'.format(recipient))
+    self.redirect('/foodie/{}'.format(recipient) + "?q=timeline/all")
 
 class SearchHandler(SessionHandler):
   ''' Search for users by the following criteria:
