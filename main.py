@@ -324,7 +324,7 @@ class GetWePayUserTokenHandler(SessionHandler):
     acct_token = r["access_token"]
     acct_id = r["user_id"]
     createAccount = CreateExpertAccount(acct_token,"Nikki Lee")
-    user.wepay_id = str(acct_id)
+    user.wepay_id = str(createAccount["account_id"])
     user.wepay_token = str(acct_token)
     user.put()
 
