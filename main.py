@@ -315,6 +315,11 @@ class LogoutHandler(SessionHandler):
     self.auth.unset_session()
     self.redirect('/')
 
+class SettingsHandler(SessionHandler):
+  @login_required
+  def get(self):
+    self.response.out.write(template.render('views/settings.html', {'user': self.user_model}))
+
 class GetWePayUserTokenHandler(SessionHandler):
   def get(self):
     self.response.out.write(template.render('views/payments.html', {'user': self.user_model}))
@@ -370,6 +375,7 @@ app = webapp2.WSGIApplication([
                              ('/fire/(.+)/(.+)', FireHandler),
                              ('/complete', CompletedRequestHandler), 
                              ('/dead', DeadRequestHandler),
+                             ('/settings', SettingsHandler),
                              ('/logout', LogoutHandler),
                              ('/authorizepayment', AuthorizePaymentsHandler),
                              ('/getwepaytoken', GetWePayUserTokenHandler),

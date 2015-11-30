@@ -103,6 +103,8 @@
         <ul id="profile-dropdown" class="dropdown-content">
           <li><a href="/foodie/{{user.username}}?q=timeline/all">My Profile</a></li>
           <li class="divider"></li>
+          <li><a class="modal-trigger" href="#edit_payment">Update Info</a></li>
+          <li class="divider"></li>
           <li><a href="/logout">Log Out</a></li>
         </ul>
 
@@ -128,3 +130,97 @@
   <div class="row">{% block content %} {% endblock %}</div></div>
 </body>
 </html>
+
+
+<script>
+$(document).ready(function(){
+
+  WePay.set_endpoint("production"); // change to "production" when live
+  // Shortcuts
+  var d = document;
+      d.id = d.getElementById,
+      valueById = function(id) {
+          return d.id(id).value;
+      };
+
+  // For those not using DOM libraries
+  var addEvent = function(e,v,f) {
+      if (!!window.attachEvent) { e.attachEvent('on' + v, f); }
+      else { e.addEventListener(v, f, false); }
+  };
+
+  // Attach the event to the DOM
+  addEvent(d.id('cc-submit'), 'click', function() {
+    var userName = [valueById('name')].join(' ');
+      response = WePay.credit_card.create({
+      "client_id":        3044,
+      "user_name":        valueById('name'),
+      "email":            valueById('email'),
+      "cc_number":        valueById('cc-number'),
+      "cvv":              valueById('cc-cvv'),
+      "expiration_month": valueById('cc-month'),
+      "expiration_year":  valueById('cc-year'),
+      "address": {
+          "zip": valueById('zip')
+      }
+    }, function(data) {
+        if (data.error) {
+          console.log(data);
+          // handle error response
+        } else {
+          // call your own app's API to save the token inside the data;
+          // show a success page
+          $.ajax({
+            type: "POST",
+            url: '/authorizepayment',
+            data: {'credit_card_id': JSON.stringify(data.credit_card_id)},
+            success: function(){
+              setTimeout(function(){
+                window.location.href = '/feed';
+              }, 200);
+            }
+            });
+        }
+    });
+  });
+
+});
+
+</script>
+<!-- Respond Modal -->
+<div id="edit_payment" name="edit_payment" class="modal modal-fixed-footer">
+  <div class="modal-content">
+    <table>
+      <tr>
+        <th colspan="2"> Credit Card Information: </th>
+      </tr>
+      <tr>
+          <td>Full Name: </td>
+          <td colspan="3"><input id="name" type="text"></td>
+      </tr>
+      <tr>
+          <td>Email: </td>
+          <td colspan="3"><input id="email" type="text"></td>
+      </tr>
+      <tr>
+          <td>Credit Card Number: </td>
+          <td colspan="3"><input id="cc-number" type="password" ></td>
+      </tr>
+      <tr>
+          <td>Expiration Month: </td>
+          <td><input id="cc-month" type="text"></td>
+          <td>Expiration Year: </td>
+          <td><input id="cc-year" type="text"></td>
+      </tr>
+      <tr>
+          <td>CVV: </td>
+          <td><input id="cc-cvv" type="password"></td>
+          <td>Zipcode: </td>
+          <td><input id="zip" type="text"></td>
+      </tr>
+  </table>
+  </div>
+  <div class="modal-footer">
+    <a type="submit" id="cc-submit" class=" modal-action modal-close waves-effect waves-green btn-flat">Submit</a>
+  </div>
+</div>
