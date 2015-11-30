@@ -1,4 +1,4 @@
-import cgi
+#import cgi
 import webapp2
 import time, datetime
 import json
@@ -29,12 +29,12 @@ class SMSHandler(SessionHandler):
     # Get all requests in accepted state
     completed_requests = Request.query(Request.status == "accepted").fetch()
     completed_requests = [x for x in completed_requests if x.recipient != None]
-    completed_requests = [x for x in completed_requests if x.start_time >= min_time and x.start_time < max_time]
+    #completed_requests = [x for x in completed_requests if x.start_time >= min_time and x.start_time < max_time]
     for request in completed_requests:
-      send_sms(request)
-      # Change status of request
       request.status = "sms"
       request.put()
+      send_sms(request)
+      # Change status of request
 
 
 class SMSFireHandler(SessionHandler):
@@ -43,7 +43,7 @@ class SMSFireHandler(SessionHandler):
     current_time = datetime.datetime.now() - datetime.timedelta(hours=8)
     # Get all requests in accepted state
     completed_requests = Request.query(Request.status == "foodie").fetch()
-    completed_requests = [x for x in completed_requests if x.start_time + datetime.timedelta(minutes=10) < current_time]
+    #completed_requests = [x for x in completed_requests if x.start_time + datetime.timedelta(minutes=10) < current_time]
     for request in completed_requests:
       send_fire_notification(request)
 
@@ -88,50 +88,54 @@ class VerifyHandler(SessionHandler):
 
 class CompletedRequestHandler(SessionHandler):
   def get(self):
-    longitude = cgi.escape(self.request.get("latitude"))
-    latitude = cgi.escape(self.request.get("longitude"))
-    message_id = cgi.escape(self.request.get("message"))
-    request_id = cgi.escape(self.request.get("request"))
+    latitude = self.request.get("latitude")
+    longitude = self.request.get("longitude")
+    message_id = self.request.get("message")
+    request_id = self.request.get("request")
     user_key = ndb.Key(urlsafe=message_id).get()
     request = ndb.Key(urlsafe=request_id).get()
     print "Request:", request.longitude, request.latitude
     print "Actual:", longitude, latitude
-
-    if request.recipient == user_key:
-      if latitude <= (request.latitude - 0.1) or latitude >= (request.latitude + 0.1):
+    there = False
+    if latitude <= (request.latitude - 0.1) or latitude >= (request.latitude + 0.1):
+      if longitude <= (request.longitude - 0.1) or longitude >= (request.longitude + 0.1):
+        there = True
+    elif longitude <= (request.latitude-0.1) or lonitude >= (request.latitude +0.1):
+        if latitude <= (request.latitude-0.1) or latitude >= (request.latitude +0.1):
+          there = True
+    if request.recipient == user_key.key:
+      if there is True:
       #if latitude <= (request.latitude - 0.01) or latitude >= (request.latitude + 0.01):
-        if longitude <= (request.longitude - 0.1) or longitude >= (request.longitude + 0.1):
         #if longitude <= (request.longitude - 0.01) or longitude >= (request.longitude + 0.01):
-          print "Expert approved!"
-          if request.status == "foodie":
-            #Foodie checked in already
-            request.status = "complete"
-          elif request.status == "sms":
-            #Expert is first to check in
-            request.status = "expert"
-          else:
-            # Request has expired
-            print "Request is no longer valid"
-          request.put()
-          #Process payment here
+        print "Expert approved!"
+        if request.status == "foodie":
+          #Foodie checked in already
+          request.status = "complete"
+        elif request.status == "sms":
+          #Expert is first to check in
+          request.status = "expert"
+          #1/2 payment processed
         else:
-          print "YOU ARE NOT THERE! - LIAR!"
+          # Request has expired
+          print "Request is no longer valid"
+        request.put()
+        #Process payment here
       else:
         print "YOU ARE NOT THERE!"
     else:
-      if latitude <= (request.latitude - 0.1) or latitude >= (request.latitude + 0.1):
+      if there is True:
       #if latitude <= (request.latitude - 0.01) or latitude >= (request.latitude + 0.01):
-        if longitude <= (request.longitude - 0.1) or longitude >= (request.longitude + 0.1):
         #if longitude <= (request.longitude - 0.01) or longitude >= (request.longitude + 0.01):
-          print "Requestor approved"
-          if request.status == "expert":
-            request.status = "complete"
-          elif request.status =="sms":
-            request.status = "foodie"
-          else:
-            # Request has experied / fired
-            print "Request is no longer valid"
-          request.put()
+        print "Requestor approved"
+        if request.status == "expert":
+          request.status = "complete"
+          # process full payment
+        elif request.status =="sms":
+          request.status = "foodie"
+        else:
+          # Request has experied / fired
+          print "Request is no longer valid"
+        request.put()
       else:
         print "YOU ARE NOT THERE! Nice try!"
 

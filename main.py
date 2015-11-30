@@ -95,7 +95,9 @@ class ProfileHandler(SessionHandler):
     # Get Request regarding the user
     reqs = []
     timeline_requests = []
+    waiting_requests = []
     my_reqs = []
+    fired_requests = []
     table_reqs = []
     pending_requests = []
     accepted_requests = []
@@ -106,9 +108,7 @@ class ProfileHandler(SessionHandler):
     available_requests = Request.query(Request.start_time >= alloted_time).order(Request.start_time)
     my_reqs = Request.query(ndb.OR(Request.sender==profile_owner.key, Request.recipient == profile_owner.key), Request.start_time >= alloted_time).order(Request.start_time).fetch()
     dead_reqs = Request.query(ndb.OR(Request.sender==profile_owner.key, Request.recipient == profile_owner.key), Request.start_time <= alloted_time).order(Request.start_time).fetch()
-    for r in dead_reqs:
-      if(r.status != "completed"):
-        r.status = "dead"
+
 
     # Get all pending request that user has bid on
     for request in available_requests:
@@ -123,15 +123,17 @@ class ProfileHandler(SessionHandler):
               # Bid by user
               pending_requests.append(request)
 
-    table_requests = dead_reqs[:] + my_reqs[:] + pending_requests
+    table_requests = my_reqs[:] + dead_reqs[:] + pending_requests[:]
     table_requests = sorted(table_requests, key=lambda x: x.start_time, reverse=True)
-    pending_requests = pending_requests + table_requests
-    pending_requests = [x for x in pending_requests if x.status == "pending"]
-    pending_requests = sorted(pending_requests, key = lambda x: x.start_time, reverse=True)
+    waiting_requests = [x for x in table_requests if x.status == "waiting for a bid"]
+    accepted_requests = [x for x in table_requests if x.status == "accepted"]
     timeline_requests = table_requests
+    pending_requests = [x for x in timeline_requests if x.status == "pending"]
+    pending_requests = sorted(pending_requests, key = lambda x: x.start_time, reverse=True)
     timeline_requests = [x for x in timeline_requests if x.status != "waiting for a bid"]
     timeline_requests = [x for x in timeline_requests if x.status != "pending"]
     timeline_requests = [x for x in timeline_requests if x.status != "dead"]
+    timeline_requests = [x for x in timeline_requests if x.status != "accepted"]
 
 
     timeline_comments = []
@@ -143,15 +145,13 @@ class ProfileHandler(SessionHandler):
         timeline_comments.append("None")
 
     timeline_requests = zip(timeline_requests, timeline_comments)
-    print timeline_requests
-
-    accepted_requests = [x for x in timeline_requests if x[0].status == "accepted"]
-    completed_reqs = [x for x in timeline_requests if x[0].status == "completed"]
+    completed_requests = [x for x in timeline_requests if x[0].status == "complete"]
+    fired_requests = [x for x in timeline_requests if x[0].status == "foodie"]
 
     self.response.out.write(template.render('views/profile.html',
-                             {'owner':profile_owner, 'profile':profile, #'endorsements': comments,
-                            'history': history, 'user': viewer, 'timeline_requests': timeline_requests, 'pending_requests': pending_requests,
-                            'accepted_requests': accepted_requests, 'completed_reqs': completed_reqs, 'table_requests': table_requests}))
+                             {'owner':profile_owner, 'profile':profile, 'history': history, 'user': viewer, 'timeline_requests': timeline_requests,
+                             'pending_requests': pending_requests, 'accepted_requests': accepted_requests, 'completed_requests': completed_requests,
+                             'waiting_requests': waiting_requests, 'fired_requests': fired_requests}))
 
 class Image(SessionHandler):
   """Serves the image associated with an avatar"""
@@ -218,7 +218,7 @@ class CommentHandler(SessionHandler):
       recipient_user.percent_positive = 0
     recipient_user.put()
 
-    self.redirect('/foodie/{}'.format(recipient))
+    self.redirect('/foodie/{}'.format(recipient) + "?q=timeline/all")
 
 class SearchHandler(SessionHandler):
   ''' Search for users by the following criteria:
@@ -382,7 +382,6 @@ app = webapp2.WSGIApplication([
                              ('/verify/(.+)/(.+)', VerifyHandler),
                              ('/fire/(.+)/(.+)', FireHandler),
                              ('/complete', CompletedRequestHandler),
-                             ('/testpayment', TestChargeHandler),
                              ('/dead', DeadRequestHandler),
                              ('/logout', LogoutHandler),
                              ('/authorizepayment', AuthorizePaymentsHandler),

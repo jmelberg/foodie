@@ -24,7 +24,7 @@
           {% endfor %}
         </div>
   </div>
-
+{% if pending %}
   <div class="feed_divider">  <p class="category">Pending</p></div>
   <div class="row">
         <div id="slider1" class="owl-carousel">
@@ -35,6 +35,7 @@
           {% endfor %}
         </div>
   </div>
+  {% endif %}
 
   {% for food, requests in food_type.items %}
   <div class="feed_divider"> <p class="category">{{food|title}}</p></div>

@@ -38,7 +38,7 @@ $(document).ready(function() {
         data: {'request' : cancel_request},
       });
     setTimeout(function(){ // Refresh after 1 second
-      window.location.href = '/requests';
+      window.location.href = '/feed';
     }, 200); 
   });
 
@@ -51,7 +51,7 @@ $(document).ready(function() {
       data: {'bidder': bidder},
     });
     setTimeout(function(){ // Refresh after 1 second
-      window.location.href = '/requests';
+      window.location.href = '/feed';
     }, 200);
   });
   // Close pending confirm application modal
@@ -69,7 +69,7 @@ $(document).ready(function() {
       data: {'request' : request},
     });
     setTimeout(function(){ // Refresh after 1 second
-      window.location.href = '/requests';
+      window.location.href = '/feed';
     }, 200);
   });
 

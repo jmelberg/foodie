@@ -1,8 +1,8 @@
 $(document).ready(function() {
   var tab = getUrlParameter('q');
 
-  if(tab == 'table/all') {
-    $('#table-all').show();
+  if(tab == 'table/waiting') {
+    $('#table-waiting').show();
     $('#timelineViewBtn').show();
     $('#tableViewBtn').hide();
     $('#tableDDBtn').show();
@@ -31,30 +31,47 @@ $(document).ready(function() {
   }
   else if(tab == 'timeline/all') {
     $('#timeline-all').show();
+    $('#sexy-sort-btn').hide();
   }
   else if(tab == 'timeline/accepted') {
     $('#timeline-accepted').show();
+    $('#sexy-sort-btn').hide();
   }
   else if(tab == 'timeline/completed') {
     $('#timeline-completed').show();
+    $('#sexy-sort-btn').hide();
   }
 
   var owner = $('#username').attr('value');
   var cancel_type = "";
+
+  $('#hangouts_sort').click(function() {
+    window.location.href = '/foodie/'+owner+'?q='+tab+'/hangouts';
+  });
+  $('#lesson_sort').click(function() {
+    window.location.href = '/foodie/'+owner+'?q='+tab+'/lesson';
+  });
+  $('#price_sort').click(function() {
+    window.location.href = '/foodie/'+owner+'?q='+tab+'/price';
+  });
+  $('#time_sort').click(function() {
+    window.location.href = '/foodie/'+owner+'?q='+tab;
+  });
+  $('#lcoation_sort').click(function() {
+    window.location.href = '/foodie/'+owner+'?q='+tab+'/location';
+  });
 
   // Cancel pending request
   $("[id^='pending_cancel']").click(function(){
       cancel_type = "pending";
       $("[id^='cancel_request_p']").openModal();
       cancel_request = $(this).val();
-    console.log(cancel_request);
   });
 
   $("[id^='cancel_pending']").click(function(){
       cancel_type = "pending";
       $("[id^='cancel_pending_request']").openModal();
       cancel_request = $(this).val();
-    console.log(cancel_request);
   });
 
   // Cancel accepted request
@@ -62,14 +79,12 @@ $(document).ready(function() {
       cancel_type = "accepted"
       $("[id^='cancel_request_a']").openModal();
       cancel_request = $(this).val();
-    console.log(cancel_request);
   });
 
   $("[id^='cancel_accepted']").click(function(){
       cancel_type = "accepted";
       $("[id^='cancel_accepted_request']").openModal();
       cancel_request = $(this).val();
-    console.log(cancel_request);
   });
   
    // Confirm cancel request
@@ -110,7 +125,7 @@ $(document).ready(function() {
       data: {'bidder': bidder},
     });
     setTimeout(function(){ // Refresh after 1 second
-      window.location.href = '/foodie/'+owner+'?q=table/all';
+      window.location.href = '/foodie/'+owner+'?q=table/pending';
     }, 200);
   });
   // Close pending confirm application modal

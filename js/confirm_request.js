@@ -21,13 +21,13 @@ $(document).ready(function(){
       data: {'location': location},
     });
     setTimeout(function(){ // Refresh after 1 second
-      window.location.href = '/requests';
+      window.location.href = '/feed';
     }, 200);
   });
 
   // Close confirm request modal
   $('#close_modal').click(function(){
     $('#respond').closeModal();
-    window.location.href = '/requests';
+    window.location.href = '/feed';
   });
 });

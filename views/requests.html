@@ -26,7 +26,7 @@
           <li class="collection-item avatar">
             <img src ="/img?user_id={{request.sender.urlsafe}}" class="circle">
             <span class="title">
-              <b>Requestor:</b><a href="/foodie/{{request.sender_name}}"> {{request.sender_name}}</a></span>
+              <b>Requestor:</b><a href="/foodie/{{request.sender_name}}?q=timeline/all"> {{request.sender_name}}</a></span>
             <p>
               <b>Type:</b> {{request.food_type}}</p>
               <b>Location:</b> {{request.location}} <br />
@@ -53,187 +53,6 @@
     </div>
   </div>
 
-  <!-- Requests that have at least one attending (pending)-->
-  <div id="pending" class="col s12">
-   <div class="row">
-      <ul class="collection with-header col s12 m12">
-        <br />
-        {% for request in pending_requests %}
-        {% if request.sender != user.key %}
-        <li class="collection-item avatar">
-          <img src ="/img?user_id={{request.sender.urlsafe}}" class="circle">
-          <span class="title"><b>Requestor:</b><a href="/foodie/{{request.sender_name}}"> {{request.sender_name}}</a></span>
-          <p>
-            <b>Type:</b> {{request.food_type}}</p>
-            <b>Location:</b> {{request.location}} <br />
-            <b>For:</b> {{request.start_time.date}} <b> @ </b> {{request.start_time.time}}</p>
-            <b>Interest:</b> {{request.interest}}</p>
-          <div class="secondary-content">
-              <button id="pending_cancel{{forloop.counter}}" style="border:none; background:none;" value={{request.key.urlsafe}}><i class="material-icons" style="color:red;">cancel</i></button>
-
-              {% include "cancel_request_modal.html" %}
-
-          </div>
-        </li>
-        {% else %}
-        <li class="collection-item avatar">
-
-          <img src ="/img?user_id={{request.sender.urlsafe}}" class="circle">
-            <span class="title"><b>Requestor:</b><a href="/foodie/{{request.sender_name}}"> {{request.sender_name}}</a></span>
-            <p>
-              <b>Type:</b> {{request.food_type}}</p>
-              <b>Location:</b> {{request.location}} <br />
-              <b>For:</b> {{request.start_time.date}} <b> @ </b> {{request.start_time.time}}</p>
-              {% if request.recipient_name|length > 0 %}
-                <p> <b>Attendees:</b> 
-                {% for person in request.recipient_name %}
-                <a href="/foodie/{{person}}">{{person}}</a>  
-                {% endfor %}</p>
-              {% endif %}
-              <b>Interest:</b> {{request.interest}}</p>
-              <b>Bidders:</b> {{request.bidders|length}}
-
-          <div class="secondary-content">
-            <table>
-              <tr>
-                <button id="delete{{forloop.counter}}" style="border:none; background:none; color:red" value={{request.key.urlsafe}}><i class="material-icons">clear</i>Delete</button>
-              </tr>
-              <tr>
-                <td>
-                  <a href="/editrequest/{{request.key.urlsafe}}" style="border:none; background:none;" ><i class="material-icons" =>mode_edit</i> Edit</a>
-               </td>
-              </tr>
-            <tr>
-              <td>
-                <a href="/choose/{{request.key.urlsafe}}" style="border:none; background:none; color:green "><i class="material-icons">chat_bubble</i> Choose</a>
-              </td>
-            </tr>
-            <tr></tr>
-          </table>
-        </div>
-        </li>
-        {% endif %}
-        {% empty %}
-        <li class="collection-header">
-         <center>
-          <h5>No Pending Requests</h5>
-         </center>
-        </li>
-        {% endfor %}
-      </ul>
-    </div>
-  </div>
-
-  <!-- Requests that have at least one attending -->
-  <div id="accepted" class="col s12">
-   <div class="row">
-      <ul class="collection with-header col s12 m12">
-        <br />
-        {% for request in accepted_requests %}
-        {% if request.sender != user.key %}
-        <li class="collection-item avatar">
-          <img src ="/img?user_id={{request.sender.urlsafe}}" class="circle">
-          <span class="title"><b>Requestor:</b><a href="/foodie/{{request.sender_name}}"> {{request.sender_name}}</a></span>
-          <p>
-            <b>Type:</b> {{request.food_type}}</p>
-            <b>Location:</b> {{request.location}} <br />
-            <b>For:</b> {{request.start_time.date}} <b> @ </b> {{request.start_time.time}}</p>
-            <p> <b>Attendee:</b> 
-            <a href="/foodie/{{request.recipient_name}}">{{request.recipient_name}}</a>  
-            </p>
-            <b>Interest:</b> {{request.interest}}</p>
-          <div class="secondary-content">
-            <button id="pending_cancel{{forloop.counter}}" style="border:none; background:none;" value={{request.key.urlsafe}}><i class="material-icons" style="color:red;">cancel</i></button>
-
-              {% include "cancel_request_modal.html" %}
-          </div>
-        </li>
-        {% else %}
-        <li class="collection-item avatar">
-          <img src ="/img?user_id={{request.sender.urlsafe}}" class="circle">
-          <span class="title"><b>Requestor:</b><a href="/foodie/{{request.recipient_name}}"> {{request.recipient_name}}</a></span>
-          <p>
-            <b>Type:</b> {{request.food_type}}</p>
-            <b>Location:</b> {{request.location}} <br />
-            <b>For:</b> {{request.start_time.date}} <b> @ </b> {{request.start_time.time}}</p>
-            <p> <b>Attendee:</b> 
-            <a href="/foodie/{{request.recipient_name}}">{{request.recipient_name}}</a>
-          </p>
-            <b>Interest:</b> {{request.interest}}</p>
-          <div class="secondary-content">
-            <button id="cancel_request{{forloop.counter}}" style="border:none; background:none;" value={{request.key.urlsafe}}><i class="material-icons">cancel</i></button>
-          </div>
-        </li>
-        {% endif %}
-        {% empty %}
-        <li class="collection-header">
-         <center>
-          <h5>No Accepted Requests</h5>
-         </center>
-        </li>
-        {% endfor %}
-      </ul>
-    </div>
-  </div>
-
-  <!-- My Requests -->
-  <div id="mine" class="col s12"> 
-    <div class="row">
-      <ul class="collection with-header col s12 m12">
-      <br />
-      {% for request in my_requests %}
-        <li class="collection-item avatar">
-          <img src ="/img?user_id={{request.sender.urlsafe}}" class="circle">
-          <span class="title"><b>Requestor:</b><a href="/foodie/{{request.sender_name}}"> {{request.sender_name}}</a></span>
-          <p>
-            <b>Type:</b> {{request.food_type}}</p>
-            <b>Location:</b> {{request.location}} <br />
-            <b>For:</b> {{request.start_time.date}} <b> @ </b> {{request.start_time.time}}</p>
-            {% if request.recipient_name|length > 0 %}
-              <p> <b>Attendees:</b> 
-              <a href="/foodie/{{request.recipient_name}}">{{request.recipient_name}}</a>  
-              </p>
-            {% endif %}
-            <b>Price Range:</b> ${{request.min_price}} to ${{request.max_price}}</p>
-            <b>Interest:</b> {{request.interest}}</p>
-            <b>Bidders:</b> {{request.bidders|length}}</p>
-            <b>Status:</b> {{request.status}}
-          {% if request.status != "accepted" %}
-          <div class="secondary-content">
-            <table>
-              <tr>
-                <button id="delete{{forloop.counter}}" style="border:none; background:none; color:red" value={{request.key.urlsafe}}><i class="material-icons">clear</i>Delete</button>
-              </tr>
-              <tr>
-                <td>
-                  <a href="/editrequest/{{request.key.urlsafe}}" style="border:none; background:none;" ><i class="material-icons" =>mode_edit</i> Edit</a>
-               </td>
-              </tr>
-            <tr>
-              <td>
-                <a href="/choose/{{request.key.urlsafe}}" style="border:none; background:none; color:green "><i class="material-icons">chat_bubble</i> Choose</a>
-              </td>
-            </tr>
-            <tr></tr>
-          </table>
-        </div>
-        {% else %}
-        <div class="secondary-content">
-          <button id="delete{{forloop.counter}}" style="border:none; background:none; color:red" value={{request.key.urlsafe}}><i class="material-icons">clear</i>Delete</button>
-        </div>
-         {% endif %}
-        </li>
-      {% empty %}
-      <li class="collection-header">
-       <center>
-        <h5>No Requests</h5>
-        <p>Find someone now!</p>
-       </center>
-      </li>
-      {% endfor %}
-      </ul>
-    </div>
-  </div>
 
   <!-- Location Requests -->
   <div id="location_requests" class="col s12" style="display:none;">
@@ -245,7 +64,7 @@
           <li class="collection-item avatar">
             <img src ="/img?user_id={{request.sender.urlsafe}}" class="circle">
             <span class="title">
-              <b>Requestor:</b><a href="/foodie/{{request.sender_name}}"> {{request.sender_name}}</a></span>
+              <b>Requestor:</b><a href="/foodie/{{request.sender_name}}?q=timeline/all"> {{request.sender_name}}</a></span>
             <p>
               <b>Type:</b> {{request.food_type}}</p>
               <b>Location:</b> {{request.location}} <br />
@@ -283,7 +102,7 @@
           <li class="collection-item avatar">
             <img src ="/img?user_id={{request.sender.urlsafe}}" class="circle">
             <span class="title">
-              <b>Requestor:</b><a href="/foodie/{{request.sender_name}}"> {{request.sender_name}}</a></span>
+              <b>Requestor:</b><a href="/foodie/{{request.sender_name}}?q=timeline/all"> {{request.sender_name}}</a></span>
             <p>
               <b>Type:</b> {{request.food_type}}</p>
               <b>Location:</b> {{request.location}} <br />
@@ -320,7 +139,7 @@
           <li class="collection-item avatar">
             <img src ="/img?user_id={{request.sender.urlsafe}}" class="circle">
             <span class="title">
-              <b>Requestor:</b><a href="/foodie/{{request.sender_name}}"> {{request.sender_name}}</a></span>
+              <b>Requestor:</b><a href="/foodie/{{request.sender_name}}?q=timeline/all"> {{request.sender_name}}</a></span>
             <p>
               <b>Type:</b> {{request.food_type}}</p>
               <b>Location:</b> {{request.location}} <br />
@@ -357,7 +176,7 @@
           <li class="collection-item avatar">
             <img src ="/img?user_id={{request.sender.urlsafe}}" class="circle">
             <span class="title">
-              <b>Requestor:</b><a href="/foodie/{{request.sender_name}}"> {{request.sender_name}}</a></span>
+              <b>Requestor:</b><a href="/foodie/{{request.sender_name}}?q=timeline/all"> {{request.sender_name}}</a></span>
             <p>
               <b>Type:</b> {{request.food_type}}</p>
               <b>Location:</b> {{request.location}} <br />
