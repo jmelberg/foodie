@@ -347,7 +347,7 @@ class JoinRequestHandler(SessionHandler):
           bidder.location = new_location.key
           bidder.name = self.user_model.username
           bidder.bid_time = datetime.datetime.now() - datetime.timedelta(hours=8)
-          bid.price = request.price
+          bidder.price = request.price
           bidder.put()
           request.bidders.append(bidder.key)
           request.status = "pending"
