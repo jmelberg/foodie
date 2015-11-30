@@ -11,3 +11,4 @@ def AuthorizeCreditCard(credit_card_id):
 
 def Charge(account_id, credit_card_id, amount, desc):
     charge = requests.post('http://107.170.240.130:3000/charge', data={"credit_card_id": credit_card_id, "account_id": account_id, "amount": amount, "desc": desc})
+    return charge
