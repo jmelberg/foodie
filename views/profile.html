@@ -42,7 +42,7 @@
     </div>
     <div class = "row profile-tabs" style="margin-top: -15px;">
       <ul>
-        <li><a href="/foodie/{{owner.username}}?q=table/waiting" class="btn" id="tableViewBtn" style="width: 100%;"> Table </a></li>
+        <li><a href="/foodie/{{owner.username}}?q=table/all" class="btn" id="tableViewBtn" style="width: 100%;"> Table </a></li>
         <li><a href="/foodie/{{owner.username}}?q=timeline/all" class="btn" id="timelineViewBtn" style="display: none; width: 100%;"> Timeline </a></li>
         <li>
           <a id="timelineDDBtn" class="dropdown-button btn" href="#" data-activates="timeline-dropdown" style="width: 100%;">Filter</a>
@@ -54,7 +54,7 @@
           </ul>
           <a id="tableDDBtn" class="dropdown-button btn" href="#" data-activates="table-dropdown" style="display: none; width: 100%;">Filter</a>
           <ul id="table-dropdown" class="dropdown-content" style="margin: 34px 0 0 0;">
-            <li><a href="/foodie/{{owner.username}}?q=table/waiting" class="sort-history">Waiting</a></li>
+            <li><a href="/foodie/{{owner.username}}?q=table/all" class="sort-history">Waiting</a></li>
             <li><a href="/foodie/{{owner.username}}?q=table/pending" class="sort-history">Pending</a></li>
             <li class="divider"></li>
             <li><a href="/foodie/{{owner.username}}?q=table/accepted" class="sort-history">Accepted</a></li>
@@ -185,6 +185,7 @@
         </p>
       </div>
       <div class= "col s1">
+        {% if profile.owner == user.key %}
         <div class="secondary-content">
           <button id="cancel_pending{{forloop.counter}}" style="border:none; background:none;" value={{request.key.urlsafe}}><i class="material-icons" style="color:#B71C1C;">clear</i></button>
           <div id="cancel_pending_request{{forloop.counter}}" class="modal">
@@ -199,10 +200,10 @@
             </div>
           </div>
         </div>
+        {% endif %}
       </div>
     </div>
   </li>
-  
   {% else %}
   <li class="collection-item">
     <div class="row search-row">
@@ -454,9 +455,9 @@
     </div>
     <!-- timeline/all end -->
     <!-- timeline/fired start-->
-    <div id="timeline-accepted" class="col s9 card history-content">
+    <div id="timeline-fired" class="col s9 card history-content">
       <h4 class= "history-title">History</h4>
-      {% if accepted_requests|length == 0 %}
+      {% if fired_requests|length == 0 %}
       <li class="collection-header">
         <center>
           <h5>No Requests</h5>
@@ -466,7 +467,7 @@
       {% else %}
       <!-- cd-timeline start -->
       <div id="cd-timeline">
-        {% for request in accepted_requests %}
+        {% for request in fired_requests %}
         <div class="cd-timeline-block"> <!-- cd-timeline-block start -->
           <div class="row">
             <div class="cd-timeline-img cd-picture">

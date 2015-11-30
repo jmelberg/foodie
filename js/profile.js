@@ -1,7 +1,7 @@
 $(document).ready(function() {
   var tab = getUrlParameter('q');
 
-  if(tab == 'table/waiting') {
+  if(tab == 'table/all') {
     $('#table-waiting').show();
     $('#timelineViewBtn').show();
     $('#tableViewBtn').hide();
@@ -33,8 +33,8 @@ $(document).ready(function() {
     $('#timeline-all').show();
     $('#sexy-sort-btn').hide();
   }
-  else if(tab == 'timeline/accepted') {
-    $('#timeline-accepted').show();
+  else if(tab == 'timeline/fired') {
+    $('#timeline-fired').show();
     $('#sexy-sort-btn').hide();
   }
   else if(tab == 'timeline/completed') {
