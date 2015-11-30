@@ -171,12 +171,10 @@ class EditProfileHandler(SessionHandler):
     user.l_last_name = l_name.lower().strip()
     user.first_name = f_name.strip()
     user.last_name = l_name.strip()
-    if phone[:1] == "+1":
-      user.telephone = phone
-    elif len(phone) == 10:
+    if len(phone) == 10:
       user.telephone = "+1" + phone
     else:
-      print "Phone can not update"
+      user.telephone = phone
     user.put()
 
     profile.about_me = about
