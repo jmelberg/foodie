@@ -135,7 +135,6 @@ class ProfileHandler(SessionHandler):
     timeline_requests = [x for x in timeline_requests if x.status != "dead"]
     timeline_requests = [x for x in timeline_requests if x.status != "accepted"]
 
-
     timeline_comments = []
     for r in timeline_requests:
       c = Endorsement.query(Endorsement.request == r.key).fetch()
