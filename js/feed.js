@@ -1,6 +1,6 @@
 "use strict"
 var FeedCarousel = (function () {
-  var owl = $("#owl-demo");
+  var owl = $(".owl-slides");
  
   owl.owlCarousel({
       items : 5, // items above 1000px browser width
@@ -9,7 +9,7 @@ var FeedCarousel = (function () {
       itemsTablet: [600,2], //2 items between 600 and 0
       itemsMobile : false, // itemsMobile disabled - inherit from itemsTablet option
       lazyLoad : true,
-      navigation : true,
+      // navigation : true,
       autoPlay: true,
   });
  

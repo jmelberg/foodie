@@ -1,6 +1,8 @@
 {% extends "base.html" %}
 {% block content %}
 <link rel="stylesheet" type="text/css" href="../css/feed_carousel.css">
+<script type="text/javascript" src="../js/flickr_me.js"></script>
+<script type="text/javascript" src="../js/food_type_displays.js"></script>
 <div class="main_picture"></div>
  {% if user.credit_id == None %}
    <!-- Modal Structure -->
@@ -17,11 +19,26 @@
 
   <div class="row">
         <div id="slider" class="">
-          {% for item in all_requests %}
           <div class="one">
-            <a>{{item.food_type}}</a>
+            <div class="owl-wrapper">
+              <div class="owl-arrow-wrapper owl-left-arrow-wrapper">
+                <div >&#10092;</div>
+              </div>
+              <div class="owl-arrow-wrapper owl-right-arrow-wrapper">
+                <div>&#10093;</div>
+              </div>
+              <div class="owl-slides owl-carousel owl-theme">
+                {% for item in all_requests %}
+                  <a href="/query?search={{item.food_type}}">
+                    <div id="owl-item-{{item.key.urlsafe}}" class="item">
+                      <span class="owl-item-text">{{item.food_type}}</span>
+                    </div>
+                    <script>FoodTypeDisplays.displayBackground( {backgroundId:"owl-item-{{item.key.urlsafe}}"} ,"{{item.food_type}}","n");</script>
+                  </a>
+                {% endfor %}
+              </div>
+            </div>
           </div>
-          {% endfor %}
         </div>
   </div>
 {% if pending %}
@@ -42,49 +59,40 @@
   <div class="row">
     <div id="slider{{forloop.counter|add:1}}" class="">
       <div class="item">
-        {% for r in requests %}
-        <div id="{{r.food_type}}" onload="getImage({{food}},{{r.food_type}})">
-          <a href="/confirm/{{r.key.urlsafe}}">
-            {{r.sender_name}} requests {{r.food_type}} in {{r.location}}
-          </a>
-        </div>
-        {% endfor %}
+          <div class="owl-wrapper">
+            <div class="owl-arrow-wrapper owl-left-arrow-wrapper">
+              <div >&#10092;</div>
+            </div>
+            <div class="owl-arrow-wrapper owl-right-arrow-wrapper">
+              <div>&#10093;</div>
+            </div>
+            <div class="owl-slides owl-carousel owl-theme">
+              {% for r in requests %}
+              <a href="/confirm/{{r.key.urlsafe}}">
+                <div id="owl-{{food}}-{{r.key.urlsafe}}" class="item">
+                  <span class="owl-item-text">{{r.location}} <br> by {{r.sender_name}}</span>
+                </div>
+                <script>FoodTypeDisplays.displayBackground( {backgroundId:"owl-{{food}}-{{r.key.urlsafe}}"} ,"{{r.food_type}}","n");</script>
+              </a>
+              {% endfor %}
+            </div>
+          </div>
       </div>
     </div>
   </div>
   {% endfor %}
   {% endif %}
 
-<div>
-  <div class="owl-wrapper">
-    <div id="owl-demo" class="owl-carousel owl-theme">
-      <div class="item"><h1>1</h1></div>
-      <div class="item"><h1>2</h1></div>
-      <div class="item"><h1>3</h1></div>
-      <div class="item"><h1>4</h1></div>
-      <div class="item"><h1>5</h1></div>
-      <div class="item"><h1>6</h1></div>
-      <div class="item"><h1>7</h1></div>
-      <div class="item"><h1>8</h1></div>
-      <div class="item"><h1>9</h1></div>
-      <div class="item"><h1>10</h1></div>
-      <div class="item"><h1>11</h1></div>
-      <div class="item"><h1>12</h1></div>
-      <div class="item"><h1>13</h1></div>
-      <div class="item"><h1>14</h1></div>
-      <div class="item"><h1>15</h1></div>
-      <div class="item"><h1>16</h1></div>
-    </div>
-  </div>
 
-</div>
- 
+  
+
+<!--  
 <div class="customNavigation">
   <a class="btn prev">Previous</a>
   <a class="btn next">Next</a>
   <a class="btn play">Autoplay</a>
   <a class="btn stop">Stop</a>
-</div>
+</div> -->
 
 
 <script type="text/javascript" src="../js/feed.js"></script>
