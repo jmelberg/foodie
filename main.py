@@ -14,10 +14,10 @@ from wepay import *
 from models import User, Profile, Request, Endorsement, Bidder
 from payments import *
 
-client_id = 3044
-client_secret = 'a2ed348f70'
-redirect_url = 'http://food-enthusiast.appspot.com'
-wepay = WePay(True, None)
+client_id = 175855
+client_secret = 'dfb950e7ea'
+redirect_url = 'http://localhost:8080/'
+wepay = WePay(False, None)
 
 
 class LoginHandler(SessionHandler):
@@ -49,10 +49,9 @@ class FeedHandler(SessionHandler):
     user = self.user_model
     get_notifications(user)
     current_date = datetime.datetime.now() - datetime.timedelta(hours=8)
-
+    
     all_requests = Request.query(Request.start_time >= current_date).order(Request.start_time)
     all_requests = [r for r in all_requests if r.sender != user.key]
-    all_requests = [r for r in all_requests if r.status == 'waiting for a bid' or r.status == 'pending']
     pending_requests = Request.query(Request.status == 'pending').order(Request.start_time)
     pending_requests = [r for r in pending_requests if r.start_time < current_date]
 
@@ -96,6 +95,7 @@ class ProfileHandler(SessionHandler):
     # Get Request regarding the user
     reqs = []
     timeline_requests = []
+    waiting_requests = []
     my_reqs = []
     fired_requests = []
     table_reqs = []
@@ -125,6 +125,7 @@ class ProfileHandler(SessionHandler):
 
     table_requests = my_reqs[:] + dead_reqs[:] + pending_requests[:]
     table_requests = sorted(table_requests, key=lambda x: x.start_time, reverse=True)
+    waiting_requests = [x for x in table_requests if x.status == "waiting for a bid"]
     accepted_requests = [x for x in table_requests if x.status == "accepted"]
     pending_requests = pending_requests + table_requests
     pending_requests = [x for x in pending_requests if x.status == "pending"]
@@ -151,7 +152,7 @@ class ProfileHandler(SessionHandler):
     self.response.out.write(template.render('views/profile.html',
                              {'owner':profile_owner, 'profile':profile, #'endorsements': comments,
                             'history': history, 'user': viewer, 'timeline_requests': timeline_requests, 'pending_requests': pending_requests,
-                            'accepted_requests': accepted_requests, 'completed_requests': completed_requests, 'table_requests': table_requests, 'fired_requests': fired_requests}))
+                            'accepted_requests': accepted_requests, 'completed_requests': completed_requests, 'waiting_requests': waiting_requests, 'fired_requests': fired_requests}))
 
 class Image(SessionHandler):
   """Serves the image associated with an avatar"""
@@ -336,12 +337,6 @@ class AuthorizePaymentsHandler(SessionHandler):
     user.credit_id = credit
     user.put()
 
-class TestChargeHandler(SessionHandler):
-  def get(self):
-    charge = Charge(383659670, 2909426724, 1.00, "Live Payments Works!")
-
-#def Charge(account_id, credit_card_id, amount, desc):
-
 
 config = {}
 config['webapp2_extras.sessions'] = {
@@ -374,8 +369,7 @@ app = webapp2.WSGIApplication([
                              ('/thanks', ThanksHandler),
                              ('/verify/(.+)/(.+)', VerifyHandler),
                              ('/fire/(.+)/(.+)', FireHandler),
-                             ('/complete', CompletedRequestHandler),
-                             ('/testpayment', TestChargeHandler),
+                             ('/complete', CompletedRequestHandler), 
                              ('/dead', DeadRequestHandler),
                              ('/logout', LogoutHandler),
                              ('/authorizepayment', AuthorizePaymentsHandler),

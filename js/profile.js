@@ -1,8 +1,8 @@
 $(document).ready(function() {
   var tab = getUrlParameter('q');
 
-  if(tab == 'table/all') {
-    $('#table-all').show();
+  if(tab == 'table/waiting') {
+    $('#table-waiting').show();
     $('#timelineViewBtn').show();
     $('#tableViewBtn').hide();
     $('#tableDDBtn').show();

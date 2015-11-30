@@ -42,7 +42,7 @@
     </div>
     <div class = "row profile-tabs" style="margin-top: -15px;">
       <ul>
-        <li><a href="/foodie/{{owner.username}}?q=table/all" class="btn" id="tableViewBtn" style="width: 100%;"> Table </a></li>
+        <li><a href="/foodie/{{owner.username}}?q=table/waiting" class="btn" id="tableViewBtn" style="width: 100%;"> Table </a></li>
         <li><a href="/foodie/{{owner.username}}?q=timeline/all" class="btn" id="timelineViewBtn" style="display: none; width: 100%;"> Timeline </a></li>
         <li>
           <a id="timelineDDBtn" class="dropdown-button btn" href="#" data-activates="timeline-dropdown" style="width: 100%;">Filter</a>
@@ -54,10 +54,10 @@
           </ul>
           <a id="tableDDBtn" class="dropdown-button btn" href="#" data-activates="table-dropdown" style="display: none; width: 100%;">Filter</a>
           <ul id="table-dropdown" class="dropdown-content" style="margin: 34px 0 0 0;">
+            <li><a href="/foodie/{{owner.username}}?q=table/waiting" class="sort-history">Waiting</a></li>
             <li><a href="/foodie/{{owner.username}}?q=table/pending" class="sort-history">Pending</a></li>
-            <li><a href="/foodie/{{owner.username}}?q=table/accepted" class="sort-history">Accepted</a></li>
             <li class="divider"></li>
-            <li><a href="/foodie/{{owner.username}}?q=table/completed" class="sort-history">Completed</a></li>
+            <li><a href="/foodie/{{owner.username}}?q=table/accepted" class="sort-history">Accepted</a></li>
           </ul>
         </li>
         <li>
@@ -79,13 +79,13 @@
       </ul>
     </div>
 
-    <!-- table/all start -->
-    <div id="table-all" class="col s9 history-content"> 
+    <!-- table/waiting start -->
+    <div id="table-waiting" class="col s9 history-content"> 
       <h4 class= "history-title">History</h4>
       <div class="row">
         <ul class="collection with-header col s12 m12">
           <br />
-          {% for request in table_requests %}
+          {% for request in waiting_requests %}
           <li class="collection-item">
             <div class="row search-row">
               <div class= "col s3">
@@ -111,88 +111,46 @@
                 </p>
               </div>
               <div class= "col s4">
-                <p class = "search-detail">
-                </br></br>
-                <b> {{request.status}}  </b></br> 
-                {{request.location|title}}</br>
-                {{request.start_time}}
-              </p>
-            </div>
-            <div class= "col s1">
-              {% if profile.owner == user.key %}
-              {% if request.status == "pending" or request.status == "waiting for a bid" or request.status == "dead" %}
-              {% if request.sender == user.key %}
-              <div class="secondary-content">
-                <table>
-                  <tr>
-                    <button id="delete{{forloop.counter}}" style="border:none; background:none; color:#B71C1C" title= "delete" value={{request.key.urlsafe}}><i class="material-icons">clear</i></button>
-                  </tr>
-                  {% if request.status == "pending" or request.status == "waiting for a bid" %}
-                  <tr>
-                    <td>
-                      <a href="/editrequest/{{request.key.urlsafe}}" style="border:none; background:none; color:#333333" title= "edit"><i class="material-icons" =>mode_edit</i></a>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>
-                      <a href="/choose/{{request.key.urlsafe}}" style="border:none; background:none; color:#1B5E20 " title= "choose"><i class="material-icons">playlist_add_check</i></a>
-                    </td>
-                  </tr>
-                  {% endif %}
-                  <tr></tr>
-                </table>
+                  <p class = "search-detail">
+                  </br></br>
+                  <b> {{request.status}}  </b></br> 
+                  {{request.location|title}}</br>
+                  {{request.start_time}}
+                </p>
               </div>
-              {% else %}
-              <div class="secondary-content">
-                <button id="pending_cancel{{forloop.counter}}" style="border:none; background:none;" title= "cancel" value={{request.key.urlsafe}}><i class="material-icons" style="color:#B71C1C;">clear</i></button>
-
-                <div id="cancel_request_p{{forloop.counter}}" class="modal">
-                  <div class="modal-content">
-                    <h4>Cancel Request</h4>
-                    <p>Are you sure you want to back out of the request?</p>
-
-                  </div>
-                  <div class="modal-footer">
-                    <button id="confirm_cancel_request" class="modal-action modal-close waves-effect waves-green btn-flat">Yes</button>
-                    <button class="modal-action modal-close waves-effect waves-green btn-flat">No</button>
-                  </div>
+              <div class= "col s1">
+                {% if profile.owner == user.key %}
+                {% if request.sender == user.key %}
+                <div class="secondary-content">
+                  <table>
+                    <tr>
+                      <button id="delete{{forloop.counter}}" style="border:none; background:none; color:#B71C1C" title= "delete" value={{request.key.urlsafe}}><i class="material-icons">clear</i></button>
+                    </tr>
+                    <tr>
+                      <td>
+                        <a href="/editrequest/{{request.key.urlsafe}}" style="border:none; background:none; color:#333333" title= "edit"><i class="material-icons" =>mode_edit</i></a>
+                      </td>
+                    </tr>
+                    <tr></tr>
+                  </table>
                 </div>
-
+                {% endif %}
+                {% endif %}
               </div>
-              {% endif %}
-              {% endif %}
-              {% if request.status == "accepted" %}
-              <div class="secondary-content">
-                <button id="accepted_cancel{{forloop.counter}}" style="border:none; background:none;" title= "cancel" value={{request.key.urlsafe}}><i class="material-icons" style="color:#B71C1C;">clear</i></button>
-                <div id="cancel_request_a{{forloop.counter}}" class="modal">
-                  <div class="modal-content">
-                    <h4>Cancel Request</h4>
-                    <p>Are you sure you want to back out of the request?</p>
-
-                  </div>
-                  <div class="modal-footer">
-                    <button id="confirm_cancel_request" class="modal-action modal-close waves-effect waves-green btn-flat">Yes</button>
-                    <button class="modal-action modal-close waves-effect waves-green btn-flat">No</button>
-                  </div>
-                </div>
-              </div>
-              {% endif %}
-              {% endif %}
             </div>
-          </div>
+          </li>
+          {% empty %}
+          <li class="collection-header">
+            <center>
+            <h5>No Requests</h5>
+            <p>Find someone now!</p>
+            </center>
         </li>
-        {% empty %}
-        <li class="collection-header">
-         <center>
-          <h5>No Requests</h5>
-          <p>Find someone now!</p>
-        </center>
-      </li>
-      {% endfor %}
-    </ul>
-  </div>
-</div>
-<!-- table/all end -->
+        {% endfor %}
+        </ul>
+      </div>
+    </div>
+<!-- table/waiting end -->
 <!-- table/pending start -->
 <div id="table-pending" class="col s9 history-content">
  <h4 class= "history-title">Pending</h4>
@@ -474,7 +432,6 @@
     {% endfor %}
   </ul>
 </div>
-</div>
 <!-- table/completed end -->
 <!-- timeline/all start-->
 <div id="timeline-all" class="col s9 card history-content">
@@ -533,12 +490,12 @@
                 </div>
                 {% endif %}
                 {% if request.1 == "None" or request.1.sender_name != user.username %}
-                {% if request.1|length < 2 %}
-                <div class="card-action">
-                  <span><a class="modal-trigger grey white-text waves-effect waves-light btn" id="comment_button" style="width: 100%;" href="#comment" {% if request.0.recipient_name == user.username %} onclick="getRequest('{{request.0.key.urlsafe}}', '{{request.0.sender_name}}')" {% else %} onclick="getRequest('{{request.0.key.urlsafe}}', '{{request.0.recipient_name}}')" {% endif %}>Share Your Experience</a>
-                  </span>
-                </div>
-                {% endif %}
+                  {% if request.1|length < 2 %}
+                  <div class="card-action">
+                    <span><a class="modal-trigger grey white-text waves-effect waves-light btn" id="comment_button" style="width: 100%;" href="#comment" {% if request.0.recipient_name == user.username %} onclick="getRequest('{{request.0.key.urlsafe}}', '{{request.0.sender_name}}')" {% else %} onclick="getRequest('{{request.0.key.urlsafe}}', '{{request.0.recipient_name}}')" {% endif %}>Share Your Experience</a>
+                    </span>
+                  </div>
+                  {% endif %}
                 {% endif %}  
 
                 {% endif %}
