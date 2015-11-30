@@ -52,6 +52,7 @@ class FeedHandler(SessionHandler):
 
     all_requests = Request.query(Request.start_time >= current_date).order(Request.start_time)
     all_requests = [r for r in all_requests if r.sender != user.key]
+    all_requests = [r for r in all_requests if r.status == 'waiting for a bid' or r.status == 'pending']
     pending_requests = Request.query(Request.status == 'pending').order(Request.start_time)
     pending_requests = [r for r in pending_requests if r.start_time < current_date]
 

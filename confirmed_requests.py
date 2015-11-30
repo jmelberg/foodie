@@ -29,7 +29,7 @@ class SMSHandler(SessionHandler):
     # Get all requests in accepted state
     completed_requests = Request.query(Request.status == "accepted").fetch()
     completed_requests = [x for x in completed_requests if x.recipient != None]
-    completed_requests = [x for x in completed_requests if x.start_time >= min_time and x.start_time < max_time]
+    #completed_requests = [x for x in completed_requests if x.start_time >= min_time and x.start_time < max_time]
     for request in completed_requests:
       send_sms(request)
       # Change status of request
@@ -88,16 +88,15 @@ class VerifyHandler(SessionHandler):
 
 class CompletedRequestHandler(SessionHandler):
   def get(self):
-    longitude = cgi.escape(self.request.get("latitude"))
-    latitude = cgi.escape(self.request.get("longitude"))
+    latitude = cgi.escape(self.request.get("latitude"))
+    longitude = cgi.escape(self.request.get("longitude"))
     message_id = cgi.escape(self.request.get("message"))
     request_id = cgi.escape(self.request.get("request"))
     user_key = ndb.Key(urlsafe=message_id).get()
     request = ndb.Key(urlsafe=request_id).get()
     print "Request:", request.longitude, request.latitude
     print "Actual:", longitude, latitude
-
-    if request.recipient == user_key:
+    if request.recipient == user_key.key:
       if latitude <= (request.latitude - 0.1) or latitude >= (request.latitude + 0.1):
       #if latitude <= (request.latitude - 0.01) or latitude >= (request.latitude + 0.01):
         if longitude <= (request.longitude - 0.1) or longitude >= (request.longitude + 0.1):

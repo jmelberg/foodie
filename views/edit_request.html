@@ -4,7 +4,7 @@
 <link rel="stylesheet" media="screen" href="../css/request_suggestion_grid.css" type="text/css" />
 <script type="text/javascript" src= "../js/flickr_me.js"></script> 
 <script type="text/javascript" src= "../js/request_suggestion_grid.js"></script> 
-
+<input style="display:none;" name="get_my_interest" id="get_my_interest" value="{{request.interest}}">
 <div class= "background">
   <div class = "container">
     <div class="row">
@@ -41,7 +41,7 @@
           </div>
 
           <div class="row">
-            <div class="input-field col s5">
+            <div class="input-field col s5" checked="{{request.interest}}">
               <label>Interest</label><br />    
               <p>
                 <input name="edit_interest" type="radio" id="edit_interest_food_lesson" value="food lesson">

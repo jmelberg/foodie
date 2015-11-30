@@ -110,7 +110,7 @@ $(document).ready(function(){
           'food_type': food_type, 'interest': interest},
           success: function(){
             setTimeout(function(){ // Refresh after 1 second
-            window.location.href = '/requests';
+            window.location.href = '/feed';
             }, 100);
           }
         });
