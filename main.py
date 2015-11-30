@@ -16,7 +16,7 @@ from payments import *
 
 client_id = 3044
 client_secret = 'a2ed348f70'
-access_token = 'PRODUCTION_f78c8a84a59f1b66cee242068d778b23367b8e69b7743b435e3cd82da9e46190'
+access_token = 'PRODUCTION_04b9fda092d11e744a5806eca8570338f69a0283dfbb3ca4845ad2f079ccc292'
 redirect_url = 'http://food-enthusiast.appspot.com'
 wepay = WePay(True, access_token)
 
@@ -316,8 +316,6 @@ class LogoutHandler(SessionHandler):
     self.redirect('/')
 
 class GetWePayUserTokenHandler(SessionHandler):
-  def get(self):
-    self.response.out.write(template.render('views/payments.html', {'user': self.user_model}))
   def post(self):
     user = self.user_model
     code = cgi.escape(self.request.get("acct_json"))
@@ -325,14 +323,9 @@ class GetWePayUserTokenHandler(SessionHandler):
     r = wepay.get_token(redirect_url, client_id, client_secret, code[1:-1])
     acct_token = r["access_token"]
     acct_id = r["user_id"]
-    wepay_create = WePay(True, acct_token)
-    response = wepay.call('/account/create', {
-    'name': user.username,
-    'description': 'Expert User.'
-    })
-    print response
-    create = CreatePaymentAccount(acct_id)
+    createAccount = CreateExpertAccount(acct_token,"Nikki Lee")
     user.wepay_id = str(acct_id)
+    user.wepay_token = str(acct_token)
     user.put()
 
 class AuthorizePaymentsHandler(SessionHandler):
@@ -345,7 +338,7 @@ class AuthorizePaymentsHandler(SessionHandler):
 
 class TestChargeHandler(SessionHandler):
   def get(self):
-    charge = Charge(60407007, 194932521, 1.00, "Live Payments Works!")
+    charge = Charge("PRODUCTION_7040820d52ece89eaac422bfac064a04f447c027c078fbae3abb1fb739123c10",1614365466, 194932521, 1.00, "Live Payments Works!")
 
 #def Charge(account_id, credit_card_id, amount, desc):
 
@@ -384,6 +377,7 @@ app = webapp2.WSGIApplication([
                              ('/complete', CompletedRequestHandler),
                              ('/dead', DeadRequestHandler),
                              ('/logout', LogoutHandler),
+                             ('/testpayment', TestChargeHandler),
                              ('/authorizepayment', AuthorizePaymentsHandler),
                              ('/getwepaytoken', GetWePayUserTokenHandler),
                               ], debug=False, config=config)

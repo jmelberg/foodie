@@ -12,7 +12,6 @@ $( "[id^=slider]" ).owlCarousel({
   autoPlay: 2000
 });
 
-
 function afterAction(){
 owlLength = this.owl.owlItems.length;
 }

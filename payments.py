@@ -9,6 +9,10 @@ def AuthorizeCreditCard(credit_card_id):
     authorize = requests.post('http://107.170.240.130:3000/authorizecredit', data={"credit_id":credit_card_id})
     return authorize
 
-def Charge(account_id, credit_card_id, amount, desc):
-    charge = requests.post('http://107.170.240.130:3000/charge', data={"credit_card_id": credit_card_id, "account_id": account_id, "amount": amount, "desc": desc})
+def Charge(acct_token,account_id, credit_card_id, amount, desc):
+    charge = requests.post('http://107.170.240.130:3000/charge', data={"acct_token":acct_token,"credit_card_id": credit_card_id, "account_id": account_id, "amount": amount, "desc": desc})
     return charge
+
+def CreateExpertAccount(account_token, account_name):
+    create = requests.post('http://107.170.240.130:3000/create', data={"account_token":account_token, "account_name": account_name})
+    return create

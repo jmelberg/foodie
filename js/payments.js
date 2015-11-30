@@ -16,7 +16,4 @@ $("#createpayment").click(function(){
 
 
 });
-
-WePay.iframe_checkout("payhere", "https://stage.wepay.com/api/checkout/12345");
-
 });
