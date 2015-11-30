@@ -32,9 +32,9 @@ class SMSHandler(SessionHandler):
     completed_requests = [x for x in completed_requests if x.recipient != None]
     #completed_requests = [x for x in completed_requests if x.start_time >= min_time and x.start_time < max_time]
     for request in completed_requests:
+      send_sms(request)
       request.status = "sms"
       request.put()
-      send_sms(request)
       # Change status of request
 
 
@@ -47,6 +47,8 @@ class SMSFireHandler(SessionHandler):
     #completed_requests = [x for x in completed_requests if x.start_time + datetime.timedelta(minutes=10) < current_time]
     for request in completed_requests:
       send_fire_notification(request)
+      request.status = "attempt_fire"
+      request.put()
 
 class DeadRequestHandler(SessionHandler):
   # Change status of request to dead if no show
@@ -68,8 +70,10 @@ class FireHandler(SessionHandler):
   def get(self, request_id, employee_id):
     request = ndb.Key(urlsafe=request_id).get()
     receiver = ndb.Key(urlsafe=employee_id).get()
-    if request.status == "foodie":
+    current_time = datetime.datetime.now() - datetime.timedelta(hours=8)
+    if request.status == "attempt_fire" and request.start_time < current_time + datetime.timedelta(minutes=10):
       request.status = "fired"
+      request.put()
       send_fire(request)
       self.response.out.write(template.render('views/fired.html', {}))
     else:
@@ -116,11 +120,17 @@ class CompletedRequestHandler(SessionHandler):
         if request.status == "foodie":
           #Foodie checked in already
           request.status = "complete"
+          request.put()
         elif request.status == "sms":
           #Expert is first to check in
           request.status = "expert"
+          request.put()
           #1/2 payment processed
-          Charge(expert.wepay_id, foodie.credit_id, (request.price/2), "1/2 payment processed")
+          Charge(expert.wepay_token, expert.wepay_id, foodie.credit_id, (request.price/2), "1/2 payment processed")
+        elif request.status == "attempt_fire":
+          request.status = "complete"
+          request.put()
+          Charge(expert.wepay_token, expert.wepay_id, foodie.credit_id, (request.price/2), "1/2 payment processed")
         else:
           # Request has expired
           print "Request is no longer valid"
@@ -136,7 +146,7 @@ class CompletedRequestHandler(SessionHandler):
         if request.status == "expert":
           request.status = "complete"
           # process full payment
-          Charge(expert.wepay_id, foodie.credit_id, (request.price/2), "Full payment processed")
+          Charge(expert.wepay_token, expert.wepay_id, foodie.credit_id, (request.price/2), "Full payment processed")
         elif request.status =="sms":
           request.status = "foodie"
         else:

@@ -16,7 +16,7 @@ from payments import *
 
 client_id = 3044
 client_secret = 'a2ed348f70'
-access_token = 'PRODUCTION_04b9fda092d11e744a5806eca8570338f69a0283dfbb3ca4845ad2f079ccc292'
+access_token = 'PRODUCTION_47ea8352cc24cab4cddd276bf5a3d7f594c832a6ca6652688e05044ccdd8d366'
 redirect_url = 'http://food-enthusiast.appspot.com'
 wepay = WePay(True, access_token)
 
@@ -149,7 +149,7 @@ class ProfileHandler(SessionHandler):
 
     timeline_requests = zip(timeline_requests, timeline_comments)
     completed_requests = [x for x in timeline_requests if x[0].status == "complete"]
-    fired_requests = [x for x in timeline_requests if x[0].status == "foodie"]
+    fired_requests = [x for x in timeline_requests if x[0].status == "fired"]
 
     self.response.out.write(template.render('views/profile.html',
                              {'owner':profile_owner, 'profile':profile, 'history': history, 'user': viewer, 'timeline_requests': timeline_requests,
