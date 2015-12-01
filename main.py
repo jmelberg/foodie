@@ -14,9 +14,9 @@ from wepay import *
 from models import User, Profile, Request, Endorsement, Bidder
 from payments import *
 
-client_id = 3044
-client_secret = 'a2ed348f70'
-access_token = 'PRODUCTION_47ea8352cc24cab4cddd276bf5a3d7f594c832a6ca6652688e05044ccdd8d366'
+client_id = 1234
+client_secret = '#######'
+access_token = '#######'
 redirect_url = 'http://food-enthusiast.appspot.com'
 wepay = WePay(True, access_token)
 

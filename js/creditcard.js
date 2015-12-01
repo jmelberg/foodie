@@ -24,7 +24,7 @@ $(document).ready(function(){
   addEvent(d.id('cc-submit'), 'click', function() {
       var userName = [valueById('name')].join(' ');
           response = WePay.credit_card.create({
-          "client_id":        3044,
+          "client_id":        1234, // put id here
           "user_name":        valueById('name'),
           "email":            valueById('email'),
           "cc_number":        valueById('cc-number'),

@@ -18,7 +18,7 @@ import urllib
 import json
 
 from twilio.rest import TwilioRestClient
-api_key = 'AIzaSyBAO3qaYH4LGQky8vAA07gCVex1LBhUdbE'
+api_key = '###########'
 
 class SMSHandler(SessionHandler):
   def get(self):
@@ -170,9 +170,9 @@ def shorten_url(url):
   return json.loads(result.content)['id']
 
 def send_sms(request):
-  AUTH_TOKEN = '3d55c9d85ab388eacc42e8cfb1ad06e4'
-  ACCOUNT_SID = 'AC8d1e55b2a96dde764f3b6df1313bc3d1'
-  twilio_number = '+16503992009'
+  AUTH_TOKEN = '#########'
+  ACCOUNT_SID = '##########'
+  twilio_number = '+###########'
 
   sender = User.query(User.username == request.sender_name).get()
   acceptor = User.query(User.username == request.recipient_name).get()
@@ -206,9 +206,9 @@ def send_sms(request):
   )
 
 def send_fire_notification(request):
-  AUTH_TOKEN = '3d55c9d85ab388eacc42e8cfb1ad06e4'
-  ACCOUNT_SID = 'AC8d1e55b2a96dde764f3b6df1313bc3d1'
-  twilio_number = '+16503992009'
+  AUTH_TOKEN = '#########'
+  ACCOUNT_SID = '##########'
+  twilio_number = '+###########'
 
   sender = User.query(User.username == request.sender_name).get()
   acceptor = User.query(User.username == request.recipient_name).get()
@@ -232,9 +232,9 @@ def send_fire_notification(request):
   )
 
 def send_fire(request):
-  AUTH_TOKEN = '3d55c9d85ab388eacc42e8cfb1ad06e4'
-  ACCOUNT_SID = 'AC8d1e55b2a96dde764f3b6df1313bc3d1'
-  twilio_number = '+16503992009'
+  AUTH_TOKEN = '#########'
+  ACCOUNT_SID = '##########'
+  twilio_number = '+###########'
 
   sender = User.query(User.username == request.sender_name).get()
   acceptor = User.query(User.username == request.recipient_name).get()

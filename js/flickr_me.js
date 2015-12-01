@@ -7,7 +7,7 @@
 * 		search() - see function description for usage
 */
 var FlickrMe = (function($){
-	var apiKey = "37b008c37e61a536200947c81c78dc87";
+	var apiKey = "########";
 	var searchMethod = "flickr.photos.search"; //static api key
 	var returnFormat = "json";
 	var sort = "relevance";

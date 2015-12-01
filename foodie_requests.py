@@ -19,7 +19,7 @@ import json
 from twilio.rest import TwilioRestClient
 
 
-api_key = 'AIzaSyBAO3qaYH4LGQky8vAA07gCVex1LBhUdbE'
+api_key = '##########'
 
 class RequestsHandler(SessionHandler):
   ''' Views current requests from other users '''
