@@ -28,13 +28,14 @@ var FeedCarousel = (function () {
     owl.trigger('owl.next');
   });
   $(".food-item-wrapper").hover(function(event) {
-    $(this).children(".food-item-picture").children(".food-item-link").children(".reply-icon").fadeIn();
-    $(this).children(".food-item-picture").children(".food-item-link").children(".food-selector").children(".owl-item-text").css('visibility','hidden');
+    $(this).children(".food-item-picture").children(".reply-icon").fadeIn();
+    $(this).children(".food-item-picture").children(".food-selector").children(".owl-item-text").css('visibility','hidden');
     owl.trigger('owl.stop');
+    $(this).children(".food-item-picture").css('color', 'blue');
   }, 
   function(e) {
-    $(this).children(".food-item-picture").children(".food-item-link").children(".reply-icon").fadeOut();
-    $(this).children(".food-item-picture").children(".food-item-link").children(".food-selector").children(".owl-item-text").css('visibility','visible');
+    $(this).children(".food-item-picture").children(".reply-icon").fadeOut();
+    $(this).children(".food-item-picture").children(".food-selector").children(".owl-item-text").css('visibility','visible');
     owl.trigger('owl.play',2500);
     e.stopPropagation();
   });

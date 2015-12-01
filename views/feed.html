@@ -27,16 +27,13 @@
               <div class="owl-slides owl-carousel owl-theme">
                 {% for item in all_requests %}
                   <div class="food-item-wrapper">
-                    <div class="food-item-picture">
-                      <a href="/query?search={{item.food_type}}" class="food-item-link">
-                        <div class="reply-icon"><i class="large material-icons">search</i></div>
-                        <div id="owl-item-{{item.key.urlsafe}}" class="item food-selector">
-                          <span class="owl-item-text">{{item.food_type}}</span>
-                        </div>
-                        <script>FoodTypeDisplays.displayBackground( {backgroundId:"owl-item-{{item.key.urlsafe}}"} ,"{{item.food_type}}","n");</script>
-                      </a>
-                    </div>
-                    <div class="grey-bg"></div>
+                    <a href="/query?search={{item.food_type}}" class="food-item-picture">
+                      <div class="reply-icon"><i class="large material-icons">search</i></div>
+                      <div id="owl-item-{{item.key.urlsafe}}" class="item food-selector">
+                        <span class="owl-item-text">{{item.food_type}}</span>
+                      </div>
+                      <script>FoodTypeDisplays.displayBackground( {backgroundId:"owl-item-{{item.key.urlsafe}}"} ,"{{item.food_type}}","n");</script>
+                    </a>
                   </div>
                 {% endfor %}
               </div>
