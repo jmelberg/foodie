@@ -366,9 +366,7 @@ class AuthorizePaymentsHandler(SessionHandler):
 
 class TestChargeHandler(SessionHandler):
   def get(self):
-    charge = Charge("PRODUCTION_7040820d52ece89eaac422bfac064a04f447c027c078fbae3abb1fb739123c10",1614365466, 194932521, 1.00, "Live Payments Works!")
-
-#def Charge(account_id, credit_card_id, amount, desc):
+    charge = Charge("######",1111111, 11111111, 1.00, "Live Payments Works!")
 
 
 config = {}
